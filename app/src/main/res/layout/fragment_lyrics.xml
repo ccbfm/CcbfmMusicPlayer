@@ -10,10 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.ccbfm.music.player.ui.widget.VerticalViewPager
-            android:id="@+id/music_view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        <Button
+            android:id="@+id/music_llll"
+            android:layout_width="200dp"
+            android:layout_gravity="center"
+            android:text="lllll"
+            android:layout_height="200dp" />
 
     </FrameLayout>
 </layout>

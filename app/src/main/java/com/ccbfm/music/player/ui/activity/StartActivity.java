@@ -26,6 +26,11 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
     }
 
     @Override
+    protected void initView(ActivityStartBinding binding) {
+
+    }
+
+    @Override
     protected int getLayoutId() {
         return R.layout.activity_start;
     }
@@ -43,7 +48,7 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
                 startActivity(intent);
                 mFlag = true;
             }
-        }, 1500);
+        }, 1000);
     }
 
     @Override

@@ -29,8 +29,10 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
                 break;
         }
         mViewDataBinding = DataBindingUtil.setContentView(this, getLayoutId());
+        initView(mViewDataBinding);
     }
 
+    protected abstract void initView(T binding);
     protected abstract int getLayoutId();
 
     private void restartApp() {
