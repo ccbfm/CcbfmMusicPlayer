@@ -2405,17 +2405,12 @@ public class VerticalViewPager extends ViewGroup {
     }
 
     private int determineTargetPage(int currentPage, float pageOffset, int velocity, int deltaY) {
-        Log.w("wds","determineTargetPage-currentPage="+currentPage+","+pageOffset+","+velocity+","+deltaY);
         int targetPage;
-        Log.w("wds","determineTargetPage-="+Math.abs(deltaY) +","+mFlingDistance);
-        Log.w("wds","determineTargetPage-="+Math.abs(velocity) +","+mMinimumVelocity);
         if (Math.abs(deltaY) > mFlingDistance && Math.abs(velocity) > mMinimumVelocity) {
             targetPage = velocity > 0 ? currentPage : currentPage + 1;
-            Log.w("wds","determineTargetPage-1-targetPage="+targetPage);
         } else {
             final float truncator = currentPage >= mCurItem ? 0.4f : 0.6f;
             targetPage = (int) (currentPage + pageOffset + truncator);
-            Log.w("wds","determineTargetPage-2-targetPage="+targetPage);
         }
 
         if (mItems.size() > 0) {
@@ -2425,7 +2420,6 @@ public class VerticalViewPager extends ViewGroup {
             // Only let the user target pages we have items for
             targetPage = Math.max(firstItem.position, Math.min(targetPage, lastItem.position));
         }
-        Log.w("wds","determineTargetPage-targetPage="+targetPage);
         return targetPage;
     }
 
