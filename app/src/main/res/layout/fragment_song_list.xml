@@ -3,20 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="songListModel"
+            type="com.ccbfm.music.player.data.model.SongListModel" />
     </data>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        android:focusable="true"
+        android:clickable="true">
 
-        <com.ccbfm.music.player.ui.widget.VerticalViewPager
-            android:id="@+id/music_view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <FrameLayout
+        <ExpandableListView
             android:id="@+id/music_song_list"
+            android:adapter="@{songListModel.adapter}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </FrameLayout>

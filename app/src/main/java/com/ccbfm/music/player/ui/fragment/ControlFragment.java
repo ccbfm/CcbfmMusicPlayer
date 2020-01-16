@@ -14,4 +14,5 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
     protected int getLayoutId() {
         return R.layout.fragment_control;
     }
+
 }

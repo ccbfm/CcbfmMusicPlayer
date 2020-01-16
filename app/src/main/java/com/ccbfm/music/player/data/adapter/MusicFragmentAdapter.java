@@ -13,8 +13,8 @@ public class MusicFragmentAdapter extends FragmentPagerAdapter {
 
     private List<BaseFragment> mFragments = new LinkedList<>();
 
-    public MusicFragmentAdapter(@NonNull FragmentManager fm, int behavior) {
-        super(fm, behavior);
+    public MusicFragmentAdapter(@NonNull FragmentManager fm) {
+        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     }
 
     public MusicFragmentAdapter(@NonNull FragmentManager fm, List<BaseFragment> fragments, int behavior) {

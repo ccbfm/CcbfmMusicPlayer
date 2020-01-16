@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
     </data>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/music_scanning"
             android:layout_width="200dp"
-            android:layout_gravity="center"
-            android:text="sc"
-            android:layout_height="200dp" />
+            android:layout_height="200dp"
+            android:background="@drawable/button_scanning_bg"
+            android:text="@string/music_scanning" />
 
-    </FrameLayout>
+        <Button
+            android:id="@+id/music_select_directory"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/button_scanning_bg"
+            android:text="@string/music_select_directory" />
+    </LinearLayout>
 </layout>
