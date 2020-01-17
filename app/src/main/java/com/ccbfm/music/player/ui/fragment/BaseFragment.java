@@ -26,5 +26,6 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
     }
 
     protected abstract void initView(T binding);
+
     protected abstract int getLayoutId();
 }

@@ -5,4 +5,11 @@
     <string name="music_select_directory">选择目录</string>
     <string name="music_control_play">播放</string>
     <string name="music_control_pause">暂停</string>
+
+    <string name="music_select_folder">选择扫描的目录</string>
+    <string name="music_back_root_path">返回根目录</string>
+    <string name="music_back_pre">返回上一层</string>
+
+    <string name="music_cancel">取消</string>
+    <string name="music_confirm">确认</string>
 </resources>

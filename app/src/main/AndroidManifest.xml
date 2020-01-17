@@ -24,6 +24,9 @@
         <activity
             android:name=".ui.activity.MusicActivity"
             android:theme="@style/MusicActivityTheme" />
+        <activity
+            android:name=".ui.activity.SelectFolderActivity"
+            android:theme="@style/MusicActivityTheme" />
     </application>
 
 </manifest>

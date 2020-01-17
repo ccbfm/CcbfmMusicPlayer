@@ -24,10 +24,16 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
         mGroupItems.add("QWER3");
 
         LinkedList<String> list1 = new LinkedList<>();
-        list1.add("1");
-        list1.add("1");
-        list1.add("1");
+        LinkedList<String> list2 = new LinkedList<>();
+        LinkedList<String> list3 = new LinkedList<>();
+        for (int i = 0; i < 20; i++) {
+            list1.add("1");
+            list2.add("2");
+            list3.add("3");
+        }
         mChildrenItems.add(list1);
+        mChildrenItems.add(list2);
+        mChildrenItems.add(list3);
     }
 
     @Override
@@ -69,9 +75,9 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         if(convertView == null) {
             convertView = mLayoutInflater.inflate(R.layout.item_song_list_name, null);
-            TextView listName = convertView.findViewById(R.id.music_song_list_name);
-            listName.setText(getGroup(groupPosition));
         }
+        TextView listName = convertView.findViewById(R.id.music_song_list_name);
+        listName.setText(getGroup(groupPosition));
         return convertView;
     }
 
@@ -79,9 +85,9 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         if(convertView == null) {
             convertView = mLayoutInflater.inflate(R.layout.item_child_song_name, null);
-            TextView songName = convertView.findViewById(R.id.music_song_name);
-            songName.setText(getChild(groupPosition, childPosition));
         }
+        TextView songName = convertView.findViewById(R.id.music_song_name);
+        songName.setText(getChild(groupPosition, childPosition));
         return convertView;
     }
 

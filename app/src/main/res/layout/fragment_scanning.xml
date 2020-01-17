@@ -3,13 +3,17 @@
 
     <data>
 
+        <variable
+            name="scanningModel"
+            type="com.ccbfm.music.player.data.model.ScanningModel" />
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <Button
             android:id="@+id/music_scanning"
@@ -24,6 +28,14 @@
             android:layout_height="100dp"
             android:layout_marginTop="50dp"
             android:background="@drawable/button_scanning_bg"
+            android:onClickListener="@{scanningModel}"
             android:text="@string/music_select_directory" />
+
+        <TextView
+            android:id="@+id/music_select_directory_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="@{scanningModel.directoryName}" />
     </LinearLayout>
 </layout>
