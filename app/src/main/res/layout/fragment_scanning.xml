@@ -20,6 +20,7 @@
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:background="@drawable/button_scanning_bg"
+            android:onClickListener="@{scanningModel}"
             android:text="@string/music_scanning" />
 
         <Button

@@ -37,4 +37,6 @@ dependencies {
     //计算float类型 density
     implementation 'com.github.ccbfm:screen-adapter:1.0.1'
     implementation "com.github.ccbfm:android-permission:1.1.0"
+    //LitePal
+    implementation 'org.litepal.android:java:3.0.0'
 }
