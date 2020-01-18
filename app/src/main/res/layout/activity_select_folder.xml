@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="56dp"
-            android:divider="@color/colorAccent"
+            android:divider="@color/color_f2f2f2"
             android:orientation="vertical"
             android:showDividers="middle">
 
@@ -29,26 +29,44 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
+                android:ellipsize="start"
                 android:gravity="center_vertical"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:singleLine="true"
                 android:text="@{selectFolderModel.rootPath}" />
 
             <TextView
+                android:id="@+id/music_back_root_path"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
+                android:drawableStart="@drawable/ic_back_root_asset_24dp"
+                android:drawablePadding="6dp"
                 android:gravity="center_vertical"
-                android:text="@string/music_back_root_path" />
+                android:onClickListener="@{selectFolderModel}"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="@string/music_back_root_path"
+                android:visibility="@{selectFolderModel.backVisible}" />
 
             <TextView
+                android:id="@+id/music_back_pre"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
+                android:drawableStart="@drawable/ic_back_pre_asset_24dp"
+                android:drawablePadding="6dp"
                 android:gravity="center_vertical"
-                android:text="@string/music_back_pre" />
+                android:onClickListener="@{selectFolderModel}"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="@string/music_back_pre"
+                android:visibility="@{selectFolderModel.backVisible}" />
 
             <ListView
-                android:id="@+id/list"
+                android:id="@+id/music_select_directory_list"
                 android:layout_width="match_parent"
-                android:adapter="@{selectFolderModel.selectFolderAdapter}"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:adapter="@{selectFolderModel.selectFolderAdapter}" />
         </LinearLayout>
 
         <LinearLayout

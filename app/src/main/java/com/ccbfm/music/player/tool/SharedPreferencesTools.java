@@ -31,6 +31,20 @@ public final class SharedPreferencesTools {
         sPreferences.edit().putInt(key, value).apply();
     }
 
+    public static String getStringValue(String key){
+        return getStringValue(key, "");
+    }
+
+    public static String getStringValue(String key, String defValue){
+        checkPreferences();
+        return sPreferences.getString(key, defValue);
+    }
+
+    public static void putStringValue(String key, String value){
+        checkPreferences();
+        sPreferences.edit().putString(key, value).apply();
+    }
+
     private static void checkPreferences(){
         if(sPreferences == null){
             if(sContext == null){

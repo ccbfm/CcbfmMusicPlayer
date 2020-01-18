@@ -46,9 +46,10 @@ public class SelectFolderActivity extends BaseActivity<ActivitySelectFolderBindi
         if(TextUtils.isEmpty(rootPath)){
             rootPath = Constants.ROOT_PATH;
         }
-        SelectFolderModel model = new SelectFolderModel(rootPath);
+        SelectFolderModel model = new SelectFolderModel(rootPath, binding.musicSelectDirectoryList);
         mSelectFolderModel = model;
         binding.setSelectFolderModel(model);
+
     }
 
     @Override

@@ -1,10 +1,13 @@
 package com.ccbfm.music.player.data.adapter;
 
-import android.util.Log;
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.ccbfm.music.player.R;
@@ -17,16 +20,35 @@ public class SelectFolderAdapter extends BaseAdapter {
 
     private List<File> mFiles = new LinkedList<>();
     private LayoutInflater mLayoutInflater;
+    private OnItemClickListener mOnItemClickListener;
+    private Drawable mFolderDrawable;
+    private Drawable mFileDrawable;
+    private Handler mHandler;
 
     public SelectFolderAdapter(List<File> files) {
         mFiles.addAll(files);
-        Log.w("wds", "getCount-="+getCount());
     }
 
-    public void updateFiles(List<File> files){
+    public void updateFiles(List<File> files, final ListView listView, final Integer position) {
         mFiles.clear();
         mFiles.addAll(files);
         notifyDataSetChanged();
+        if (mHandler == null) {
+            mHandler = new Handler();
+        }
+        if (position != null) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    listView.setSelection(position);
+                }
+            }, 0);
+        }
+
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
     }
 
     @Override
@@ -46,25 +68,48 @@ public class SelectFolderAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.w("wds", "getView-="+position);
         ViewHolder holder;
         if (convertView == null) {
-            if(mLayoutInflater == null){
-                mLayoutInflater = LayoutInflater.from(parent.getContext());
+            if (mLayoutInflater == null) {
+                Context context = parent.getContext();
+                mLayoutInflater = LayoutInflater.from(context);
+                mFolderDrawable = context.getDrawable(R.drawable.ic_folder_asset_24dp);
+                mFileDrawable = context.getDrawable(R.drawable.ic_file_asset_24dp);
             }
             convertView = mLayoutInflater.inflate(R.layout.item_select_folder_name, null);
             holder = new ViewHolder();
             holder.fileName = (TextView) convertView.findViewById(R.id.music_directory_name);
+            holder.convertView = convertView;
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        File file = mFiles.get(position);
+        final File file = mFiles.get(position);
         holder.fileName.setText(file.getName());
+        if (file.isDirectory()) {
+            holder.fileName.setCompoundDrawablesWithIntrinsicBounds(mFolderDrawable, null, null, null);
+        } else {
+            holder.fileName.setCompoundDrawablesWithIntrinsicBounds(mFileDrawable, null, null, null);
+        }
+
+        holder.convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnItemClickListener != null) {
+                    mOnItemClickListener.onItemClickListener(file);
+                }
+            }
+        });
         return convertView;
     }
 
     private static class ViewHolder {
+        View convertView;
         TextView fileName;
     }
+
+    public interface OnItemClickListener {
+        void onItemClickListener(File file);
+    }
+
 }

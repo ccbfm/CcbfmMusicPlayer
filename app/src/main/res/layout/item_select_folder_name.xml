@@ -2,10 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="36dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp">
 
     <TextView
         android:id="@+id/music_directory_name"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="36dp"
+        android:drawablePadding="6dp"
+        android:gravity="center_vertical" />
 </LinearLayout>

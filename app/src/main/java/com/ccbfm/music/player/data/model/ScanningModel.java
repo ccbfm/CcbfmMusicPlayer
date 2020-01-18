@@ -12,18 +12,20 @@ import androidx.databinding.Bindable;
 import com.ccbfm.music.player.BR;
 import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.tool.Constants;
+import com.ccbfm.music.player.tool.SharedPreferencesTools;
 import com.ccbfm.music.player.ui.activity.SelectFolderActivity;
 import com.ccbfm.music.player.ui.fragment.ScanningFragment;
 
 public class ScanningModel extends BaseObservable implements View.OnClickListener {
 
     private static final int CODE_SELECT_FOLDER_NAME = 0x11;
+    private static final String KEY_SELECT_DIRECTORY_NAME = "select_directory_name";
     private ScanningFragment mFragment;
     private String mDirectoryName;
 
     public ScanningModel(ScanningFragment fragment) {
         mFragment = fragment;
-        mDirectoryName = "Constants.ROOT_PATH";
+        mDirectoryName = SharedPreferencesTools.getStringValue(KEY_SELECT_DIRECTORY_NAME, Constants.ROOT_PATH);
     }
 
     @Override
@@ -57,5 +59,6 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
     public void setDirectoryName(String directoryName) {
         mDirectoryName = directoryName;
         notifyPropertyChanged(BR.directoryName);
+        SharedPreferencesTools.putStringValue(KEY_SELECT_DIRECTORY_NAME, directoryName);
     }
 }
