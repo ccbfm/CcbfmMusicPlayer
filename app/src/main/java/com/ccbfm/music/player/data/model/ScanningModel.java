@@ -2,6 +2,7 @@ package com.ccbfm.music.player.data.model;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.view.View;
@@ -12,6 +13,7 @@ import androidx.databinding.Bindable;
 
 import com.ccbfm.music.player.BR;
 import com.ccbfm.music.player.R;
+import com.ccbfm.music.player.database.SongLoader;
 import com.ccbfm.music.player.tool.Constants;
 import com.ccbfm.music.player.tool.SharedPreferencesTools;
 import com.ccbfm.music.player.tool.ToastTools;
@@ -44,7 +46,7 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
                 }
                 break;
             case R.id.music_select_directory:
-                SelectFolderActivity.startForResult(mFragment, "", CODE_SELECT_FOLDER_NAME);
+                SelectFolderActivity.startForResult(mFragment, getDirectoryName(), CODE_SELECT_FOLDER_NAME);
                 break;
         }
     }
@@ -86,12 +88,8 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
 
         @Override
         protected Boolean doInBackground(String... strings) {
-            try {
-                Thread.sleep(3000);
-            } catch (Exception e) {
-
-            }
-            return false;
+            String path = mScanningModel.getDirectoryName();
+            return SongLoader.loadSong(mScanningModel.mFragment.getContext(), path);
         }
 
         @Override

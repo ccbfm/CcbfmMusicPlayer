@@ -29,22 +29,23 @@ public class SelectFolderAdapter extends BaseAdapter {
         mFiles.addAll(files);
     }
 
-    public void updateFiles(List<File> files, final ListView listView, final Integer position) {
+    public void updateFiles(List<File> files, final ListView listView, Integer position) {
         mFiles.clear();
         mFiles.addAll(files);
         notifyDataSetChanged();
         if (mHandler == null) {
             mHandler = new Handler();
         }
-        if (position != null) {
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    listView.setSelection(position);
-                }
-            }, 0);
+        if (position == null) {
+            position = 0;
         }
-
+        final int pos = position;
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                listView.setSelection(pos);
+            }
+        }, 0);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {

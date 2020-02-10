@@ -20,6 +20,10 @@ public class Song extends LitePalSupport {
 
     private String lyricsPath;
 
+    private String album;
+
+    private int albumId;
+
     public Song() {
     }
 
@@ -85,4 +89,19 @@ public class Song extends LitePalSupport {
         this.lyricsPath = lyricsPath;
     }
 
+    public String getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(String album) {
+        this.album = album;
+    }
+
+    public int getAlbumId() {
+        return albumId;
+    }
+
+    public void setAlbumId(int albumId) {
+        this.albumId = albumId;
+    }
 }
