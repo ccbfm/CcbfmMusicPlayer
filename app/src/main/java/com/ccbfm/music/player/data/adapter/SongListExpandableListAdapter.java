@@ -73,21 +73,34 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        if(convertView == null) {
+        GroupHolder groupHolder;
+        if (convertView == null) {
             convertView = mLayoutInflater.inflate(R.layout.item_song_list_name, null);
+
+            groupHolder = new GroupHolder();
+            groupHolder.listName = convertView.findViewById(R.id.music_song_list_name);
+
+            convertView.setTag(groupHolder);
+        } else {
+            groupHolder = (GroupHolder) convertView.getTag();
         }
-        TextView listName = convertView.findViewById(R.id.music_song_list_name);
-        listName.setText(getGroup(groupPosition));
+        groupHolder.listName.setText(getGroup(groupPosition));
         return convertView;
     }
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        if(convertView == null) {
+        ChildHolder childHolder;
+        if (convertView == null) {
             convertView = mLayoutInflater.inflate(R.layout.item_child_song_name, null);
+            childHolder = new ChildHolder();
+            childHolder.songName = convertView.findViewById(R.id.music_song_name);
+
+            convertView.setTag(childHolder);
+        } else {
+            childHolder = (ChildHolder) convertView.getTag();
         }
-        TextView songName = convertView.findViewById(R.id.music_song_name);
-        songName.setText(getChild(groupPosition, childPosition));
+        childHolder.songName.setText(getChild(groupPosition, childPosition));
         return convertView;
     }
 
@@ -96,4 +109,12 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
+
+    private static class GroupHolder {
+        TextView listName;
+    }
+
+    private static class ChildHolder {
+        TextView songName;
+    }
 }

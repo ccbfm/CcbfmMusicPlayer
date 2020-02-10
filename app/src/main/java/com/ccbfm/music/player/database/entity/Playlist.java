@@ -3,6 +3,8 @@ package com.ccbfm.music.player.database.entity;
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
+import java.util.List;
+
 public class Playlist extends LitePalSupport {
 
     @Column(nullable = false, defaultValue = "新建列表")
@@ -10,7 +12,7 @@ public class Playlist extends LitePalSupport {
 
     private String description;
 
-    private long[] songId;
+    private List<Song> songList;
 
     public Playlist() {
     }
@@ -35,11 +37,11 @@ public class Playlist extends LitePalSupport {
         this.description = description;
     }
 
-    public long[] getSongId() {
-        return songId;
+    public List<Song> getSongList() {
+        return songList;
     }
 
-    public void setSongId(long[] songId) {
-        this.songId = songId;
+    public void setSongList(List<Song> songList) {
+        this.songList = songList;
     }
 }

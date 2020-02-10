@@ -89,7 +89,7 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
         @Override
         protected Boolean doInBackground(String... strings) {
             String path = mScanningModel.getDirectoryName();
-            return SongLoader.loadSong(mScanningModel.mFragment.getContext(), path);
+            return SongLoader.loadAudioSong(mScanningModel.mFragment.getContext(), path);
         }
 
         @Override

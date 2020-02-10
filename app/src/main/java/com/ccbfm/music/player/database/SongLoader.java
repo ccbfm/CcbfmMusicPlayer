@@ -5,7 +5,10 @@ import android.database.Cursor;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
+import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
+
+import java.util.List;
 
 public final class SongLoader {
 
@@ -34,7 +37,7 @@ public final class SongLoader {
         return null;
     }
 
-    public static boolean loadSong(Context context, String path) {
+    public static boolean loadAudioSong(Context context, String path) {
         Cursor cursor = makeSongCursor(context, path);
         if (cursor != null) {
             while (cursor.moveToNext()) {
@@ -54,5 +57,16 @@ public final class SongLoader {
             return true;
         }
         return false;
+    }
+
+
+    public static List<Playlist> loadDBSong(){
+        List<Song> allSong = DBDao.queryAllSong();
+        Playlist playlist = new Playlist();
+        playlist.setName("全部歌曲");
+        playlist.setSongList(allSong);
+        List<Playlist> allPlaylist = DBDao.queryAllPlaylist();
+        allPlaylist.add(0, playlist);
+        return allPlaylist;
     }
 }

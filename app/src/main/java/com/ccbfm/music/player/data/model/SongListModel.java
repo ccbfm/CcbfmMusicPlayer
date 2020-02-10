@@ -13,4 +13,6 @@ public class SongListModel {
     public void setAdapter(SongListExpandableListAdapter adapter) {
         mAdapter = adapter;
     }
+
+
 }

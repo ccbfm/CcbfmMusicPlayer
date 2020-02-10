@@ -106,7 +106,7 @@ public class SelectFolderModel extends BaseObservable implements View.OnClickLis
 
     public void setSelectFolderAdapter(SelectFolderAdapter selectFolderAdapter) {
         mSelectFolderAdapter = selectFolderAdapter;
-        notifyPropertyChanged(BR.selectFolderAdapter);
+        notifyPropertyChanged(BR.selectFolderModel);
     }
 
     @Bindable
