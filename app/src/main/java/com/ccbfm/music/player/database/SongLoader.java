@@ -2,6 +2,7 @@ package com.ccbfm.music.player.database;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
@@ -59,8 +60,22 @@ public final class SongLoader {
         return false;
     }
 
+    private static List<Playlist> sPlaylists;
+    private static LoadDBSong sLoadDBSong;
 
-    public static List<Playlist> loadDBSong(){
+    public static List<Playlist> getSongData(LoadSongCallBack callBack) {
+        if (sPlaylists != null) {
+            return sPlaylists;
+        }
+        if (sLoadDBSong != null && !sLoadDBSong.isCancelled()) {
+            sLoadDBSong.cancel(true);
+        }
+        sLoadDBSong = new LoadDBSong(callBack);
+        sLoadDBSong.execute();
+        return null;
+    }
+
+    private static List<Playlist> loadDBSong() {
         List<Song> allSong = DBDao.queryAllSong();
         Playlist playlist = new Playlist();
         playlist.setName("全部歌曲");
@@ -68,5 +83,57 @@ public final class SongLoader {
         List<Playlist> allPlaylist = DBDao.queryAllPlaylist();
         allPlaylist.add(0, playlist);
         return allPlaylist;
+    }
+
+    private static class LoadDBSong extends AsyncTask<Void, Integer, List<Playlist>> {
+        private LoadSongCallBack mCallBack;
+
+        private LoadDBSong(LoadSongCallBack callBack) {
+            mCallBack = callBack;
+        }
+
+        @Override
+        protected List<Playlist> doInBackground(Void... voids) {
+            sPlaylists = null;
+            return SongLoader.loadDBSong();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (mCallBack != null) {
+                mCallBack.onPreExecute();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<Playlist> playlists) {
+            super.onPostExecute(playlists);
+            sPlaylists = playlists;
+            if (mCallBack != null) {
+                mCallBack.onPostExecute(playlists);
+            }
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            if (mCallBack != null) {
+                mCallBack.onCancelled();
+            }
+        }
+    }
+
+    public interface LoadSongCallBack {
+        void onPreExecute();
+
+        void onPostExecute(List<Playlist> playlists);
+
+        void onCancelled();
     }
 }

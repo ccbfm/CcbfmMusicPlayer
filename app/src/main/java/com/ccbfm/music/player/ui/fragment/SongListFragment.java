@@ -25,7 +25,12 @@ public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
                 }
             }
         });
-        SongListModel model = new SongListModel();
+        SongListModel model = new SongListModel(new SongListModel.CallBack<String>() {
+            @Override
+            public void changeContent(String groupItem) {
+                headName.setText(groupItem);
+            }
+        });
         model.setAdapter(new SongListExpandableListAdapter(getContext()));
         binding.setSongListModel(model);
     }

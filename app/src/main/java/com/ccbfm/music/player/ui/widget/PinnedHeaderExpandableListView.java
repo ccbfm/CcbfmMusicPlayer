@@ -98,6 +98,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
         });
     }
 
+
     public void setPinnedHeader(View view, PinnedHeaderListener listener) {
         if (view != null) {
             mPinnedHeader = view;
@@ -106,7 +107,6 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
             requestLayout();
             postInvalidate();
         }
-
     }
 
     @Override
@@ -119,6 +119,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
         mPinnedHeaderWidth = mPinnedHeader.getMeasuredWidth();
         mPinnedHeaderHeight = mPinnedHeader.getMeasuredHeight();
     }
+
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {

@@ -12,6 +12,9 @@ public final class SharedPreferencesTools {
 
     public static final String KEY_INIT_SHOW_PAGE = "init_show_page";
 
+    public static final String KEY_INIT_PLAYLIST_INDEX = "init_playlist_index";
+    public static final String KEY_INIT_SONG_INDEX = "init_song_index";
+
     public static void init(Application context){
         sContext = context;
     }

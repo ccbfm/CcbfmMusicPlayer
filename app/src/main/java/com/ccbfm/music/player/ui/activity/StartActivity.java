@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 
 import com.ccbfm.android.permission.APermission;
 import com.ccbfm.music.player.R;
+import com.ccbfm.music.player.database.SongLoader;
 import com.ccbfm.music.player.databinding.ActivityStartBinding;
 import com.ccbfm.music.player.tool.RestartTools;
 
@@ -41,6 +42,8 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
     }
 
     private void needJump() {
+        SongLoader.getSongData(null);
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
