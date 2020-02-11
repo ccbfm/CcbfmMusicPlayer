@@ -8,52 +8,45 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import com.ccbfm.music.player.R;
+import com.ccbfm.music.player.database.entity.Playlist;
+import com.ccbfm.music.player.database.entity.Song;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
 
     private LayoutInflater mLayoutInflater;
-    private LinkedList<String> mGroupItems = new LinkedList<>();
-    private LinkedList<LinkedList<String>> mChildrenItems = new LinkedList<>();
+    private LinkedList<Playlist> mPlaylists = new LinkedList<>();
 
     public SongListExpandableListAdapter(Context context) {
         mLayoutInflater = LayoutInflater.from(context);
-        mGroupItems.add("QWER1");
-        mGroupItems.add("QWER2");
-        mGroupItems.add("QWER3");
+    }
 
-        LinkedList<String> list1 = new LinkedList<>();
-        LinkedList<String> list2 = new LinkedList<>();
-        LinkedList<String> list3 = new LinkedList<>();
-        for (int i = 0; i < 20; i++) {
-            list1.add("1");
-            list2.add("2");
-            list3.add("3");
-        }
-        mChildrenItems.add(list1);
-        mChildrenItems.add(list2);
-        mChildrenItems.add(list3);
+    public void updatePlaylist(List<Playlist> playlists) {
+        mPlaylists.clear();
+        mPlaylists.addAll(playlists);
+        notifyDataSetChanged();
     }
 
     @Override
     public int getGroupCount() {
-        return mGroupItems.size();
+        return mPlaylists.size();
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return mChildrenItems.get(groupPosition).size();
+        return mPlaylists.get(groupPosition).getSongList().size();
     }
 
     @Override
     public String getGroup(int groupPosition) {
-        return mGroupItems.get(groupPosition);
+        return mPlaylists.get(groupPosition).getName();
     }
 
     @Override
-    public String getChild(int groupPosition, int childPosition) {
-        return mChildrenItems.get(groupPosition).get(childPosition);
+    public Song getChild(int groupPosition, int childPosition) {
+        return mPlaylists.get(groupPosition).getSongList().get(childPosition);
     }
 
     @Override
@@ -100,7 +93,7 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
         } else {
             childHolder = (ChildHolder) convertView.getTag();
         }
-        childHolder.songName.setText(getChild(groupPosition, childPosition));
+        childHolder.songName.setText(getChild(groupPosition, childPosition).getSongName());
         return convertView;
     }
 

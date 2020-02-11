@@ -16,7 +16,7 @@ import android.widget.ExpandableListView;
 public class PinnedHeaderExpandableListView extends ExpandableListView {
 
     private View mPinnedHeader;
-    private boolean mCheckPinnedHeaderContent = false;
+    private boolean mCheckPinnedHeaderContent = true;
     private PinnedHeaderListener mPinnedHeaderListener;
     private int mPinnedHeaderWidth;
     private int mPinnedHeaderHeight;
@@ -45,7 +45,6 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
         setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-
             }
 
             @Override
@@ -53,6 +52,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
                 if (mPinnedHeader == null) {
                     return;
                 }
+
                 int firstGroup = getPackedPositionGroup(getExpandableListPosition(firstVisibleItem));
                 int nextPosition = firstVisibleItem + 1;
                 int nextGroup = getPackedPositionGroup(getExpandableListPosition(nextPosition));
@@ -61,6 +61,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
                     return;
                 }
                 int top = childView.getTop();
+
                 if (nextGroup == firstGroup + 1) {
                     if (top <= mPinnedHeaderHeight) {
                         int delta = mPinnedHeaderHeight - top;
@@ -105,6 +106,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
             requestLayout();
             postInvalidate();
         }
+
     }
 
     @Override
