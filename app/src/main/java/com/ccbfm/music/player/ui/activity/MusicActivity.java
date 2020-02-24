@@ -1,5 +1,6 @@
 package com.ccbfm.music.player.ui.activity;
 
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 

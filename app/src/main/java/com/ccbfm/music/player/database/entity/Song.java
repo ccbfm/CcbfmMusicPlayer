@@ -1,11 +1,14 @@
 package com.ccbfm.music.player.database.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
-public class Song extends LitePalSupport {
+public class Song extends LitePalSupport implements Parcelable {
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String songName;
 
     private String singerName;
@@ -104,4 +107,60 @@ public class Song extends LitePalSupport {
     public void setAlbumId(int albumId) {
         this.albumId = albumId;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+
+    public Song(String songName, String singerName, String lyricist, String composer,
+                long duration, String songPath, String lyricsPath, String album, int albumId) {
+        this.songName = songName;
+        this.singerName = singerName;
+        this.lyricist = lyricist;
+        this.composer = composer;
+        this.duration = duration;
+        this.songPath = songPath;
+        this.lyricsPath = lyricsPath;
+        this.album = album;
+        this.albumId = albumId;
+    }
+
+    private Song(Parcel in) {
+        this(in.readString(),
+                in.readString(),
+                in.readString(),
+                in.readString(),
+                in.readLong(),
+                in.readString(),
+                in.readString(),
+                in.readString(),
+                in.readInt());
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeString(songName);
+        out.writeString(singerName);
+        out.writeString(lyricist);
+        out.writeString(composer);
+        out.writeLong(duration);
+        out.writeString(songPath);
+        out.writeString(lyricsPath);
+        out.writeString(album);
+        out.writeInt(albumId);
+    }
+
+    public static Parcelable.Creator<Song> CREATOR = new Parcelable.Creator<Song>() {
+        @Override
+        public Song createFromParcel(Parcel source) {
+            return new Song(source);
+        }
+
+        @Override
+        public Song[] newArray(int size) {
+            return new Song[size];
+        }
+    };
 }

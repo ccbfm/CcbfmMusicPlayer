@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
@@ -40,7 +41,7 @@ public final class SongLoader {
 
     public static boolean loadAudioSong(Context context, String path) {
         Cursor cursor = makeSongCursor(context, path);
-        if (cursor != null) {
+        if (cursor != null && cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
                 //long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.AudioColumns._ID));
                 String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.TITLE));
@@ -53,8 +54,10 @@ public final class SongLoader {
                 song.setDuration(duration);
                 song.setAlbum(album);
                 song.setAlbumId(album_id);
-                song.save();
+                song.saveOrUpdate("songName=?", title);
             }
+
+            sPlaylists = null;
             return true;
         }
         return false;

@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">音乐</string>
 
+    <string name="music_service_permission">permission.ccbfm.music.player.service</string>
+
     <string name="music_scanning">扫描</string>
     <string name="music_select_directory">选择目录</string>
     <string name="music_control_play">播放</string>

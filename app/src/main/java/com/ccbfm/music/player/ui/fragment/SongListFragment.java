@@ -20,12 +20,13 @@ public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
         binding.musicSongList.setPinnedHeader(headView, new PinnedHeaderExpandableListView.PinnedHeaderListener() {
             @Override
             public void changeContent(View view, Object object) {
-                if(object instanceof String) {
+                if (object instanceof String) {
                     headName.setText(object.toString());
                 }
             }
         });
-        SongListModel model = new SongListModel(new SongListModel.CallBack<String>() {
+
+        SongListModel model = new SongListModel(this, new SongListModel.CallBack<String>() {
             @Override
             public void changeContent(String groupItem) {
                 headName.setText(groupItem);
@@ -39,4 +40,6 @@ public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
     protected int getLayoutId() {
         return R.layout.fragment_song_list;
     }
+
+
 }

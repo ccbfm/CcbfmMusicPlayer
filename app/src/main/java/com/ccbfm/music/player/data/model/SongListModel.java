@@ -1,8 +1,11 @@
 package com.ccbfm.music.player.data.model;
 
+import android.util.Log;
+
 import com.ccbfm.music.player.data.adapter.SongListExpandableListAdapter;
 import com.ccbfm.music.player.database.SongLoader;
 import com.ccbfm.music.player.database.entity.Playlist;
+import com.ccbfm.music.player.ui.fragment.BaseFragment;
 
 import java.util.List;
 
@@ -10,11 +13,13 @@ public class SongListModel {
 
     private SongListExpandableListAdapter mAdapter;
     private CallBack mCallBack;
+    private BaseFragment mFragment;
 
     public SongListModel() {
     }
 
-    public SongListModel(CallBack callBack) {
+    public SongListModel(BaseFragment fragment, CallBack callBack) {
+        mFragment = fragment;
         mCallBack = callBack;
     }
 
@@ -24,6 +29,10 @@ public class SongListModel {
 
     public void setAdapter(SongListExpandableListAdapter adapter) {
         mAdapter = adapter;
+        loadData();
+    }
+
+    private void loadData(){
         List<Playlist> playlists = SongLoader.getSongData(new SongLoader.LoadSongCallBack() {
             @Override
             public void onPreExecute() {

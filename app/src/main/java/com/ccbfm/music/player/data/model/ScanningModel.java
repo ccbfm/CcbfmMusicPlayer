@@ -2,7 +2,6 @@ package com.ccbfm.music.player.data.model;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.view.View;
@@ -15,10 +14,13 @@ import com.ccbfm.music.player.BR;
 import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.database.SongLoader;
 import com.ccbfm.music.player.tool.Constants;
+import com.ccbfm.music.player.tool.LiveDataBus;
 import com.ccbfm.music.player.tool.SharedPreferencesTools;
 import com.ccbfm.music.player.tool.ToastTools;
 import com.ccbfm.music.player.ui.activity.SelectFolderActivity;
 import com.ccbfm.music.player.ui.fragment.ScanningFragment;
+
+import static com.ccbfm.music.player.tool.Constants.SCAN_SUCCESS_NOTIFICATION;
 
 public class ScanningModel extends BaseObservable implements View.OnClickListener {
 
@@ -77,6 +79,9 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
     private void loadSongEnd(boolean isOk) {
         mLoadSong = null;
         ToastTools.showToast(mFragment.getContext(), "扫描完成：" + (isOk ? "成功" : "失败"));
+        if(isOk) {
+            LiveDataBus.get().<Boolean>with(SCAN_SUCCESS_NOTIFICATION).postValue(true);
+        }
     }
 
     private static class LoadSong extends AsyncTask<String, Integer, Boolean> {
