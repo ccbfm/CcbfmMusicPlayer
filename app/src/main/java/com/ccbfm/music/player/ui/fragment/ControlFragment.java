@@ -70,7 +70,6 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
             @Override
             public void onClick(View v) {
                 if (!MusicControl.getInstance().isPlaying()) {
-                    Log.w("wds", ">>>>onClick=" + mSongIndex + "," + mSongList.size());
                     MusicControl.getInstance().setSongList(mSongList, mSongIndex);
                 } else {
                     MusicControl.getInstance().pause();

@@ -27,4 +27,6 @@ public interface IControlPlayer {
     void mode(int mode);
 
     void release();
+
+    Song getCurrentSong();
 }

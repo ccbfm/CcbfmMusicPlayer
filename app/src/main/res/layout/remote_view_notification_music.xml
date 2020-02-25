@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:orientation="horizontal"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/music_notification_image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_vertical"
+        android:background="@mipmap/ic_music_player" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/music_notification_title"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:text="@string/app_name" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/music_notification_previous"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/ic_skip_previous_30dp"/>
+
+            <ImageButton
+                android:id="@+id/music_notification_play"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="50dp"
+                android:layout_marginStart="50dp"
+                android:scaleType="center"
+                android:src="@drawable/ic_pause_to_play_40dp"
+                android:background="#000000"/>
+
+            <ImageButton
+                android:id="@+id/music_notification_next"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/ic_skip_next_30dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

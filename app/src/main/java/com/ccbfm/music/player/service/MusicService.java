@@ -1,10 +1,14 @@
 package com.ccbfm.music.player.service;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
+import android.text.TextUtils;
+import android.util.Log;
+import android.widget.RemoteViews;
 
 import androidx.annotation.Nullable;
 
@@ -13,20 +17,49 @@ import com.ccbfm.music.player.IPlayerCallback;
 import com.ccbfm.music.player.control.IControlPlayer;
 import com.ccbfm.music.player.control.MusicPlayer;
 import com.ccbfm.music.player.database.entity.Song;
+import com.ccbfm.music.player.tool.MusicNotificationTool;
 
 import java.util.List;
 
 public class MusicService extends Service {
 
     private PlayerBinder mBinder;
-    private IControlPlayer mControlPlayer;
-    private RemoteCallbackList<IPlayerCallback> mCallbackList;
+    private Notification mNotification;
+    private RemoteViews mRemoteViews;
 
     @Override
     public void onCreate() {
-        mCallbackList = new RemoteCallbackList<>();
-        mControlPlayer = new MusicPlayer(mCallbackList);
-        mBinder = new PlayerBinder(mControlPlayer);
+        mRemoteViews = MusicNotificationTool.createMusicView(getApplicationContext());
+        mNotification = MusicNotificationTool.createNotification(getApplicationContext(), mRemoteViews);
+        mBinder = new PlayerBinder();
+
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        final String action = intent.getAction();
+        if(mBinder != null && !TextUtils.isEmpty(action)){
+            try {
+                switch (action){
+                    case MusicNotificationTool.ACTION_PREVIOUS:
+                        mBinder.previous();
+                        break;
+                    case MusicNotificationTool.ACTION_PLAY:
+                        if(mBinder.isPlaying()){
+                            mBinder.pause();
+                        } else {
+                            mBinder.play();
+                        }
+                        break;
+                    case MusicNotificationTool.ACTION_NEXT:
+                        mBinder.next();
+                        break;
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Nullable
@@ -38,9 +71,11 @@ public class MusicService extends Service {
 
     public class PlayerBinder extends IPlayer.Stub {
         private IControlPlayer mControlPlayer;
+        private RemoteCallbackList<IPlayerCallback> mCallbackList;
 
-        private PlayerBinder(IControlPlayer controlPlayer) {
-            mControlPlayer = controlPlayer;
+        private PlayerBinder() {
+            mCallbackList = new RemoteCallbackList<>();
+            mControlPlayer = new MusicPlayer(mCallbackList, mCallback);
         }
 
         @Override
@@ -100,16 +135,36 @@ public class MusicService extends Service {
 
         @Override
         public void registerCallback(IPlayerCallback callback) throws RemoteException {
-            if(mCallbackList != null){
+            if (mCallbackList != null) {
                 mCallbackList.register(callback);
             }
         }
 
         @Override
         public void unregisterCallback(IPlayerCallback callback) throws RemoteException {
-            if(mCallbackList != null){
+            if (mCallbackList != null) {
                 mCallbackList.unregister(callback);
             }
         }
+
+    }
+
+    private NotificationCallback mCallback = new NotificationCallback() {
+        @Override
+        public void changeDisplay(Song song, boolean isPlaying) {
+            showNotification(song, isPlaying);
+        }
+    };
+
+    public void showNotification(Song song, boolean isPlaying){
+        if(song != null) {
+            MusicNotificationTool.showNotification(getApplicationContext(), mNotification, mRemoteViews,
+                    MusicNotificationTool.buildTitle(song.getSongName(),
+                            "  --  ", song.getSingerName()), isPlaying);
+        }
+    }
+
+    public interface NotificationCallback {
+        void changeDisplay(Song song, boolean isPlaying);
     }
 }

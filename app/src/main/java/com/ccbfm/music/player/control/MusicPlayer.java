@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.ccbfm.music.player.IPlayerCallback;
 import com.ccbfm.music.player.database.entity.Song;
+import com.ccbfm.music.player.service.MusicService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +27,12 @@ public class MusicPlayer implements IControlPlayer {
     private RemoteCallbackList<IPlayerCallback> mCallbackList;
     private Timer mTimer;
     private int mSeekTime = 0;
+    private MusicService.NotificationCallback mCallback;
 
-    public MusicPlayer(RemoteCallbackList<IPlayerCallback> callbackList) {
+    public MusicPlayer(RemoteCallbackList<IPlayerCallback> callbackList,
+                       MusicService.NotificationCallback callback) {
         mCallbackList = callbackList;
+        mCallback = callback;
         initPlayer();
     }
 
@@ -90,6 +94,7 @@ public class MusicPlayer implements IControlPlayer {
             startTimer();
             mPlayer.start();
             seekTo(mSeekTime);
+            changeDisplay();
         }
     }
 
@@ -98,6 +103,7 @@ public class MusicPlayer implements IControlPlayer {
         if (mPlayer != null && isPlaying()) {
             mPlayer.stop();
             cancelTimer();
+            changeDisplay();
         }
     }
 
@@ -108,6 +114,7 @@ public class MusicPlayer implements IControlPlayer {
             mPlayer.release();
             mPlayer = null;
             cancelTimer();
+            changeDisplay();
         }
     }
 
@@ -116,6 +123,7 @@ public class MusicPlayer implements IControlPlayer {
         if (mPlayer != null && isPlaying()) {
             mPlayer.pause();
             cancelTimer();
+            changeDisplay();
         }
     }
 
@@ -270,5 +278,16 @@ public class MusicPlayer implements IControlPlayer {
         if (mTimer != null) {
             mTimer.cancel();
         }
+    }
+
+    private void changeDisplay(){
+        if(mCallback != null){
+            mCallback.changeDisplay(getCurrentSong(), isPlaying());
+        }
+    }
+
+    @Override
+    public Song getCurrentSong() {
+        return mSongList != null ? mSongList.get(mSongIndex) : null;
     }
 }
