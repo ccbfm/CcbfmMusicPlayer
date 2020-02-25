@@ -30,8 +30,8 @@ public class MusicService extends Service {
     public void onCreate() {
         mRemoteViews = MusicNotificationTool.createMusicView(getApplicationContext());
         mNotification = MusicNotificationTool.createNotification(getApplicationContext(), mRemoteViews);
+        startForeground(MusicNotificationTool.NOTIFY_ID_MUSIC, mNotification);
         mBinder = new PlayerBinder();
-
     }
 
     @Override
@@ -159,7 +159,7 @@ public class MusicService extends Service {
 
     public void showNotification(Song song, boolean isPlaying) {
         if (song != null) {
-            MusicNotificationTool.showNotification(getApplicationContext(), mNotification, mRemoteViews,
+            MusicNotificationTool.showNotification(this, mNotification, mRemoteViews,
                     MusicNotificationTool.buildTitle(song.getSongName(),
                             "  --  ", song.getSingerName()), isPlaying);
         }
@@ -167,5 +167,14 @@ public class MusicService extends Service {
 
     public interface NotificationCallback {
         void changeDisplay(Song song, boolean isPlaying);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        try {
+            mBinder.release();
+        } catch (Exception ignore) {
+        }
     }
 }

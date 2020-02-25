@@ -25,7 +25,7 @@ public class App extends Application {
         AndroidPermissionTool.init();
         SharedPreferencesTools.init(this);
 
-        MusicControl.getInstance().init(this);
+        MusicControl.getInstance().initMusicService(this);
     }
 
     private boolean isMainProcess() {

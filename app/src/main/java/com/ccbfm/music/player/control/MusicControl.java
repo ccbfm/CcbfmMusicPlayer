@@ -35,8 +35,9 @@ public class MusicControl implements ControlConstants {
 
     }
 
-    public void init(Context context){
+    public void initMusicService(final Context context){
         Intent intent = new Intent(context, MusicService.class);
+        context.getApplicationContext().startService(intent);
         context.getApplicationContext().bindService(intent, new ServiceConnection(){
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
@@ -47,7 +48,7 @@ public class MusicControl implements ControlConstants {
             public void onServiceDisconnected(ComponentName name) {
                 mPlayer = null;
             }
-        }, Context.BIND_AUTO_CREATE);
+        }, Context.BIND_IMPORTANT);
 
     }
 

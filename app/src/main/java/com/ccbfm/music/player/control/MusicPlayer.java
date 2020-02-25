@@ -3,7 +3,6 @@ package com.ccbfm.music.player.control;
 import android.media.MediaPlayer;
 import android.os.RemoteCallbackList;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.ccbfm.music.player.IPlayerCallback;
 import com.ccbfm.music.player.database.entity.Song;
@@ -79,7 +78,6 @@ public class MusicPlayer implements IControlPlayer {
             try {
                 mIsPrepared = false;
                 mPlayer.reset();
-
                 mPlayer.setDataSource(path);
                 mPlayer.prepareAsync();
             } catch (Exception e) {
@@ -90,7 +88,7 @@ public class MusicPlayer implements IControlPlayer {
 
     @Override
     public void play() {
-        if (mPlayer != null && !isPlaying()) {
+        if (mPlayer != null && !isPlaying() && mIsPrepared) {
             startTimer();
             mPlayer.start();
             seekTo(mSeekTime);

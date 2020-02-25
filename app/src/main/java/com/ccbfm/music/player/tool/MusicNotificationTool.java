@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -27,7 +28,7 @@ import static androidx.core.app.NotificationCompat.PRIORITY_MAX;
  */
 public class MusicNotificationTool {
 
-    private static final int NOTIFY_ID_MUSIC = 0x110;
+    public static final int NOTIFY_ID_MUSIC = 0x110;
 
     private static final String PACKAGE_NAME = "com.ccbfm.music.player.notification";
     public static final String ACTION_PREVIOUS = PACKAGE_NAME + ".music_previous";
@@ -112,11 +113,11 @@ public class MusicNotificationTool {
         return notification;
     }
 
-    public static void showNotification(Context context,
+    public static void showNotification(Service service,
                                         Notification notification,
                                         RemoteViews remoteViews,
                                         String title, boolean isPlaying){
-        if(context == null){
+        if(service == null){
             throw new NullPointerException("Context 为空！");
         }
         if(remoteViews == null){
@@ -127,11 +128,10 @@ public class MusicNotificationTool {
         }
         remoteViews.setImageViewResource(R.id.music_notification_play,
                 isPlaying ? R.drawable.ic_play_to_pause_40dp : R.drawable.ic_pause_to_play_40dp);
-        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if(notificationManager == null || notification == null){
+        if(notification == null){
             return;
         }
-        notificationManager.notify(NOTIFY_ID_MUSIC, notification);
+        service.startForeground(NOTIFY_ID_MUSIC, notification);
     }
 
     public static String buildTitle(String...strings){

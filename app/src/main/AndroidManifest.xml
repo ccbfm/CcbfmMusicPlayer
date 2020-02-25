@@ -35,9 +35,11 @@
                 <action android:name="ccbfm.music.player.service"/>
             </intent-filter>
         </service>
+
     </application>
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="permission.ccbfm.music.player.service" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 </manifest>
