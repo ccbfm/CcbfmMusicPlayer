@@ -7,7 +7,6 @@ import android.os.IBinder;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import androidx.annotation.Nullable;
@@ -38,14 +37,14 @@ public class MusicService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         final String action = intent.getAction();
-        if(mBinder != null && !TextUtils.isEmpty(action)){
+        if (mBinder != null && !TextUtils.isEmpty(action)) {
             try {
-                switch (action){
+                switch (action) {
                     case MusicNotificationTool.ACTION_PREVIOUS:
                         mBinder.previous();
                         break;
                     case MusicNotificationTool.ACTION_PLAY:
-                        if(mBinder.isPlaying()){
+                        if (mBinder.isPlaying()) {
                             mBinder.pause();
                         } else {
                             mBinder.play();
@@ -54,8 +53,10 @@ public class MusicService extends Service {
                     case MusicNotificationTool.ACTION_NEXT:
                         mBinder.next();
                         break;
+                    default:
+                        break;
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -156,8 +157,8 @@ public class MusicService extends Service {
         }
     };
 
-    public void showNotification(Song song, boolean isPlaying){
-        if(song != null) {
+    public void showNotification(Song song, boolean isPlaying) {
+        if (song != null) {
             MusicNotificationTool.showNotification(getApplicationContext(), mNotification, mRemoteViews,
                     MusicNotificationTool.buildTitle(song.getSongName(),
                             "  --  ", song.getSingerName()), isPlaying);
