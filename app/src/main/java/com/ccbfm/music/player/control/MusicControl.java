@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -42,6 +43,17 @@ public class MusicControl implements ControlConstants {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 mPlayer = IPlayer.Stub.asInterface(service);
+                registerCallback(new IPlayerCallback.Stub() {
+                    @Override
+                    public void callbackIndex(int index) throws RemoteException {
+                        SharedPreferencesTools.putIntValue(SharedPreferencesTools.KEY_INIT_SONG_INDEX, index);
+                    }
+
+                    @Override
+                    public void callbackMsec(int msec) throws RemoteException {
+                        SharedPreferencesTools.putIntValue(SharedPreferencesTools.KEY_INIT_SONG_MSEC, msec);
+                    }
+                });
             }
 
             @Override

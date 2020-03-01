@@ -48,16 +48,16 @@ android {
     }
 
     applicationVariants.all { variant ->
-
-        def outDir = "${rootDir}/musicBuild/"
-        variant.getPackageApplicationProvider().get().outputDirectory = new File(outDir)
-
         getPackageApplicationProvider().get()
         variant.outputs.all {
             //改名字
-
-            def type = outputFileName.contains("debug") ? "debug" : "release"
+            def flag = outputFileName.contains("release")
+            def type = flag ? "release" : "debug"
             outputFileName = "MusicPlayer_${type}_${variant.versionName}.apk"
+            if(flag){
+                def outDir = "${rootDir}/musicBuild/"
+                variant.getPackageApplicationProvider().get().outputDirectory = new File(outDir)
+            }
         }
     }
 
