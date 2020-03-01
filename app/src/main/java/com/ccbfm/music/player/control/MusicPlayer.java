@@ -177,10 +177,9 @@ public class MusicPlayer implements IControlPlayer {
                 for (int i = 0; i < size; i++) {
                     mCallbackList.getBroadcastItem(i).callbackIndex(songIndex);
                 }
+                mCallbackList.finishBroadcast();
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                mCallbackList.finishBroadcast();
             }
         }
     }
@@ -263,10 +262,9 @@ public class MusicPlayer implements IControlPlayer {
                         for (int i = 0; i < size; i++) {
                             mCallbackList.getBroadcastItem(i).callbackMsec(msec);
                         }
+                        mCallbackList.finishBroadcast();
                     } catch (Exception e) {
                         e.printStackTrace();
-                    } finally {
-                        mCallbackList.finishBroadcast();
                     }
                 }
             }

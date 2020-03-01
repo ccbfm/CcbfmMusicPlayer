@@ -159,9 +159,9 @@ public class MusicControl implements ControlConstants {
                     case STATUS_IDLE:
                         break;
                     case STATUS_SET_LIST:
+                        seekTo(msg.arg1);
                         List<Song> songs = (List<Song>)msg.obj;
                         mPlayer.setSongList(songs, msg.arg1);
-                        seekTo(msg.arg1);
                         break;
                     case STATUS_PREPARE:
                         String path = (String)msg.obj;
