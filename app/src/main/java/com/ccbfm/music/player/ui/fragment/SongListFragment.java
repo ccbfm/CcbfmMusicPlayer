@@ -1,6 +1,5 @@
 package com.ccbfm.music.player.ui.fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -34,6 +33,8 @@ public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
         });
         model.setAdapter(new SongListExpandableListAdapter(getContext()));
         binding.setSongListModel(model);
+
+
     }
 
     @Override

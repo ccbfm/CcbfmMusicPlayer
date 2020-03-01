@@ -1,6 +1,7 @@
 package com.ccbfm.music.player.data.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import com.ccbfm.music.player.R;
+import com.ccbfm.music.player.control.MusicControl;
 import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
 
@@ -18,15 +20,27 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
 
     private LayoutInflater mLayoutInflater;
     private LinkedList<Playlist> mPlaylists = new LinkedList<>();
+    private OnChildClickListener mChildClickListener;
 
     public SongListExpandableListAdapter(Context context) {
         mLayoutInflater = LayoutInflater.from(context);
+        setChildClickListener(new OnChildClickListener() {
+            @Override
+            public void onClick(View view, int groupPosition, int childPosition) {
+                List<Song> songList = mPlaylists.get(groupPosition).getSongList();
+                MusicControl.getInstance().setSongList(songList, childPosition);
+            }
+        });
     }
 
     public void updatePlaylist(List<Playlist> playlists) {
         mPlaylists.clear();
         mPlaylists.addAll(playlists);
         notifyDataSetChanged();
+    }
+
+    public void setChildClickListener(OnChildClickListener childClickListener) {
+        mChildClickListener = childClickListener;
     }
 
     @Override
@@ -82,7 +96,7 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         ChildHolder childHolder;
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(R.layout.item_child_song_name, null);
@@ -93,6 +107,19 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
         } else {
             childHolder = (ChildHolder) convertView.getTag();
         }
+
+        if(mChildClickListener != null) {
+            final View view = convertView;
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(mChildClickListener != null) {
+                        mChildClickListener.onClick(view, groupPosition, childPosition);
+                    }
+                }
+            });
+        }
+
         childHolder.songName.setText(getChild(groupPosition, childPosition).getSongName());
         return convertView;
     }
@@ -109,5 +136,9 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
 
     private static class ChildHolder {
         TextView songName;
+    }
+
+    public interface OnChildClickListener {
+        void onClick(View view, int groupPosition, int childPosition);
     }
 }
