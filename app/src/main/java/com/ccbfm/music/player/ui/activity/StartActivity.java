@@ -47,9 +47,9 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                mFlag = true;
                 Intent intent = new Intent(StartActivity.this, MusicActivity.class);
                 startActivity(intent);
-                mFlag = true;
             }
         }, 1000);
     }

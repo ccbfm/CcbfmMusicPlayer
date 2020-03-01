@@ -8,13 +8,38 @@ android {
         applicationId "com.ccbfm.music.player"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 4
-        versionName "3.1"
+        versionCode 1
+        versionName "1.0"
     }
+
+    signingConfigs {
+        debug {
+            storeFile file("${projectDir}/keystore.jks")
+            storePassword 'ccbfmmusic'
+            keyAlias = 'ccbfmmusic'
+            keyPassword 'ccbfmmusic'
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+        release {
+            storeFile file("${projectDir}/keystore.jks")
+            storePassword 'ccbfmmusic'
+            keyPassword 'ccbfmmusic'
+            keyAlias = 'ccbfmmusic'
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+
+        debug{
+            signingConfig signingConfigs.debug
         }
     }
 
@@ -23,12 +48,20 @@ android {
     }
 
     applicationVariants.all { variant ->
+
+        def outDir = "${rootDir}/musicBuild/"
+        variant.getPackageApplicationProvider().get().outputDirectory = new File(outDir)
+
+        getPackageApplicationProvider().get()
         variant.outputs.all {
             //改名字
+
             def type = outputFileName.contains("debug") ? "debug" : "release"
             outputFileName = "MusicPlayer_${type}_${variant.versionName}.apk"
         }
     }
+
+
 }
 
 dependencies {

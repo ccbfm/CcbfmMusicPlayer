@@ -33,7 +33,6 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
     private IPlayerCallback mPlayerCallback = new IPlayerCallback.Stub() {
         @Override
         public void callbackIndex(int index) throws RemoteException {
-            SharedPreferencesTools.putIntValue(SharedPreferencesTools.KEY_INIT_SONG_INDEX, index);
             mSongIndex = index;
             if (mSongList != null) {
                 Song song = mSongList.get(index);
@@ -44,7 +43,7 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
 
         @Override
         public void callbackMsec(int msec) throws RemoteException {
-            SharedPreferencesTools.putIntValue(SharedPreferencesTools.KEY_INIT_SONG_MSEC, msec);
+
         }
     };
 

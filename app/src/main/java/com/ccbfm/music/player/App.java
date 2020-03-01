@@ -16,14 +16,13 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        SharedPreferencesTools.init(this);
         if(!isMainProcess()){
             return;
         }
         LitePal.initialize(this);
 
         AndroidPermissionTool.init();
-        SharedPreferencesTools.init(this);
 
         MusicControl.getInstance().initMusicService(this);
     }

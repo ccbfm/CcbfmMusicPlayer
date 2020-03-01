@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.ccbfm.music.player.IPlayerCallback;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.service.MusicService;
+import com.ccbfm.music.player.tool.SharedPreferencesTools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -169,6 +170,7 @@ public class MusicPlayer implements IControlPlayer {
 
     private void setSongIndex(int songIndex) {
         mSongIndex = songIndex;
+        SharedPreferencesTools.putIntValue(SharedPreferencesTools.KEY_INIT_SONG_INDEX, songIndex);
 
         if (mCallbackList != null) {
             try {
@@ -258,6 +260,7 @@ public class MusicPlayer implements IControlPlayer {
                 if (mCallbackList != null && mPlayer != null) {
                     try {
                         int msec = mPlayer.getCurrentPosition();
+                        SharedPreferencesTools.putIntValue(SharedPreferencesTools.KEY_INIT_SONG_MSEC, msec);
                         int size = mCallbackList.beginBroadcast();
                         for (int i = 0; i < size; i++) {
                             mCallbackList.getBroadcastItem(i).callbackMsec(msec);
