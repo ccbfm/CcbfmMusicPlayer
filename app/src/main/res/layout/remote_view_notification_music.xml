@@ -43,8 +43,7 @@
                 android:layout_marginEnd="50dp"
                 android:layout_marginStart="50dp"
                 android:scaleType="center"
-                android:src="@drawable/ic_pause_to_play_40dp"
-                android:background="#000000"/>
+                android:background="@drawable/ic_pause_to_play_40dp"/>
 
             <ImageButton
                 android:id="@+id/music_notification_next"

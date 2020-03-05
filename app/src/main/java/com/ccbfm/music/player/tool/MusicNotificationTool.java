@@ -126,8 +126,8 @@ public class MusicNotificationTool {
         if(!TextUtils.isEmpty(title)) {
             remoteViews.setTextViewText(R.id.music_notification_title, title);
         }
-        remoteViews.setImageViewResource(R.id.music_notification_play,
-                isPlaying ? R.drawable.ic_play_to_pause_40dp : R.drawable.ic_pause_to_play_40dp);
+        remoteViews.setInt(R.id.music_notification_play, "setBackgroundResource",
+                (isPlaying ? R.drawable.ic_play_to_pause_40dp : R.drawable.ic_pause_to_play_40dp));
         if(notification == null){
             return;
         }
