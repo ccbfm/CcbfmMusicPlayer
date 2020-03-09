@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RoundProgressBar">
+        <!--圆环宽度-->
+        <attr name="round_width" format="dimension" />
+        <!--圆环底部颜色-->
+        <attr name="round_floor_color" format="color" />
+        <!--圆环进度条开始颜色-->
+        <attr name="round_progress_start_color" format="color" />
+        <!--圆环进度条结束颜色-->
+        <attr name="round_progress_end_color" format="color" />
+        <!--圆环进度条半径-->
+        <attr name="round_progress_radius" format="dimension" />
+        <!--圆环中心百分比字体颜色-->
+        <attr name="round_text_color" format="color" />
+        <!--圆环中心百分比字体大小-->
+        <attr name="round_text_size" format="dimension" />
+    </declare-styleable>
+</resources>

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.animation.Animation;
 
 import androidx.annotation.Nullable;
 
@@ -13,6 +14,7 @@ import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.database.SongLoader;
 import com.ccbfm.music.player.databinding.ActivityStartBinding;
 import com.ccbfm.music.player.tool.RestartTools;
+import com.ccbfm.music.player.ui.widget.RoundProgressBar;
 
 public class StartActivity extends BaseActivity<ActivityStartBinding> {
 
@@ -44,14 +46,23 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
     private void needJump() {
         SongLoader.getSongData(null);
 
-        new Handler().postDelayed(new Runnable() {
+        final RoundProgressBar progressBar = mViewDataBinding.musicRoundProgress;
+        progressBar.setAnimationListener(new RoundProgressBar.AnimationListenerAdapter<Activity>((this)) {
             @Override
-            public void run() {
-                mFlag = true;
-                Intent intent = new Intent(StartActivity.this, MusicActivity.class);
-                startActivity(intent);
+            public void onAnimationEnd(Animation animation, final Activity target) {
+                progressBar.endAnimation();
+                getMainHandler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mFlag = true;
+                        Intent intent = new Intent(StartActivity.this, MusicActivity.class);
+                        startActivity(intent);
+                    }
+                }, 10);
             }
-        }, 1000);
+        });
+
+        progressBar.startAnimation((360F), (0F), (1000));
     }
 
     @Override
@@ -60,5 +71,10 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
         if (mFlag) {
             finish();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 }

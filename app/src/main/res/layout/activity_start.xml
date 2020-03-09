@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.ccbfm.music.player.ui.widget.RoundProgressBar
+            android:id="@+id/music_round_progress"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="end|top"
+            android:layout_margin="20dp"
+            app:round_progress_end_color="#00ff00"
+            app:round_progress_start_color="#ff0000"
+            app:round_text_size="24dp"
+            app:round_width="3dip" />
+
+    </FrameLayout>
 
     <data>
 
     </data>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".MainActivity"/>
 </layout>
