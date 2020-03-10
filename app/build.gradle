@@ -14,7 +14,7 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file("${projectDir}/keystore.jks")
+            storeFile file("${projectDir}${File.separator}keystore.jks")
             storePassword 'ccbfmmusic'
             keyAlias = 'ccbfmmusic'
             keyPassword 'ccbfmmusic'
@@ -22,7 +22,7 @@ android {
             v2SigningEnabled true
         }
         release {
-            storeFile file("${projectDir}/keystore.jks")
+            storeFile file("${projectDir}${File.separator}keystore.jks")
             storePassword 'ccbfmmusic'
             keyPassword 'ccbfmmusic'
             keyAlias = 'ccbfmmusic'
@@ -55,7 +55,7 @@ android {
             def type = flag ? "release" : "debug"
             outputFileName = "MusicPlayer_${type}_${variant.versionName}.apk"
             if(flag){
-                def outDir = "${rootDir}/musicBuild/"
+                def outDir = "${rootDir}${File.separator}musicBuild${File.separator}"
                 variant.getPackageApplicationProvider().get().outputDirectory = new File(outDir)
             }
         }

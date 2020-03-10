@@ -30,7 +30,7 @@ public class MusicService extends Service {
     public void onCreate() {
         mRemoteViews = MusicNotificationTool.createMusicView(getApplicationContext());
         mNotification = MusicNotificationTool.createNotification(getApplicationContext(), mRemoteViews);
-        startForeground(MusicNotificationTool.NOTIFY_ID_MUSIC, mNotification);
+        //startForeground(MusicNotificationTool.NOTIFY_ID_MUSIC, mNotification);
         mBinder = new PlayerBinder();
     }
 
