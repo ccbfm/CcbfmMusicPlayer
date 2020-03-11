@@ -1,7 +1,6 @@
 package com.ccbfm.music.player.ui.fragment;
 
 import android.os.RemoteException;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -9,6 +8,7 @@ import androidx.lifecycle.Observer;
 
 import com.ccbfm.music.player.IPlayerCallback;
 import com.ccbfm.music.player.R;
+import com.ccbfm.music.player.aidl.IPlayerCallbackStub;
 import com.ccbfm.music.player.control.MusicControl;
 import com.ccbfm.music.player.database.SongLoader;
 import com.ccbfm.music.player.database.entity.Playlist;
@@ -30,7 +30,7 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
     private TextView mControlTitle;
     private TextView mControlSinger;
 
-    private IPlayerCallback mPlayerCallback = new IPlayerCallback.Stub() {
+    private IPlayerCallback mPlayerCallback = new IPlayerCallbackStub() {
         @Override
         public void callbackIndex(int index) throws RemoteException {
             mSongIndex = index;
@@ -38,11 +38,6 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
                 Song song = mSongList.get(index);
                 updateUI(song.getSongName(), song.getSingerName());
             }
-
-        }
-
-        @Override
-        public void callbackMsec(int msec) throws RemoteException {
 
         }
     };

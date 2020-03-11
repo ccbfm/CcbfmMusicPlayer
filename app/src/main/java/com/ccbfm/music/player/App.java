@@ -12,11 +12,11 @@ import com.ccbfm.music.player.tool.SharedPreferencesTools;
 import org.litepal.LitePal;
 
 public class App extends Application {
-
+    private static App sApp;
     @Override
     public void onCreate() {
         super.onCreate();
-
+        sApp = this;
         if (!isMainProcess()) {
             return;
         }
@@ -52,4 +52,7 @@ public class App extends Application {
         return processName;
     }
 
+    public static App getApp() {
+        return sApp;
+    }
 }

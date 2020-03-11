@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 使用tag传递数据。 -->
+    <item name="tag_group_position" type="id"/>
+    <item name="tag_child_position" type="id"/>
+</resources>

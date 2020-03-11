@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="100dp"
     android:orientation="horizontal"
@@ -9,12 +9,15 @@
         android:id="@+id/music_notification_image"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_gravity="center_vertical"
+        android:layout_gravity="center_vertical|start"
         android:background="@mipmap/ic_music_player_bg" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginStart="90dp"
+        android:layout_marginEnd="34dp"
+        android:layout_gravity="center_vertical|end"
         android:orientation="vertical">
 
         <TextView
@@ -52,4 +55,12 @@
                 android:background="@drawable/ic_skip_next_30dp"/>
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+
+    <ImageButton
+        android:id="@+id/music_notification_close"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="top|end"
+        android:visibility="gone"
+        android:background="@drawable/ic_close_asset_24dp"/>
+</FrameLayout>

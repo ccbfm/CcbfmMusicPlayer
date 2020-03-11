@@ -53,6 +53,8 @@ public class MusicService extends Service {
                     case MusicNotificationTool.ACTION_NEXT:
                         mBinder.next();
                         break;
+                    case MusicNotificationTool.ACTION_CLOSE:
+                        break;
                     default:
                         break;
                 }
@@ -73,6 +75,10 @@ public class MusicService extends Service {
     public class PlayerBinder extends IPlayer.Stub {
         private IControlPlayer mControlPlayer;
         private RemoteCallbackList<IPlayerCallback> mCallbackList;
+
+        public RemoteCallbackList<IPlayerCallback> getCallbackList() {
+            return mCallbackList;
+        }
 
         private PlayerBinder() {
             mCallbackList = new RemoteCallbackList<>();
@@ -161,7 +167,7 @@ public class MusicService extends Service {
         if (song != null) {
             MusicNotificationTool.showNotification(this, mNotification, mRemoteViews,
                     MusicNotificationTool.buildTitle(song.getSongName(),
-                            "  --  ", song.getSingerName()), isPlaying);
+                            "  -  ", song.getSingerName()), isPlaying);
         }
     }
 

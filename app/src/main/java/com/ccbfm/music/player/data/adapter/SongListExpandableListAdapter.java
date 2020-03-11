@@ -1,7 +1,6 @@
 package com.ccbfm.music.player.data.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,7 +95,7 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         ChildHolder childHolder;
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(R.layout.item_child_song_name, null);
@@ -110,10 +109,14 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
 
         if(mChildClickListener != null) {
             final View view = convertView;
+            convertView.setTag(R.id.tag_group_position, groupPosition);
+            convertView.setTag(R.id.tag_child_position, childPosition);
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(mChildClickListener != null) {
+                    if(mChildClickListener != null && v != null) {
+                        int groupPosition = (int)v.getTag(R.id.tag_group_position);
+                        int childPosition = (int)v.getTag(R.id.tag_child_position);
                         mChildClickListener.onClick(view, groupPosition, childPosition);
                     }
                 }

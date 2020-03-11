@@ -34,6 +34,7 @@ public class MusicNotificationTool {
     public static final String ACTION_PREVIOUS = PACKAGE_NAME + ".music_previous";
     public static final String ACTION_PLAY = PACKAGE_NAME + ".music_play";
     public static final String ACTION_NEXT = PACKAGE_NAME + ".music_next";
+    public static final String ACTION_CLOSE = PACKAGE_NAME + ".music_close";
 
     public static RemoteViews createMusicView(Context context){
         if(context == null){
@@ -59,6 +60,11 @@ public class MusicNotificationTool {
         PendingIntent nextPendingIntent = PendingIntent.getService(context, 0,
                 serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.music_notification_next, nextPendingIntent);
+
+        serviceIntent.setAction(ACTION_CLOSE);
+        PendingIntent closePendingIntent = PendingIntent.getService(context, 0,
+                serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.music_notification_close, closePendingIntent);
 
         return remoteViews;
     }

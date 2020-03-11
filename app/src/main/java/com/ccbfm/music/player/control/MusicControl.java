@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 
 import com.ccbfm.music.player.IPlayer;
 import com.ccbfm.music.player.IPlayerCallback;
+import com.ccbfm.music.player.aidl.IPlayerCallbackStub;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.service.MusicService;
 import com.ccbfm.music.player.tool.SharedPreferencesTools;
@@ -43,7 +44,7 @@ public class MusicControl implements ControlConstants {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 mPlayer = IPlayer.Stub.asInterface(service);
-                registerCallback(new IPlayerCallback.Stub() {
+                registerCallback(new IPlayerCallbackStub() {
                     @Override
                     public void callbackIndex(int index) throws RemoteException {
                         SharedPreferencesTools.putIntValue(SharedPreferencesTools.KEY_INIT_SONG_INDEX, index);

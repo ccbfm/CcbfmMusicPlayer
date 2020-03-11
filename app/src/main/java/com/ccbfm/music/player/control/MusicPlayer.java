@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import com.ccbfm.music.player.IPlayerCallback;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.service.MusicService;
-import com.ccbfm.music.player.tool.SharedPreferencesTools;
 
 import java.util.ArrayList;
 import java.util.List;
