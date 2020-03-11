@@ -8,12 +8,13 @@ import androidx.lifecycle.Observer;
 
 import com.ccbfm.music.player.IPlayerCallback;
 import com.ccbfm.music.player.R;
-import com.ccbfm.music.player.aidl.IPlayerCallbackStub;
+import com.ccbfm.music.player.callback.PlayerCallbackAdapter;
 import com.ccbfm.music.player.control.MusicControl;
 import com.ccbfm.music.player.database.SongLoader;
 import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.databinding.FragmentControlBinding;
+import com.ccbfm.music.player.service.LocalService;
 import com.ccbfm.music.player.tool.LiveDataBus;
 import com.ccbfm.music.player.tool.MathTools;
 import com.ccbfm.music.player.tool.SharedPreferencesTools;
@@ -30,9 +31,9 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
     private TextView mControlTitle;
     private TextView mControlSinger;
 
-    private IPlayerCallback mPlayerCallback = new IPlayerCallbackStub() {
+    private IPlayerCallback mPlayerCallback = new PlayerCallbackAdapter() {
         @Override
-        public void callbackIndex(int index) throws RemoteException {
+        public void callbackIndex(int index) {
             mSongIndex = index;
             if (mSongList != null) {
                 Song song = mSongList.get(index);
@@ -47,7 +48,7 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
         mControlTitle = binding.musicControlTitle;
         mControlSinger = binding.musicControlSinger;
 
-        MusicControl.getInstance().registerCallback(mPlayerCallback);
+        LocalService.addPlayerCallbackAdapter(mPlayerCallback);
 
         LiveDataBus.get().<Boolean>with(SCAN_SUCCESS_NOTIFICATION).observe(this, new Observer<Boolean>() {
             @Override
@@ -138,7 +139,7 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        MusicControl.getInstance().unregisterCallback(mPlayerCallback);
+        LocalService.removePlayerCallbackAdapter(mPlayerCallback);
         LiveDataBus.get().<Boolean>with(SCAN_SUCCESS_NOTIFICATION).postValue(null);
     }
 }

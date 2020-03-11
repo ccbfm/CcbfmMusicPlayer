@@ -7,14 +7,11 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.RemoteException;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.ccbfm.music.player.IPlayer;
-import com.ccbfm.music.player.IPlayerCallback;
-import com.ccbfm.music.player.aidl.IPlayerCallbackStub;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.service.MusicService;
 import com.ccbfm.music.player.tool.SharedPreferencesTools;
@@ -44,17 +41,6 @@ public class MusicControl implements ControlConstants {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 mPlayer = IPlayer.Stub.asInterface(service);
-                registerCallback(new IPlayerCallbackStub() {
-                    @Override
-                    public void callbackIndex(int index) throws RemoteException {
-                        SharedPreferencesTools.putIntValue(SharedPreferencesTools.KEY_INIT_SONG_INDEX, index);
-                    }
-
-                    @Override
-                    public void callbackMsec(int msec) throws RemoteException {
-                        SharedPreferencesTools.putIntValue(SharedPreferencesTools.KEY_INIT_SONG_MSEC, msec);
-                    }
-                });
             }
 
             @Override
@@ -63,26 +49,6 @@ public class MusicControl implements ControlConstants {
             }
         }, Context.BIND_IMPORTANT);
 
-    }
-
-    public void registerCallback(IPlayerCallback callback) {
-        if(mPlayer != null){
-            try {
-                mPlayer.registerCallback(callback);
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void unregisterCallback(IPlayerCallback callback) {
-        if(mPlayer != null){
-            try {
-                mPlayer.unregisterCallback(callback);
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-        }
     }
 
     public void prepare(String path){

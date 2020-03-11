@@ -30,7 +30,4 @@ interface IPlayer {
 
     void release();
 
-    void registerCallback(in IPlayerCallback callback);
-
-    void unregisterCallback(in IPlayerCallback callback);
 }

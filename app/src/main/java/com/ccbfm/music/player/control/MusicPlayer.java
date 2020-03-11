@@ -1,7 +1,6 @@
 package com.ccbfm.music.player.control;
 
 import android.media.MediaPlayer;
-import android.os.RemoteCallbackList;
 import android.text.TextUtils;
 
 import com.ccbfm.music.player.IPlayerCallback;
@@ -23,14 +22,12 @@ public class MusicPlayer implements IControlPlayer {
     private Random mRandom;
     private String mCurrentPath;
     private boolean mIsPrepared = false;
-    private RemoteCallbackList<IPlayerCallback> mCallbackList;
     private Timer mTimer;
     private int mSeekTime = 0;
     private MusicService.NotificationCallback mCallback;
+    private IPlayerCallback mPlayerCallback;
 
-    public MusicPlayer(RemoteCallbackList<IPlayerCallback> callbackList,
-                       MusicService.NotificationCallback callback) {
-        mCallbackList = callbackList;
+    public MusicPlayer(MusicService.NotificationCallback callback) {
         mCallback = callback;
         initPlayer();
     }
@@ -128,7 +125,7 @@ public class MusicPlayer implements IControlPlayer {
     @Override
     public void seekTo(int msec) {
         if (mPlayer != null && isPlaying()) {
-            if(mSeekTime > 0) {
+            if (mSeekTime > 0) {
                 mPlayer.seekTo(msec);
                 mSeekTime = 0;
             }
@@ -170,13 +167,9 @@ public class MusicPlayer implements IControlPlayer {
     private void setSongIndex(int songIndex) {
         mSongIndex = songIndex;
 
-        if (mCallbackList != null) {
+        if (mPlayerCallback != null) {
             try {
-                int size = mCallbackList.beginBroadcast();
-                for (int i = 0; i < size; i++) {
-                    mCallbackList.getBroadcastItem(i).callbackIndex(songIndex);
-                }
-                mCallbackList.finishBroadcast();
+                mPlayerCallback.callbackIndex(songIndex);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -254,14 +247,10 @@ public class MusicPlayer implements IControlPlayer {
         mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (mCallbackList != null && mPlayer != null) {
+                if (mPlayerCallback != null && mPlayer != null) {
                     try {
                         int msec = mPlayer.getCurrentPosition();
-                        int size = mCallbackList.beginBroadcast();
-                        for (int i = 0; i < size; i++) {
-                            mCallbackList.getBroadcastItem(i).callbackMsec(msec);
-                        }
-                        mCallbackList.finishBroadcast();
+                        mPlayerCallback.callbackMsec(msec);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -276,8 +265,8 @@ public class MusicPlayer implements IControlPlayer {
         }
     }
 
-    private void changeDisplay(){
-        if(mCallback != null){
+    private void changeDisplay() {
+        if (mCallback != null) {
             mCallback.changeDisplay(getCurrentSong(), isPlaying());
         }
     }
@@ -285,5 +274,10 @@ public class MusicPlayer implements IControlPlayer {
     @Override
     public Song getCurrentSong() {
         return mSongList != null ? mSongList.get(mSongIndex) : null;
+    }
+
+    @Override
+    public void setPlayerCallback(IPlayerCallback callback) {
+        mPlayerCallback = callback;
     }
 }

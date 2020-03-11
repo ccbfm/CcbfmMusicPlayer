@@ -36,6 +36,8 @@
             </intent-filter>
         </service>
 
+        <service android:name=".service.LocalService" android:exported="true"/>
+
     </application>
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

@@ -1,5 +1,6 @@
 package com.ccbfm.music.player.control;
 
+import com.ccbfm.music.player.IPlayerCallback;
 import com.ccbfm.music.player.database.entity.Song;
 
 import java.util.List;
@@ -29,4 +30,6 @@ public interface IControlPlayer {
     void release();
 
     Song getCurrentSong();
+
+    void setPlayerCallback(IPlayerCallback callback);
 }

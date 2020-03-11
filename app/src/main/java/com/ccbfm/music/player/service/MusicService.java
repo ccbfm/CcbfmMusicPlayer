@@ -2,11 +2,14 @@ package com.ccbfm.music.player.service;
 
 import android.app.Notification;
 import android.app.Service;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import androidx.annotation.Nullable;
@@ -25,13 +28,32 @@ public class MusicService extends Service {
     private PlayerBinder mBinder;
     private Notification mNotification;
     private RemoteViews mRemoteViews;
+    private IPlayerCallback mPlayerCallback;
+    private IControlPlayer mControlPlayer;
 
     @Override
     public void onCreate() {
         mRemoteViews = MusicNotificationTool.createMusicView(getApplicationContext());
         mNotification = MusicNotificationTool.createNotification(getApplicationContext(), mRemoteViews);
         //startForeground(MusicNotificationTool.NOTIFY_ID_MUSIC, mNotification);
-        mBinder = new PlayerBinder();
+        mControlPlayer = new MusicPlayer(mCallback);
+        mBinder = new PlayerBinder(mControlPlayer);
+
+        Intent intent = new Intent(this, LocalService.class);
+        getApplicationContext().startService(intent);
+        getApplicationContext().bindService(intent, new ServiceConnection(){
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                mPlayerCallback = IPlayerCallback.Stub.asInterface(service);
+                mControlPlayer.setPlayerCallback(mPlayerCallback);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mPlayerCallback = null;
+                mControlPlayer.setPlayerCallback(null);
+            }
+        }, Context.BIND_IMPORTANT);
     }
 
     @Override
@@ -74,15 +96,10 @@ public class MusicService extends Service {
 
     public class PlayerBinder extends IPlayer.Stub {
         private IControlPlayer mControlPlayer;
-        private RemoteCallbackList<IPlayerCallback> mCallbackList;
 
-        public RemoteCallbackList<IPlayerCallback> getCallbackList() {
-            return mCallbackList;
-        }
 
-        private PlayerBinder() {
-            mCallbackList = new RemoteCallbackList<>();
-            mControlPlayer = new MusicPlayer(mCallbackList, mCallback);
+        private PlayerBinder(IControlPlayer controlPlayer) {
+            mControlPlayer = controlPlayer;
         }
 
         @Override
@@ -138,20 +155,6 @@ public class MusicService extends Service {
         @Override
         public void release() throws RemoteException {
             mControlPlayer.release();
-        }
-
-        @Override
-        public void registerCallback(IPlayerCallback callback) throws RemoteException {
-            if (mCallbackList != null) {
-                mCallbackList.register(callback);
-            }
-        }
-
-        @Override
-        public void unregisterCallback(IPlayerCallback callback) throws RemoteException {
-            if (mCallbackList != null) {
-                mCallbackList.unregister(callback);
-            }
         }
 
     }
