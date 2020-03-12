@@ -2,10 +2,13 @@ package com.ccbfm.music.player.control;
 
 import android.media.MediaPlayer;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.ccbfm.music.player.IPlayerCallback;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.service.MusicService;
+import com.ccbfm.music.player.tool.Constants;
+import com.ccbfm.music.player.tool.PlayerErrorCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +17,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MusicPlayer implements IControlPlayer {
-
+    private static final String TAG = "MusicPlayer";
     private MediaPlayer mPlayer;
     private List<Song> mSongList;
-    private int mSongIndex;
+    private int mSongIndex = 0;
     private int mMode = ControlConstants.MODE_LIST;
     private Random mRandom;
     private String mCurrentPath;
@@ -78,7 +81,9 @@ public class MusicPlayer implements IControlPlayer {
                 mPlayer.setDataSource(path);
                 mPlayer.prepareAsync();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Exception--- ", e);
+                callbackError(PlayerErrorCode.PREPARE);
+                next();
             }
         }
     }
@@ -151,17 +156,22 @@ public class MusicPlayer implements IControlPlayer {
             mSongList.addAll(songList);
         }
 
-        int size = songList.size();
-        if (position < 0) {
-            position = 0;
-        } else if (position > size - 1) {
-            position = size - 1;
+        if(position == Constants.ONLY_RESET_SONG_LIST){
+            position = mSongIndex;
+        } else {
+            int size = songList.size();
+            if (position < 0) {
+                position = 0;
+            } else if (position > size - 1) {
+                position = size - 1;
+            }
         }
         setSongIndex(position);
 
         Song song = mSongList.get(position);
-
-        prepare(song.getSongPath());
+        String path = song.getSongPath();
+        Log.w(TAG, "setSongList-path="+path);
+        prepare(path);
     }
 
     private void setSongIndex(int songIndex) {
@@ -279,5 +289,15 @@ public class MusicPlayer implements IControlPlayer {
     @Override
     public void setPlayerCallback(IPlayerCallback callback) {
         mPlayerCallback = callback;
+    }
+
+    private void callbackError(@PlayerErrorCode int code){
+        if (mPlayerCallback != null) {
+            try {
+                mPlayerCallback.callbackError(code, getCurrentSong());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

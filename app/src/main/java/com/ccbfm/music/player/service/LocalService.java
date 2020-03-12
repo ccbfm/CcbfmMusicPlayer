@@ -9,7 +9,10 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.ccbfm.music.player.IPlayerCallback;
+import com.ccbfm.music.player.database.entity.Song;
+import com.ccbfm.music.player.tool.PlayerErrorCode;
 import com.ccbfm.music.player.tool.SharedPreferencesTools;
+import com.ccbfm.music.player.tool.ToastTools;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -53,6 +56,23 @@ public class LocalService extends Service {
                     adapter.callbackMsec(msec);
                 }
             }
+        }
+
+        @Override
+        public void callbackError(int code, Song song) throws RemoteException {
+            if(isNotifyCallback()){
+                for (IPlayerCallback adapter : sPlayerCallbackAdapters) {
+                    adapter.callbackError(code, song);
+                }
+            }
+
+            String message = "";
+            switch (code){
+                case PlayerErrorCode.PREPARE:
+                    message = "歌曲 " + song.getSongName() + " 播放错误";
+                    break;
+            }
+            ToastTools.showToast(getApplicationContext(), message);
         }
     }
 

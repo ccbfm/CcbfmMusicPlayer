@@ -35,7 +35,7 @@ public class MusicControl implements ControlConstants {
     }
 
     public void initMusicService(final Context context){
-        Intent intent = new Intent(context, MusicService.class);
+        Intent intent = new Intent(context.getApplicationContext(), MusicService.class);
         context.getApplicationContext().startService(intent);
         context.getApplicationContext().bindService(intent, new ServiceConnection(){
             @Override
