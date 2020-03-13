@@ -7,12 +7,18 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.ccbfm.music.player.App;
 import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
+import com.ccbfm.music.player.tool.ToastTools;
+
+import org.litepal.crud.async.UpdateOrDeleteExecutor;
+import org.litepal.crud.callback.UpdateOrDeleteCallback;
 
 import java.util.List;
 
 public final class SongLoader {
+    private static final String TAG = "SongLoader";
 
     private static String[] PROJECTION = new String[]{
             MediaStore.Audio.AudioColumns._ID,
@@ -39,28 +45,30 @@ public final class SongLoader {
         return null;
     }
 
-    public static boolean loadAudioSong(Context context, String path) {
+    public static int loadAudioSong(Context context, String path) {
         Cursor cursor = makeSongCursor(context, path);
-        if (cursor != null && cursor.getCount() > 0) {
-            while (cursor.moveToNext()) {
-                //long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.AudioColumns._ID));
-                String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.TITLE));
-                String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ARTIST));
-                String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ALBUM));
-                int album_id = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ALBUM_ID));
-                int duration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DURATION));
-                String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DATA));
-                Song song = new Song(title, artist, data);
-                song.setDuration(duration);
-                song.setAlbum(album);
-                song.setAlbumId(album_id);
-                song.saveOrUpdate("songName=?", title);
+        if (cursor != null) {
+            int count = cursor.getCount();
+            if (count > 0) {
+                while (cursor.moveToNext()) {
+                    //long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.AudioColumns._ID));
+                    String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.TITLE));
+                    String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ARTIST));
+                    String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ALBUM));
+                    int album_id = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ALBUM_ID));
+                    int duration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DURATION));
+                    String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DATA));
+                    Song song = new Song(title, artist, data);
+                    song.setDuration(duration);
+                    song.setAlbum(album);
+                    song.setAlbumId(album_id);
+                    song.saveOrUpdate("songPath=?", data);
+                }
+                sPlaylists = null;
             }
-
-            sPlaylists = null;
-            return true;
+            return count;
         }
-        return false;
+        return 0;
     }
 
     private static List<Playlist> sPlaylists;
@@ -138,5 +146,19 @@ public final class SongLoader {
         void onPostExecute(List<Playlist> playlists);
 
         void onCancelled();
+    }
+
+    public static void deleteAllSongAsync() {
+        UpdateOrDeleteExecutor executor = DBDao.deleteAllSongAsync("0");
+        executor.listen(new UpdateOrDeleteCallback() {
+            @Override
+            public void onFinish(int rowsAffected) {
+                Log.w(TAG, "deleteAllSongAsync-onFinish-rowsAffected=" + rowsAffected);
+                ToastTools.showToast(App.getApp(), "清除" + rowsAffected + "个");
+                if (rowsAffected > 0) {
+                    sPlaylists = null;
+                }
+            }
+        });
     }
 }

@@ -26,22 +26,28 @@
             android:name=".ui.activity.SelectFolderActivity"
             android:theme="@style/MusicActivityTheme" />
 
+        <activity
+            android:name=".ui.activity.CreatePlaylistActivity"
+            android:theme="@style/MusicActivityTheme" />
+
         <service
             android:name=".service.MusicService"
             android:exported="true"
             android:permission="@string/music_service_permission"
             android:process=":player.service">
             <intent-filter>
-                <action android:name="ccbfm.music.player.service"/>
+                <action android:name="ccbfm.music.player.service" />
             </intent-filter>
         </service>
 
-        <service android:name=".service.LocalService" android:exported="true"/>
+        <service
+            android:name=".service.LocalService"
+            android:exported="true" />
 
     </application>
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="permission.ccbfm.music.player.service" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 </manifest>

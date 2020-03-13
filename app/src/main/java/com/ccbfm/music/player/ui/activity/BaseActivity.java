@@ -36,6 +36,7 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
     }
 
     protected abstract void initView(T binding);
+
     protected abstract int getLayoutId();
 
     public Handler getMainHandler() {
@@ -47,4 +48,5 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
         startActivity(intent);
         finish();
     }
+
 }

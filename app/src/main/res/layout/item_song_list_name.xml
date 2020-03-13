@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
-    android:orientation="horizontal">
+    android:background="@color/colorPrimary">
 
     <TextView
         android:id="@+id/music_song_list_name"
         android:layout_width="match_parent"
-        android:gravity="center_vertical"
-        android:layout_height="64dp" />
-</LinearLayout>
+        android:padding="5dp"
+        android:layout_height="64dp"
+        android:gravity="center_vertical|start" />
+
+    <ImageButton
+        android:id="@+id/music_song_list_add"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_margin="10dp"
+        android:layout_gravity="center_vertical|end"
+        android:scaleType="center"
+        android:src="@drawable/ic_add_circle_outline_asset_24dp"
+        android:background="@android:color/transparent"/>
+</FrameLayout>

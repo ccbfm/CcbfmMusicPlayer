@@ -39,6 +39,11 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
     public void onClick(View v) {
         final int id = v.getId();
         switch (id) {
+            case R.id.music_scanning_clear:
+                SongLoader.deleteAllSongAsync();
+                break;
+            case R.id.music_blacklist:
+                break;
             case R.id.music_scanning:
                 if (mLoadSong == null) {
                     mLoadSong = new LoadSong(this);
@@ -76,15 +81,16 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
         SharedPreferencesTools.putStringValue(KEY_SELECT_DIRECTORY_NAME, directoryName);
     }
 
-    private void loadSongEnd(boolean isOk) {
+    private void loadSongEnd(int count) {
         mLoadSong = null;
-        ToastTools.showToast(mFragment.getContext(), "扫描完成：" + (isOk ? "成功" : "失败"));
-        if(isOk) {
+        boolean flag = (count > 0);
+        ToastTools.showToast(mFragment.getContext(), "扫描完成：" + (flag ? "成功 " + count + "个" : "失败"));
+        if (flag) {
             LiveDataBus.get().<Boolean>with(SCAN_SUCCESS_NOTIFICATION).postValue(true);
         }
     }
 
-    private static class LoadSong extends AsyncTask<String, Integer, Boolean> {
+    private static class LoadSong extends AsyncTask<String, Integer, Integer> {
         private ScanningModel mScanningModel;
 
         private LoadSong(ScanningModel scanningModel) {
@@ -92,7 +98,7 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
         }
 
         @Override
-        protected Boolean doInBackground(String... strings) {
+        protected Integer doInBackground(String... strings) {
             String path = mScanningModel.getDirectoryName();
             return SongLoader.loadAudioSong(mScanningModel.mFragment.getContext(), path);
         }
@@ -103,9 +109,10 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
         }
 
         @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            super.onPostExecute(aBoolean);
-            mScanningModel.loadSongEnd(aBoolean);
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+            int count = integer != null ? integer : 0;
+            mScanningModel.loadSongEnd(count);
         }
 
         @Override
@@ -116,7 +123,7 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            mScanningModel.loadSongEnd(false);
+            mScanningModel.loadSongEnd(0);
         }
     }
 }

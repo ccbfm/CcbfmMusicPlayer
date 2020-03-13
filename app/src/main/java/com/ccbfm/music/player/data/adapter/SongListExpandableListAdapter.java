@@ -54,7 +54,7 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public String getGroup(int groupPosition) {
-        return mPlaylists.get(groupPosition).getName();
+        return mPlaylists.get(groupPosition).getName() + "(" + getChildrenCount(groupPosition) + "个)";
     }
 
     @Override
@@ -107,16 +107,16 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
             childHolder = (ChildHolder) convertView.getTag();
         }
 
-        if(mChildClickListener != null) {
+        if (mChildClickListener != null) {
             final View view = convertView;
             convertView.setTag(R.id.tag_group_position, groupPosition);
             convertView.setTag(R.id.tag_child_position, childPosition);
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(mChildClickListener != null && v != null) {
-                        int groupPosition = (int)v.getTag(R.id.tag_group_position);
-                        int childPosition = (int)v.getTag(R.id.tag_child_position);
+                    if (mChildClickListener != null && v != null) {
+                        int groupPosition = (int) v.getTag(R.id.tag_group_position);
+                        int childPosition = (int) v.getTag(R.id.tag_child_position);
                         mChildClickListener.onClick(view, groupPosition, childPosition);
                     }
                 }

@@ -32,7 +32,8 @@ public class SongListModel {
         loadData();
     }
 
-    private void loadData(){
+    public void loadData() {
+        Log.i("SongListModel", "loadData--->---");
         List<Playlist> playlists = SongLoader.getSongData(new SongLoader.LoadSongCallBack() {
             @Override
             public void onPreExecute() {
@@ -49,7 +50,7 @@ public class SongListModel {
 
             }
         });
-        if(playlists != null){
+        if (playlists != null) {
             loadSongEnd(playlists);
         }
     }
@@ -60,15 +61,17 @@ public class SongListModel {
 
     @SuppressWarnings("unchecked")
     private void loadSongEnd(List<Playlist> playlists) {
-        if(playlists != null && playlists.size() != 0){
+        if (playlists != null && playlists.size() != 0) {
             mAdapter.updatePlaylist(playlists);
-            if(mCallBack != null){
-                mCallBack.changeContent(playlists.get(0).getName());
+            if (mCallBack != null) {
+                Playlist playlist = playlists.get(0);
+                String content = playlist.getName() + "(" + playlist.getSongList().size() + "个)";
+                mCallBack.changeContent(content);
             }
         }
     }
 
-    public interface CallBack<T>{
+    public interface CallBack<T> {
         void changeContent(T groupItem);
     }
 }

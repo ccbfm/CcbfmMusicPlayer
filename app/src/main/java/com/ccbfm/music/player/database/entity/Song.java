@@ -27,6 +27,8 @@ public class Song extends LitePalSupport implements Parcelable {
 
     private int albumId;
 
+    private int status = 0;
+
     public Song() {
     }
 
@@ -108,6 +110,14 @@ public class Song extends LitePalSupport implements Parcelable {
         this.albumId = albumId;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -163,4 +173,20 @@ public class Song extends LitePalSupport implements Parcelable {
             return new Song[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "Song{" +
+                "songName='" + songName + '\'' +
+                ", singerName='" + singerName + '\'' +
+                ", lyricist='" + lyricist + '\'' +
+                ", composer='" + composer + '\'' +
+                ", duration=" + duration +
+                ", songPath='" + songPath + '\'' +
+                ", lyricsPath='" + lyricsPath + '\'' +
+                ", album='" + album + '\'' +
+                ", albumId=" + albumId +
+                ", status=" + status +
+                '}';
+    }
 }

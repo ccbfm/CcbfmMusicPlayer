@@ -1,16 +1,16 @@
 package com.ccbfm.music.player.ui.activity;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-
-import androidx.fragment.app.Fragment;
 
 import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.data.model.SelectFolderModel;
 import com.ccbfm.music.player.databinding.ActivitySelectFolderBinding;
 import com.ccbfm.music.player.tool.Constants;
+import com.ccbfm.music.player.tool.StartActivityTools;
+import com.ccbfm.music.player.ui.fragment.BaseFragment;
 
 public class SelectFolderActivity extends BaseActivity<ActivitySelectFolderBinding> {
     public static final String RESULT_SELECT_FOLDER_NAME = "result_select_folder_name";
@@ -18,22 +18,22 @@ public class SelectFolderActivity extends BaseActivity<ActivitySelectFolderBindi
 
     private SelectFolderModel mSelectFolderModel;
 
-    public static void startForResult(Activity activity, String rootPath, int requestCode){
-        Intent intent = new Intent(activity, SelectFolderActivity.class);
+    public static void startForResult(BaseActivity activity, String rootPath, int requestCode){
         if(TextUtils.isEmpty(rootPath)){
             rootPath = Constants.ROOT_PATH;
         }
-        intent.putExtra(SELECT_ROOT_FOLDER_PATH, rootPath);
-        activity.startActivityForResult(intent, requestCode);
+        Bundle bundle = new Bundle();
+        bundle.putString(SELECT_ROOT_FOLDER_PATH, rootPath);
+        StartActivityTools.startForResult(activity, SelectFolderActivity.class, bundle, requestCode);
     }
 
-    public static void startForResult(Fragment fragment, String rootPath, int requestCode){
-        Intent intent = new Intent(fragment.getContext(), SelectFolderActivity.class);
+    public static void startForResult(BaseFragment fragment, String rootPath, int requestCode){
         if(TextUtils.isEmpty(rootPath)){
             rootPath = Constants.ROOT_PATH;
         }
-        intent.putExtra(SELECT_ROOT_FOLDER_PATH, rootPath);
-        fragment.startActivityForResult(intent, requestCode);
+        Bundle bundle = new Bundle();
+        bundle.putString(SELECT_ROOT_FOLDER_PATH, rootPath);
+        StartActivityTools.startForResult(fragment, SelectFolderActivity.class, bundle, requestCode);
     }
 
     @Override
