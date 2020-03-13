@@ -164,7 +164,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
                             boolean flag = MathTools.inRangeOfView(view, x, y);
                              if(flag) {
                                  view.performClick();
-                                 return super.dispatchTouchEvent(ev);
+                                 return true;
                              }
                         }
                     }

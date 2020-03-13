@@ -1,6 +1,7 @@
 package com.ccbfm.music.player.tool;
 
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 

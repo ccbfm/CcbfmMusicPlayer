@@ -160,7 +160,7 @@ public class MusicPlayer implements IControlPlayer {
             position = mSongIndex;
         } else {
             int size = songList.size();
-            if (position < 0) {
+            if (position < 0 || size <= 0) {
                 position = 0;
             } else if (position > size - 1) {
                 position = size - 1;

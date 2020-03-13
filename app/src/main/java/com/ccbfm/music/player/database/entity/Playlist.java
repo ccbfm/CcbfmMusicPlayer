@@ -2,6 +2,7 @@ package com.ccbfm.music.player.database.entity;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
@@ -11,7 +12,7 @@ import java.util.List;
 public class Playlist extends LitePalSupport implements Parcelable {
 
     @Column(nullable = false, defaultValue = "新建列表")
-    private String name;
+    private String name = "新建列表";
 
     private String description;
 
@@ -29,7 +30,9 @@ public class Playlist extends LitePalSupport implements Parcelable {
     }
 
     public void setName(String name) {
-        this.name = name;
+        if(!TextUtils.isEmpty(name)){
+            this.name = name;
+        }
     }
 
     public String getDescription() {

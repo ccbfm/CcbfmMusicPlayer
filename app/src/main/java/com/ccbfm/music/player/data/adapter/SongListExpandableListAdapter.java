@@ -1,6 +1,7 @@
 package com.ccbfm.music.player.data.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.control.MusicControl;
 import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
+import com.ccbfm.music.player.tool.SharedPreferencesTools;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +28,7 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
         setChildClickListener(new OnChildClickListener() {
             @Override
             public void onClick(View view, int groupPosition, int childPosition) {
+                SharedPreferencesTools.putIntValue(SharedPreferencesTools.KEY_INIT_PLAYLIST_INDEX, groupPosition);
                 List<Song> songList = mPlaylists.get(groupPosition).getSongList();
                 MusicControl.getInstance().setSongList(songList, childPosition);
             }
@@ -49,8 +52,18 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return mPlaylists.get(groupPosition).getSongList().size();
+        Playlist playlist = mPlaylists.get(groupPosition);
+        if(playlist == null){
+            return -1;
+        }
+        List<Song> songs = playlist.getSongList();
+        if(songs== null){
+            return -1;
+        }
+        return songs.size();
     }
+
+
 
     @Override
     public String getGroup(int groupPosition) {

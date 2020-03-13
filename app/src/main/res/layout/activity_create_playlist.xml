@@ -32,6 +32,7 @@
                 android:background="@android:color/transparent"
                 android:gravity="center"
                 android:hint="@string/music_create_playlist"
+                android:text="@={createPlaylistModel.playlistName}"
                 android:singleLine="true" />
 
             <ListView

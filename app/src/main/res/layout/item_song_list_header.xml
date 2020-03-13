@@ -2,6 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true"
     android:background="@color/colorPrimary">
 
     <TextView
@@ -10,4 +12,14 @@
         android:padding="5dp"
         android:layout_height="64dp"
         android:gravity="center_vertical|start" />
+
+    <ImageButton
+        android:id="@+id/music_song_list_add"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_margin="10dp"
+        android:layout_gravity="center_vertical|end"
+        android:scaleType="center"
+        android:src="@drawable/ic_add_circle_outline_asset_24dp"
+        android:background="@android:color/transparent"/>
 </FrameLayout>

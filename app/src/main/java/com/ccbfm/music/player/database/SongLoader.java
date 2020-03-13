@@ -12,13 +12,18 @@ import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.tool.ToastTools;
 
-import org.litepal.crud.async.UpdateOrDeleteExecutor;
-import org.litepal.crud.callback.UpdateOrDeleteCallback;
-
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public final class SongLoader {
     private static final String TAG = "SongLoader";
+
+    private static final Executor EXECUTOR = new ThreadPoolExecutor(1,5,1,
+            TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(100));
+
 
     private static String[] PROJECTION = new String[]{
             MediaStore.Audio.AudioColumns._ID,
@@ -149,16 +154,31 @@ public final class SongLoader {
     }
 
     public static void deleteAllSongAsync() {
-        UpdateOrDeleteExecutor executor = DBDao.deleteAllSongAsync("0");
-        executor.listen(new UpdateOrDeleteCallback() {
+        final Runnable runnable = new Runnable() {
             @Override
-            public void onFinish(int rowsAffected) {
-                Log.w(TAG, "deleteAllSongAsync-onFinish-rowsAffected=" + rowsAffected);
+            public void run() {
+                DBDao.deleteAllPlaylist();
+                int rowsAffected = DBDao.deleteAllSong("0");
                 ToastTools.showToast(App.getApp(), "清除" + rowsAffected + "个");
                 if (rowsAffected > 0) {
                     sPlaylists = null;
                 }
             }
-        });
+        };
+        EXECUTOR.execute(runnable);
+    }
+
+    public static boolean addPlaylist(String name, List<Song> songs){
+        if(songs.size() == 0){
+            return false;
+        }
+        Playlist playlist = new Playlist();
+        playlist.setName(name);
+        playlist.setSongList(songs);
+        boolean flag = playlist.save();
+        if(flag){
+            sPlaylists.add(playlist);
+        }
+        return flag;
     }
 }

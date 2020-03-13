@@ -56,7 +56,7 @@ public class MusicControl implements ControlConstants {
     }
 
     public void setSongList(List<Song> songList, int index){
-        sendMessage(createMessage(STATUS_SET_LIST, songList, index), 0);
+        sendMessage(createMessage(STATUS_SET_LIST, songList, index), 300);
     }
 
     public void play(){
@@ -89,6 +89,7 @@ public class MusicControl implements ControlConstants {
         if(mHandler == null){
             mHandler = new PlayHandler(mPlayer);
         }
+        mHandler.removeMessages(message.what);
         mHandler.sendMessageDelayed(message, delayMillis);
     }
 
@@ -128,7 +129,9 @@ public class MusicControl implements ControlConstants {
                     case STATUS_SET_LIST:
                         seekTo(msg.arg1);
                         List<Song> songs = (List<Song>)msg.obj;
-                        mPlayer.setSongList(songs, msg.arg1);
+                        if(songs != null && songs.size() > 0) {
+                            mPlayer.setSongList(songs, msg.arg1);
+                        }
                         break;
                     case STATUS_PREPARE:
                         String path = (String)msg.obj;

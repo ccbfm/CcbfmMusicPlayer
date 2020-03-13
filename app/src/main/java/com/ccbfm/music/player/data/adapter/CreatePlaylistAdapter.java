@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -74,15 +75,16 @@ public class CreatePlaylistAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+        final ViewHolder holder;
         if (convertView == null) {
             if (mLayoutInflater == null) {
                 Context context = parent.getContext();
                 mLayoutInflater = LayoutInflater.from(context);
             }
-            convertView = mLayoutInflater.inflate(R.layout.item_select_folder_name, null);
+            convertView = mLayoutInflater.inflate(R.layout.item_create_playlist_song, null);
             holder = new ViewHolder();
-            holder.fileName = (TextView) convertView.findViewById(R.id.music_directory_name);
+            holder.fileName = (TextView) convertView.findViewById(R.id.music_create_playlist_song);
+            holder.checkBox = convertView.findViewById(R.id.music_create_playlist_check);
             holder.convertView = convertView;
             convertView.setTag(holder);
         } else {
@@ -90,12 +92,20 @@ public class CreatePlaylistAdapter extends BaseAdapter {
         }
         final Song song = mSongList.get(position);
         holder.fileName.setText(song.getSongName());
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CheckBox cb = holder.checkBox;
+                cb.setChecked(!cb.isChecked());
+            }
+        });
         return convertView;
     }
 
     private static class ViewHolder {
         View convertView;
         TextView fileName;
+        CheckBox checkBox;
     }
 
     public interface OnItemClickListener {

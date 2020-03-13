@@ -5,17 +5,17 @@ import android.view.View;
 
 import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.data.model.CreatePlaylistModel;
-import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.databinding.ActivityCreatePlaylistBinding;
 
 public class CreatePlaylistActivity extends BaseActivity<ActivityCreatePlaylistBinding> {
 
-    private Playlist mPlaylist;
+    private CreatePlaylistModel mModel;
 
     @Override
     protected void initView(ActivityCreatePlaylistBinding binding) {
         CreatePlaylistModel model = new CreatePlaylistModel(binding.musicCreatePlaylist);
         binding.setCreatePlaylistModel(model);
+        mModel = model;
     }
 
     @Override
@@ -29,7 +29,8 @@ public class CreatePlaylistActivity extends BaseActivity<ActivityCreatePlaylistB
     }
 
     public void selectConfirm(View view){
-        if(mPlaylist == null){
+        boolean flag = mModel.addPlaylist();
+        if(!flag){
             selectCancel(view);
             return;
         }

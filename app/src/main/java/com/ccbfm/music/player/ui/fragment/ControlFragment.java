@@ -35,8 +35,16 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
         @Override
         public void callbackIndex(int index) {
             mSongIndex = index;
-            if (mSongList != null) {
-                Song song = mSongList.get(index);
+            int playlistIndex = SharedPreferencesTools.getIntValue(SharedPreferencesTools.KEY_INIT_PLAYLIST_INDEX);
+            if (mPlaylists != null) {
+                List<Song> songs = mPlaylists.get(playlistIndex).getSongList();
+                if(mSongList == null){
+                    mSongList = songs;
+                } else {
+                    mSongList.clear();
+                    mSongList.addAll(songs);
+                }
+                Song song = songs.get(index);
                 updateUI(song.getSongName(), song.getSingerName());
             }
 

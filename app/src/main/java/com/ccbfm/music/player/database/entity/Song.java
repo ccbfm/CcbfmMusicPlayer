@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
+import java.util.List;
+
 public class Song extends LitePalSupport implements Parcelable {
 
     @Column(nullable = false, unique = true)
@@ -28,6 +30,8 @@ public class Song extends LitePalSupport implements Parcelable {
     private int albumId;
 
     private int status = 0;
+
+    private List<Playlist> playlistList;
 
     public Song() {
     }
@@ -116,6 +120,14 @@ public class Song extends LitePalSupport implements Parcelable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public List<Playlist> getPlaylistList() {
+        return playlistList;
+    }
+
+    public void setPlaylistList(List<Playlist> playlistList) {
+        this.playlistList = playlistList;
     }
 
     @Override

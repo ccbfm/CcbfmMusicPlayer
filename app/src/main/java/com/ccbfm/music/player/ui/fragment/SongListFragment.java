@@ -24,7 +24,7 @@ public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
 
     @Override
     protected void initView(FragmentSongListBinding binding) {
-        View headView = LayoutInflater.from(getContext()).inflate(R.layout.item_song_list_name, null);
+        View headView = LayoutInflater.from(getContext()).inflate(R.layout.item_song_list_header, null);
         final TextView headName = headView.findViewById(R.id.music_song_list_name);
         binding.musicSongList.setPinnedHeader(headView, new PinnedHeaderExpandableListView.PinnedHeaderListener() {
             @Override
