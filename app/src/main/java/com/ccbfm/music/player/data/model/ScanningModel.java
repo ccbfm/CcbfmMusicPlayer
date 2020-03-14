@@ -15,7 +15,7 @@ import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.database.SongLoader;
 import com.ccbfm.music.player.tool.Constants;
 import com.ccbfm.music.player.tool.LiveDataBus;
-import com.ccbfm.music.player.tool.SharedPreferencesTools;
+import com.ccbfm.music.player.tool.SPTools;
 import com.ccbfm.music.player.tool.ToastTools;
 import com.ccbfm.music.player.ui.activity.SelectFolderActivity;
 import com.ccbfm.music.player.ui.fragment.ScanningFragment;
@@ -30,7 +30,7 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
 
     public ScanningModel(ScanningFragment fragment) {
         mFragment = fragment;
-        mDirectoryName = SharedPreferencesTools.getStringValue(KEY_SELECT_DIRECTORY_NAME, Constants.ROOT_PATH);
+        mDirectoryName = SPTools.getStringValue(KEY_SELECT_DIRECTORY_NAME, Constants.ROOT_PATH);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
     public void setDirectoryName(String directoryName) {
         mDirectoryName = directoryName;
         notifyPropertyChanged(BR.directoryName);
-        SharedPreferencesTools.putStringValue(KEY_SELECT_DIRECTORY_NAME, directoryName);
+        SPTools.putStringValue(KEY_SELECT_DIRECTORY_NAME, directoryName);
     }
 
     private void loadSongEnd(int count) {

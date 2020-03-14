@@ -18,4 +18,5 @@
     <string name="music_confirm">确认</string>
 
     <string name="music_create_playlist">新建列表</string>
+    <string name="music_create_playlist_name_hint">请输入列表名字</string>
 </resources>

@@ -2,35 +2,51 @@ package com.ccbfm.music.player.ui.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.ccbfm.music.player.IPlayerCallback;
 import com.ccbfm.music.player.R;
+import com.ccbfm.music.player.callback.PlayerCallbackAdapter;
+import com.ccbfm.music.player.control.MusicControl;
 import com.ccbfm.music.player.data.adapter.SongListExpandableListAdapter;
 import com.ccbfm.music.player.data.model.SongListModel;
 import com.ccbfm.music.player.databinding.FragmentSongListBinding;
+import com.ccbfm.music.player.service.LocalService;
 import com.ccbfm.music.player.tool.StartActivityTools;
 import com.ccbfm.music.player.ui.activity.CreatePlaylistActivity;
 import com.ccbfm.music.player.ui.widget.PinnedHeaderExpandableListView;
+
 
 public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
 
     private static final int CODE_CREATE_PLAYLIST = 0x12;
     private SongListModel mSongListModel;
+    private TextView mHeadName;
+    private View mAddSongList;
+
+    private IPlayerCallback mPlayerCallback = new PlayerCallbackAdapter() {
+        @Override
+        public void callbackIndex(int index) {
+
+        }
+    };
 
     @Override
     protected void initView(FragmentSongListBinding binding) {
+        LocalService.addPlayerCallbackAdapter(mPlayerCallback);
         View headView = LayoutInflater.from(getContext()).inflate(R.layout.item_song_list_header, null);
-        final TextView headName = headView.findViewById(R.id.music_song_list_name);
+        mHeadName = headView.findViewById(R.id.music_song_list_name);
+        mAddSongList = headView.findViewById(R.id.music_song_list_add);
         binding.musicSongList.setPinnedHeader(headView, new PinnedHeaderExpandableListView.PinnedHeaderListener() {
             @Override
             public void changeContent(View view, Object object) {
                 if (object instanceof String) {
-                    headName.setText(object.toString());
+                    setHeadNameText(object.toString());
                 }
             }
         });
@@ -38,20 +54,26 @@ public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
         SongListModel model = new SongListModel(this, new SongListModel.CallBack<String>() {
             @Override
             public void changeContent(String groupItem) {
-                headName.setText(groupItem);
+                setHeadNameText(groupItem);
             }
         });
-        model.setAdapter(new SongListExpandableListAdapter(getContext()));
+        model.setAdapter(new SongListExpandableListAdapter(getContext(), binding.musicSongList));
         binding.setSongListModel(model);
         mSongListModel = model;
 
-        final View addSongList = headView.findViewById(R.id.music_song_list_add);
-        addSongList.setOnClickListener(new View.OnClickListener() {
+        mAddSongList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 StartActivityTools.startForResult((SongListFragment.this), CreatePlaylistActivity.class, CODE_CREATE_PLAYLIST);
             }
         });
+    }
+
+    private void setHeadNameText(String text){
+        if(mHeadName != null && text != null){
+            mHeadName.setText(text);
+            mAddSongList.setVisibility((text.startsWith("全部歌曲") ? View.VISIBLE : View.GONE));
+        }
     }
 
     @Override
@@ -63,9 +85,15 @@ public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (CODE_CREATE_PLAYLIST == requestCode && resultCode == Activity.RESULT_OK) {
-            if(mSongListModel != null){
+            if (mSongListModel != null) {
                 mSongListModel.loadData();
             }
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalService.removePlayerCallbackAdapter(mPlayerCallback);
     }
 }

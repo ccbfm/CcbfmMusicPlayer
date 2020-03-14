@@ -2,7 +2,6 @@ package com.ccbfm.music.player.data.adapter;
 
 import android.content.Context;
 import android.os.Handler;
-import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,7 @@ import com.ccbfm.music.player.tool.LogTools;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,18 +27,17 @@ public class CreatePlaylistAdapter extends BaseAdapter {
     private LayoutInflater mLayoutInflater;
     private OnItemClickListener mOnItemClickListener;
     private Handler mHandler;
-    private SparseIntArray mCheckedArray;
+    private HashSet<Integer> mCheckedSet;
 
     public CreatePlaylistAdapter(List<Song> songList) {
-        if(songList != null) {
-            if(mSongList == null){
+        if (songList != null) {
+            if (mSongList == null) {
                 mSongList = new ArrayList<>(songList);
             } else {
                 mSongList.clear();
                 mSongList.addAll(songList);
             }
         }
-        mCheckedArray = new SparseIntArray(getCount() / 2);
     }
 
     public void updateData(List<Song> songList, final ListView listView, Integer position) {
@@ -99,6 +97,11 @@ public class CreatePlaylistAdapter extends BaseAdapter {
         }
         final Song song = getItem(position);
         holder.fileName.setText(song.getSongName());
+        holder.checkBox.setTag(position);
+
+        if(mCheckedSet != null) {
+            holder.checkBox.setChecked(mCheckedSet.contains(position));
+        }
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,7 +109,7 @@ public class CreatePlaylistAdapter extends BaseAdapter {
                 cb.setChecked(!cb.isChecked());
             }
         });
-        holder.checkBox.setTag(position);
+
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -117,21 +120,30 @@ public class CreatePlaylistAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private void handleSelectSongList(int pos, boolean isChecked){
-        if(isChecked) {
-            mCheckedArray.put(pos, 1);
+    private void handleSelectSongList(int pos, boolean isChecked) {
+        LogTools.i(TAG, "handleSelectSongList", "pos=" + pos + ",isChecked=" + isChecked);
+        if (mCheckedSet == null) {
+            mCheckedSet = new HashSet<>(getCount() / 4);
+        }
+        if (isChecked) {
+            mCheckedSet.add(pos);
         } else {
-            mCheckedArray.removeAt(pos);
+            mCheckedSet.remove(pos);
         }
     }
 
-    public List<Song> getSelectSongList(){
-        int size = mCheckedArray.size();
-        if(size > 0){
+    public List<Song> getSelectSongList() {
+        if(mCheckedSet == null){
+            return null;
+        }
+        int size = mCheckedSet.size();
+        LogTools.i(TAG, "getSelectSongList", "size=" + size);
+        if (size > 0) {
             List<Song> songs = new LinkedList<>();
-            for (int i = 0; i < size; i++) {
-                int key = mCheckedArray.keyAt(i);
-                songs.add(mSongList.get(key));
+            for (Integer key : mCheckedSet) {
+                if (key != null) {
+                    songs.add(mSongList.get(key));
+                }
             }
             return songs;
         }

@@ -1,18 +1,19 @@
 package com.ccbfm.music.player.data.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.control.MusicControl;
 import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
-import com.ccbfm.music.player.tool.SharedPreferencesTools;
+import com.ccbfm.music.player.tool.SPTools;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -22,15 +23,25 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
     private LayoutInflater mLayoutInflater;
     private LinkedList<Playlist> mPlaylists = new LinkedList<>();
     private OnChildClickListener mChildClickListener;
+    private boolean mInitDisplay = true;
+    private int mPlaylistIndex;
+    private int mSongIndex;
+    private ExpandableListView mListView;
+    private View mCurrentView;
 
-    public SongListExpandableListAdapter(Context context) {
+    public SongListExpandableListAdapter(Context context, ExpandableListView listView) {
+        mListView = listView;
+        listView.setAdapter(this);
         mLayoutInflater = LayoutInflater.from(context);
         setChildClickListener(new OnChildClickListener() {
             @Override
             public void onClick(View view, int groupPosition, int childPosition) {
-                SharedPreferencesTools.putIntValue(SharedPreferencesTools.KEY_INIT_PLAYLIST_INDEX, groupPosition);
+                SPTools.putIntValue(SPTools.KEY_INIT_PLAYLIST_INDEX, groupPosition);
                 List<Song> songList = mPlaylists.get(groupPosition).getSongList();
                 MusicControl.getInstance().setSongList(songList, childPosition);
+                mPlaylistIndex = groupPosition;
+                mSongIndex = childPosition;
+                changePlayView(view, true);
             }
         });
     }
@@ -38,6 +49,8 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
     public void updatePlaylist(List<Playlist> playlists) {
         mPlaylists.clear();
         mPlaylists.addAll(playlists);
+        mPlaylistIndex = SPTools.getIntValue(SPTools.KEY_INIT_PLAYLIST_INDEX);
+        mSongIndex = SPTools.getIntValue(SPTools.KEY_INIT_SONG_INDEX);
         notifyDataSetChanged();
     }
 
@@ -52,22 +65,12 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        Playlist playlist = mPlaylists.get(groupPosition);
-        if(playlist == null){
-            return -1;
-        }
-        List<Song> songs = playlist.getSongList();
-        if(songs== null){
-            return -1;
-        }
-        return songs.size();
+        return mPlaylists.get(groupPosition).getSongList().size();
     }
-
-
 
     @Override
     public String getGroup(int groupPosition) {
-        return mPlaylists.get(groupPosition).getName() + "(" + getChildrenCount(groupPosition) + "个)";
+        return mPlaylists.get(groupPosition).getName() + "(" + getChildrenCount(groupPosition) + ")";
     }
 
     @Override
@@ -103,6 +106,13 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
         } else {
             groupHolder = (GroupHolder) convertView.getTag();
         }
+        if(mInitDisplay && mPlaylistIndex == groupPosition){
+            mInitDisplay = false;
+            mListView.expandGroup(groupPosition);
+            int position = (mSongIndex > 3 ? mSongIndex - 3 : 0) + groupPosition;
+            //滚动到指定child位置
+            mListView.smoothScrollToPositionFromTop(position, 0, 0);
+        }
         groupHolder.listName.setText(getGroup(groupPosition));
         return convertView;
     }
@@ -114,7 +124,8 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = mLayoutInflater.inflate(R.layout.item_child_song_name, null);
             childHolder = new ChildHolder();
             childHolder.songName = convertView.findViewById(R.id.music_song_name);
-
+            childHolder.songPlay = convertView.findViewById(R.id.music_song_play);
+            childHolder.convertView = convertView;
             convertView.setTag(childHolder);
         } else {
             childHolder = (ChildHolder) convertView.getTag();
@@ -136,6 +147,15 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
             });
         }
 
+        if(mPlaylistIndex == groupPosition && mSongIndex == childPosition){
+            mCurrentView = childHolder.songPlay;
+            childHolder.songPlay.setVisibility(View.VISIBLE);
+            childHolder.songPlay.setBackgroundResource(MusicControl.getInstance().isPlaying() ?
+                    R.drawable.ic_play_to_pause_40dp : R.drawable.ic_pause_to_play_40dp);
+        } else {
+            childHolder.songPlay.setVisibility(View.GONE);
+        }
+
         childHolder.songName.setText(getChild(groupPosition, childPosition).getSongName());
         return convertView;
     }
@@ -145,13 +165,29 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
+    private void changePlayView(View view, boolean isPlay){
+        if(view != null){
+            View play = view.findViewById(R.id.music_song_play);
+            if(play != null){
+                play.setVisibility(View.VISIBLE);
+                play.setBackgroundResource(isPlay ?
+                        R.drawable.ic_play_to_pause_40dp : R.drawable.ic_pause_to_play_40dp);
+            }
+            if(mCurrentView != null){
+                mCurrentView.setVisibility(View.GONE);
+            }
+            mCurrentView = play;
+        }
+    }
 
     private static class GroupHolder {
         TextView listName;
     }
 
     private static class ChildHolder {
+        View convertView;
         TextView songName;
+        ImageButton songPlay;
     }
 
     public interface OnChildClickListener {

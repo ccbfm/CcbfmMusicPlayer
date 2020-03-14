@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 
 import androidx.annotation.NonNull;
@@ -14,7 +15,7 @@ import com.ccbfm.music.player.IPlayer;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.service.MusicService;
 import com.ccbfm.music.player.tool.LogTools;
-import com.ccbfm.music.player.tool.SharedPreferencesTools;
+import com.ccbfm.music.player.tool.SPTools;
 
 import java.util.List;
 
@@ -91,6 +92,9 @@ public class MusicControl implements ControlConstants {
             return;
         }
         if (mHandler == null) {
+            if(Looper.myLooper() == null){
+                Looper.prepare();
+            }
             mHandler = new PlayHandler(mPlayer);
         }
         mHandler.removeMessages(message.what);
@@ -178,9 +182,9 @@ public class MusicControl implements ControlConstants {
             if (newIndex < 0) {
                 return;
             }
-            int index = SharedPreferencesTools.getIntValue(SharedPreferencesTools.KEY_INIT_SONG_INDEX);
+            int index = SPTools.getIntValue(SPTools.KEY_INIT_SONG_INDEX);
             if (newIndex == index) {
-                int msec = SharedPreferencesTools.getIntValue(SharedPreferencesTools.KEY_INIT_SONG_MSEC);
+                int msec = SPTools.getIntValue(SPTools.KEY_INIT_SONG_MSEC);
                 Message message = Message.obtain();
                 message.what = STATUS_SEEK;
                 message.arg1 = msec;

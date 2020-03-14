@@ -4,21 +4,20 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.ccbfm.music.player.IPlayerCallback;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.tool.PlayerErrorCode;
-import com.ccbfm.music.player.tool.SharedPreferencesTools;
+import com.ccbfm.music.player.tool.SPTools;
 import com.ccbfm.music.player.tool.ToastTools;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.ccbfm.music.player.tool.SharedPreferencesTools.KEY_INIT_SONG_INDEX;
-import static com.ccbfm.music.player.tool.SharedPreferencesTools.KEY_INIT_SONG_MSEC;
+import static com.ccbfm.music.player.tool.SPTools.KEY_INIT_SONG_INDEX;
+import static com.ccbfm.music.player.tool.SPTools.KEY_INIT_SONG_MSEC;
 
 public class LocalService extends Service {
 
@@ -40,7 +39,7 @@ public class LocalService extends Service {
     private class LocalBinder extends IPlayerCallback.Stub {
         @Override
         public void callbackIndex(int index) throws RemoteException {
-            SharedPreferencesTools.putIntValue(KEY_INIT_SONG_INDEX, index);
+            SPTools.putIntValue(KEY_INIT_SONG_INDEX, index);
             if(isNotifyCallback()){
                 for (IPlayerCallback adapter : sPlayerCallbackAdapters) {
                     adapter.callbackIndex(index);
@@ -50,7 +49,7 @@ public class LocalService extends Service {
 
         @Override
         public void callbackMsec(int msec) throws RemoteException {
-            SharedPreferencesTools.putIntValue(KEY_INIT_SONG_MSEC, msec);
+            SPTools.putIntValue(KEY_INIT_SONG_MSEC, msec);
             if(isNotifyCallback()){
                 for (IPlayerCallback adapter : sPlayerCallbackAdapters) {
                     adapter.callbackMsec(msec);

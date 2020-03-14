@@ -5,6 +5,7 @@ import android.util.Log;
 import com.ccbfm.music.player.data.adapter.SongListExpandableListAdapter;
 import com.ccbfm.music.player.database.SongLoader;
 import com.ccbfm.music.player.database.entity.Playlist;
+import com.ccbfm.music.player.databinding.FragmentSongListBinding;
 import com.ccbfm.music.player.ui.fragment.BaseFragment;
 
 import java.util.List;
@@ -13,12 +14,12 @@ public class SongListModel {
 
     private SongListExpandableListAdapter mAdapter;
     private CallBack mCallBack;
-    private BaseFragment mFragment;
+    private BaseFragment<FragmentSongListBinding> mFragment;
 
     public SongListModel() {
     }
 
-    public SongListModel(BaseFragment fragment, CallBack callBack) {
+    public SongListModel(BaseFragment<FragmentSongListBinding> fragment, CallBack callBack) {
         mFragment = fragment;
         mCallBack = callBack;
     }
@@ -65,7 +66,7 @@ public class SongListModel {
             mAdapter.updatePlaylist(playlists);
             if (mCallBack != null) {
                 Playlist playlist = playlists.get(0);
-                String content = playlist.getName() + "(" + playlist.getSongList().size() + "个)";
+                String content = playlist.getName() + "(" + playlist.getSongList().size() + ")";
                 mCallBack.changeContent(content);
             }
         }

@@ -11,6 +11,7 @@ import android.widget.AbsListView;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 
+import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.MathTools;
 
 /**
@@ -21,6 +22,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
     private View mPinnedHeader;
     private boolean mCheckPinnedHeaderContent = true;
     private PinnedHeaderListener mPinnedHeaderListener;
+    private int mNextGroup;
     private int mPinnedHeaderWidth;
     private int mPinnedHeaderHeight;
 
@@ -64,7 +66,6 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
                     return;
                 }
                 int top = childView.getTop();
-
                 if (nextGroup == firstGroup + 1) {
                     if (top <= mPinnedHeaderHeight) {
                         int delta = mPinnedHeaderHeight - top;
@@ -72,7 +73,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
                     } else {
                         mPinnedHeader.layout(0, 0, mPinnedHeaderWidth, mPinnedHeaderHeight);
                     }
-                    if (!mCheckPinnedHeaderContent) {
+                    if (!mCheckPinnedHeaderContent || mNextGroup != nextGroup) {
                         if (mPinnedHeaderListener != null) {
                             Object groupItem = null;
                             if (getExpandableListAdapter() instanceof BaseExpandableListAdapter) {
@@ -97,6 +98,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
                     }
                     mPinnedHeader.layout(0, 0, mPinnedHeaderWidth, mPinnedHeaderHeight);
                 }
+                mNextGroup = nextGroup;
             }
         });
     }
@@ -105,7 +107,8 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
     public void setPinnedHeader(View view, PinnedHeaderListener listener) {
         if (view != null) {
             mPinnedHeader = view;
-            mPinnedHeader.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            mPinnedHeader.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
             mPinnedHeaderListener = listener;
             requestLayout();
             postInvalidate();

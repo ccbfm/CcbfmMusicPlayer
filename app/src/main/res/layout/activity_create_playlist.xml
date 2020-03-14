@@ -31,7 +31,8 @@
                 android:layout_height="48dp"
                 android:background="@android:color/transparent"
                 android:gravity="center"
-                android:hint="@string/music_create_playlist"
+                android:textSize="16sp"
+                android:hint="@string/music_create_playlist_name_hint"
                 android:text="@={createPlaylistModel.playlistName}"
                 android:singleLine="true" />
 

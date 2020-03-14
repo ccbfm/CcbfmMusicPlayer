@@ -16,7 +16,6 @@
 
         <com.ccbfm.music.player.ui.widget.PinnedHeaderExpandableListView
             android:id="@+id/music_song_list"
-            android:adapter="@{songListModel.adapter}"
             android:layout_width="match_parent"
             android:groupIndicator="@null"
             android:layout_height="match_parent"/>

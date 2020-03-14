@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.data.adapter.MusicFragmentAdapter;
 import com.ccbfm.music.player.databinding.ActivityMusicBinding;
-import com.ccbfm.music.player.tool.SharedPreferencesTools;
+import com.ccbfm.music.player.tool.SPTools;
 import com.ccbfm.music.player.ui.fragment.BaseFragment;
 import com.ccbfm.music.player.ui.fragment.ControlFragment;
 import com.ccbfm.music.player.ui.fragment.LyricsFragment;
@@ -45,9 +45,9 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
             }
         });
 
-        int initPage = SharedPreferencesTools.getIntValue(SharedPreferencesTools.KEY_INIT_SHOW_PAGE);
+        int initPage = SPTools.getIntValue(SPTools.KEY_INIT_SHOW_PAGE);
         binding.musicViewPager.setCurrentItem(initPage);
-        SharedPreferencesTools.putIntValue(SharedPreferencesTools.KEY_INIT_SHOW_PAGE, INDEX_CONTROL);
+        SPTools.putIntValue(SPTools.KEY_INIT_SHOW_PAGE, INDEX_CONTROL);
     }
 
     @Override

@@ -18,7 +18,7 @@ import com.ccbfm.music.player.tool.Constants;
 import com.ccbfm.music.player.tool.LiveDataBus;
 import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.MathTools;
-import com.ccbfm.music.player.tool.SharedPreferencesTools;
+import com.ccbfm.music.player.tool.SPTools;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
         @Override
         public void callbackIndex(int index) {
             mSongIndex = index;
-            int playlistIndex = SharedPreferencesTools.getIntValue(SharedPreferencesTools.KEY_INIT_PLAYLIST_INDEX);
+            int playlistIndex = SPTools.getIntValue(SPTools.KEY_INIT_PLAYLIST_INDEX);
             if (mPlaylists != null) {
                 List<Song> songs = mPlaylists.get(playlistIndex).getSongList();
                 mSongList = songs;
@@ -100,8 +100,8 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
     private void initData(FragmentControlBinding binding, List<Playlist> playlists) {
         LogTools.i(TAG, "initData", "--------");
         mPlaylists = playlists;
-        int playlistIndex = SharedPreferencesTools.getIntValue(SharedPreferencesTools.KEY_INIT_PLAYLIST_INDEX);
-        int songIndex = SharedPreferencesTools.getIntValue(SharedPreferencesTools.KEY_INIT_SONG_INDEX);
+        int playlistIndex = SPTools.getIntValue(SPTools.KEY_INIT_PLAYLIST_INDEX);
+        int songIndex = SPTools.getIntValue(SPTools.KEY_INIT_SONG_INDEX);
         int playlistSize = playlists.size();
         playlistIndex = MathTools.calculationIndex(playlistIndex, playlistSize);
         if (playlistIndex >= 0 && playlistIndex < playlistSize) {

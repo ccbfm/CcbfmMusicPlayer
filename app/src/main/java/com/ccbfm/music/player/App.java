@@ -7,7 +7,7 @@ import android.text.TextUtils;
 
 import com.ccbfm.music.player.control.MusicControl;
 import com.ccbfm.music.player.tool.AndroidPermissionTool;
-import com.ccbfm.music.player.tool.SharedPreferencesTools;
+import com.ccbfm.music.player.tool.SPTools;
 
 import org.litepal.LitePal;
 
@@ -24,7 +24,7 @@ public class App extends Application {
         LitePal.initialize(this);
 
         AndroidPermissionTool.init();
-        SharedPreferencesTools.init(this);
+        SPTools.init(this);
 
         MusicControl.getInstance().initMusicService(this);
     }

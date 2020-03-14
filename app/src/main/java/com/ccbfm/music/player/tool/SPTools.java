@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-public final class SharedPreferencesTools {
+/**
+ * SharedPreferences
+ */
+public final class SPTools {
     private static final String TAG = "SharedPreferences";
     private static final boolean DEBUG = false;
 
@@ -61,7 +64,7 @@ public final class SharedPreferencesTools {
 
     private static void checkPreferences() {
         if (sPreferences == null) {
-            synchronized (SharedPreferencesTools.class) {
+            synchronized (SPTools.class) {
                 if (sContext == null) {
                     throw new NullPointerException("Context == null");
                 }

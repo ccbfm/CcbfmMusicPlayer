@@ -32,6 +32,10 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
 
     protected abstract int getLayoutId();
 
+    public T getViewDataBinding() {
+        return mViewDataBinding;
+    }
+
     public BaseActivity getBaseActivity(){
         Activity activity = getActivity();
         if(activity instanceof BaseActivity){
