@@ -184,7 +184,7 @@ public class MusicPlayer implements IControlPlayer {
                 position = size - 1;
             }
         }
-        setSongIndex(position);
+        mSongIndex = (position);
 
         Song song = mSongList.get(position);
         String path = song.getSongPath();
@@ -193,9 +193,7 @@ public class MusicPlayer implements IControlPlayer {
         prepare(path);
     }
 
-    private void setSongIndex(int songIndex) {
-        mSongIndex = songIndex;
-
+    private void callbackSongIndex(int songIndex) {
         if (mPlayerCallback != null) {
             try {
                 mPlayerCallback.callbackIndex(songIndex);
@@ -235,14 +233,14 @@ public class MusicPlayer implements IControlPlayer {
                         index = size - 1;
                     }
                 }
-                setSongIndex(index);
+                mSongIndex = index;
                 break;
             case ControlConstants.MODE_RANDOM:
                 if (mRandom == null) {
                     mRandom = new Random();
                 }
                 index = mRandom.nextInt(size());
-                setSongIndex(index);
+                mSongIndex = index;
                 break;
         }
     }
@@ -299,6 +297,7 @@ public class MusicPlayer implements IControlPlayer {
         if (mCallback != null) {
             mCallback.changeDisplay(getCurrentSong(), isPlaying());
         }
+        callbackSongIndex(mSongIndex);
     }
 
     @Override

@@ -32,13 +32,13 @@ public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
     private IPlayerCallback mPlayerCallback = new PlayerCallbackAdapter() {
         @Override
         public void callbackIndex(int index) {
-
+            boolean isPlaying = MusicControl.getInstance().isPlaying();
+            mSongListModel.getAdapter().changePlayView(-1, index, isPlaying);
         }
     };
 
     @Override
     protected void initView(FragmentSongListBinding binding) {
-        LocalService.addPlayerCallbackAdapter(mPlayerCallback);
         View headView = LayoutInflater.from(getContext()).inflate(R.layout.item_song_list_header, null);
         mHeadName = headView.findViewById(R.id.music_song_list_name);
         mAddSongList = headView.findViewById(R.id.music_song_list_add);
@@ -67,6 +67,8 @@ public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
                 StartActivityTools.startForResult((SongListFragment.this), CreatePlaylistActivity.class, CODE_CREATE_PLAYLIST);
             }
         });
+
+        LocalService.addPlayerCallbackAdapter(mPlayerCallback);
     }
 
     private void setHeadNameText(String text){

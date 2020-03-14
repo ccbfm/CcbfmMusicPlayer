@@ -1,6 +1,7 @@
 package com.ccbfm.music.player.data.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +14,15 @@ import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.control.MusicControl;
 import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
+import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.SPTools;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
 
@@ -28,10 +34,12 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
     private int mSongIndex;
     private ExpandableListView mListView;
     private View mCurrentView;
+    private HashMap<ChildHolder, String> mChildHolderMap;
 
     public SongListExpandableListAdapter(Context context, ExpandableListView listView) {
         mListView = listView;
         listView.setAdapter(this);
+        mChildHolderMap = new HashMap<>(16);
         mLayoutInflater = LayoutInflater.from(context);
         setChildClickListener(new OnChildClickListener() {
             @Override
@@ -130,7 +138,7 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
         } else {
             childHolder = (ChildHolder) convertView.getTag();
         }
-
+        mChildHolderMap.put(childHolder, getStringKey(groupPosition, childPosition));
         if (mChildClickListener != null) {
             final View view = convertView;
             convertView.setTag(R.id.tag_group_position, groupPosition);
@@ -165,18 +173,44 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    private void changePlayView(View view, boolean isPlay){
-        if(view != null){
-            View play = view.findViewById(R.id.music_song_play);
-            if(play != null){
-                play.setVisibility(View.VISIBLE);
-                play.setBackgroundResource(isPlay ?
-                        R.drawable.ic_play_to_pause_40dp : R.drawable.ic_pause_to_play_40dp);
+    private String getStringKey(int groupPosition, int childPosition){
+        return groupPosition + "#" + childPosition;
+    }
+
+    public void changePlayView(int groupPosition, int childPosition, boolean isPlay){
+        mSongIndex = childPosition;
+        if(mChildHolderMap != null){
+            if(groupPosition == -1){
+                groupPosition = mPlaylistIndex;
             }
-            if(mCurrentView != null){
-                mCurrentView.setVisibility(View.GONE);
+            Set<Map.Entry<ChildHolder, String>> set = mChildHolderMap.entrySet();
+            for (Map.Entry<ChildHolder, String> entry : set) {
+                if(TextUtils.equals(entry.getValue(), getStringKey(groupPosition, childPosition))){
+                    changePlayView(entry.getKey().convertView, isPlay);
+                }
             }
-            mCurrentView = play;
+        }
+    }
+
+    private void changePlayView(final View view, final boolean isPlay){
+        if(mListView != null){
+            mListView.post(new Runnable() {
+                @Override
+                public void run() {
+                    if(view != null){
+                        View play = view.findViewById(R.id.music_song_play);
+                        if(play != null){
+                            play.setVisibility(View.VISIBLE);
+                            play.setBackgroundResource(isPlay ?
+                                    R.drawable.ic_play_to_pause_40dp : R.drawable.ic_pause_to_play_40dp);
+                        }
+                        if(mCurrentView != play){
+                            mCurrentView.setVisibility(View.GONE);
+                            mCurrentView = play;
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -188,6 +222,21 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
         View convertView;
         TextView songName;
         ImageButton songPlay;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ChildHolder that = (ChildHolder) o;
+            return Objects.equals(convertView, that.convertView) &&
+                    Objects.equals(songName, that.songName) &&
+                    Objects.equals(songPlay, that.songPlay);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(convertView, songName, songPlay);
+        }
     }
 
     public interface OnChildClickListener {
