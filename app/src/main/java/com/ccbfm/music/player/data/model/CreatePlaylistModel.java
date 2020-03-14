@@ -14,12 +14,13 @@ import com.ccbfm.music.player.data.adapter.CreatePlaylistAdapter;
 import com.ccbfm.music.player.database.SongLoader;
 import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
+import com.ccbfm.music.player.tool.LogTools;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class CreatePlaylistModel extends BaseObservable {
-
+    private static final String TAG = "CreatePlaylistModel";
     private CreatePlaylistAdapter mCreatePlaylistAdapter;
     private ListView mListView;
     private List<Song> mSongList;
@@ -31,7 +32,7 @@ public class CreatePlaylistModel extends BaseObservable {
     }
 
     private void loadData() {
-        Log.i("CreatePlaylistModel", "loadData--->---");
+        LogTools.i(TAG, "loadData", "-------");
         List<Playlist> playlists = SongLoader.getSongData(new SongLoader.LoadSongCallBack() {
             @Override
             public void onPreExecute() {
@@ -53,25 +54,8 @@ public class CreatePlaylistModel extends BaseObservable {
         }
     }
 
-    private List<Song> getSelectSong(){
-        LinkedList<Song> songs = new LinkedList<>();
-        ListView listView = mListView;
-        List<Song> songList = mSongList;
-        if(listView != null){
-            int count = listView.getChildCount();
-            for (int i = 0; i < count; i++) {
-                View view = listView.getChildAt(i);
-                CheckBox checkView = (CheckBox) view.findViewById(R.id.music_create_playlist_check);
-                if(checkView != null && checkView.isChecked()){
-                    songs.add(songList.get(i));
-                }
-            }
-        }
-        return songs;
-    }
-
     public boolean addPlaylist(){
-        return SongLoader.addPlaylist(getPlaylistName(), getSelectSong());
+        return SongLoader.addPlaylist(getPlaylistName(), mCreatePlaylistAdapter.getSelectSongList());
     }
 
     private void loadSongStart() {

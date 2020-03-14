@@ -20,8 +20,6 @@ import com.ccbfm.music.player.tool.ToastTools;
 import com.ccbfm.music.player.ui.activity.SelectFolderActivity;
 import com.ccbfm.music.player.ui.fragment.ScanningFragment;
 
-import static com.ccbfm.music.player.tool.Constants.SCAN_SUCCESS_NOTIFICATION;
-
 public class ScanningModel extends BaseObservable implements View.OnClickListener {
 
     private static final int CODE_SELECT_FOLDER_NAME = 0x11;
@@ -86,7 +84,7 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
         boolean flag = (count > 0);
         ToastTools.showToast(mFragment.getContext(), "扫描完成：" + (flag ? "成功 " + count + "个" : "失败"));
         if (flag) {
-            LiveDataBus.get().<Boolean>with(SCAN_SUCCESS_NOTIFICATION).postValue(true);
+            LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).postValue(true);
         }
     }
 

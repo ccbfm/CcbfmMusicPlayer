@@ -9,7 +9,6 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import androidx.annotation.Nullable;
@@ -41,7 +40,7 @@ public class MusicService extends Service {
 
         Intent intent = new Intent(this, LocalService.class);
         getApplicationContext().startService(intent);
-        getApplicationContext().bindService(intent, new ServiceConnection(){
+        getApplicationContext().bindService(intent, new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 mPlayerCallback = IPlayerCallback.Stub.asInterface(service);
@@ -167,11 +166,14 @@ public class MusicService extends Service {
     };
 
     public void showNotification(Song song, boolean isPlaying) {
+        String title;
         if (song != null) {
-            MusicNotificationTool.showNotification(this, mNotification, mRemoteViews,
-                    MusicNotificationTool.buildTitle(song.getSongName(),
-                            "  -  ", song.getSingerName()), isPlaying);
+            title = MusicNotificationTool.buildTitle(song.getSongName(),
+                    "  -  ", song.getSingerName());
+        } else {
+            title = "音乐";
         }
+        MusicNotificationTool.showNotification(this, mNotification, mRemoteViews, title, isPlaying);
     }
 
     public interface NotificationCallback {

@@ -8,8 +8,12 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.ccbfm.music.player.App;
+import com.ccbfm.music.player.control.MusicControl;
 import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
+import com.ccbfm.music.player.tool.Constants;
+import com.ccbfm.music.player.tool.LiveDataBus;
+import com.ccbfm.music.player.tool.SharedPreferencesTools;
 import com.ccbfm.music.player.tool.ToastTools;
 
 import java.util.List;
@@ -162,14 +166,23 @@ public final class SongLoader {
                 ToastTools.showToast(App.getApp(), "清除" + rowsAffected + "个");
                 if (rowsAffected > 0) {
                     sPlaylists = null;
+                    LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).postValue(true);
+                    clearData();
                 }
             }
         };
         EXECUTOR.execute(runnable);
     }
 
+    private static void clearData(){
+        SharedPreferencesTools.putIntValue(SharedPreferencesTools.KEY_INIT_PLAYLIST_INDEX, 0);
+        SharedPreferencesTools.putIntValue(SharedPreferencesTools.KEY_INIT_SONG_INDEX, 0);
+        SharedPreferencesTools.putIntValue(SharedPreferencesTools.KEY_INIT_SONG_MSEC, 0);
+        MusicControl.getInstance().release();
+    }
+
     public static boolean addPlaylist(String name, List<Song> songs){
-        if(songs.size() == 0){
+        if(songs == null || songs.size() == 0){
             return false;
         }
         Playlist playlist = new Playlist();

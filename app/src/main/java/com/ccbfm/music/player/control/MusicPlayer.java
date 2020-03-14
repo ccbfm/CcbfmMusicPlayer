@@ -2,12 +2,12 @@ package com.ccbfm.music.player.control;
 
 import android.media.MediaPlayer;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.ccbfm.music.player.IPlayerCallback;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.service.MusicService;
 import com.ccbfm.music.player.tool.Constants;
+import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.PlayerErrorCode;
 
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ public class MusicPlayer implements IControlPlayer {
     private Random mRandom;
     private String mCurrentPath;
     private boolean mIsPrepared = false;
+    private boolean mIsResetSongList = true;
     private Timer mTimer;
     private int mSeekTime = 0;
     private MusicService.NotificationCallback mCallback;
@@ -43,12 +44,16 @@ public class MusicPlayer implements IControlPlayer {
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                next();
+                LogTools.i(TAG, "onCompletion", "mIsResetSongList=" + mIsResetSongList);
+                if(!mIsResetSongList) {
+                    next();
+                }
             }
         });
         mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
+                LogTools.i(TAG, "onPrepared", "mp=" + mp);
                 mIsPrepared = true;
                 play();
             }
@@ -59,7 +64,8 @@ public class MusicPlayer implements IControlPlayer {
     public void prepare(String path) {
         initPlayer();
 
-        if (TextUtils.equals(mCurrentPath, path)) {
+        if (!TextUtils.isEmpty(mCurrentPath)
+                && TextUtils.equals(mCurrentPath, path)) {
             if (mIsPrepared) {
                 play();
             }
@@ -74,14 +80,14 @@ public class MusicPlayer implements IControlPlayer {
         }
         if (mPlayer != null && !TextUtils.isEmpty(path)) {
             mCurrentPath = path;
-
+            LogTools.w(TAG, "prepare", "path=" + path);
             try {
                 mIsPrepared = false;
                 mPlayer.reset();
                 mPlayer.setDataSource(path);
                 mPlayer.prepareAsync();
             } catch (Exception e) {
-                Log.e(TAG, "Exception--- ", e);
+                LogTools.e(TAG, "prepare", "Exception--- ", e);
                 callbackError(PlayerErrorCode.PREPARE);
                 next();
             }
@@ -91,6 +97,8 @@ public class MusicPlayer implements IControlPlayer {
     @Override
     public void play() {
         if (mPlayer != null && !isPlaying() && mIsPrepared) {
+            LogTools.i(TAG, "play", "------");
+            mIsResetSongList = false;
             startTimer();
             mPlayer.start();
             seekTo(mSeekTime);
@@ -101,6 +109,7 @@ public class MusicPlayer implements IControlPlayer {
     @Override
     public void stop() {
         if (mPlayer != null && isPlaying()) {
+            LogTools.i(TAG, "stop", "------");
             mPlayer.stop();
             cancelTimer();
             changeDisplay();
@@ -110,9 +119,16 @@ public class MusicPlayer implements IControlPlayer {
     @Override
     public void release() {
         if (mPlayer != null) {
+            LogTools.i(TAG, "release", "------");
             mPlayer.stop();
             mPlayer.release();
             mPlayer = null;
+            mSongList = null;
+            mCurrentPath = null;
+            mSongIndex = 0;
+            mIsPrepared = false;
+            mIsResetSongList = true;
+            mSeekTime = 0;
             cancelTimer();
             changeDisplay();
         }
@@ -121,6 +137,7 @@ public class MusicPlayer implements IControlPlayer {
     @Override
     public void pause() {
         if (mPlayer != null && isPlaying()) {
+            LogTools.i(TAG, "pause", "------");
             mPlayer.pause();
             cancelTimer();
             changeDisplay();
@@ -147,6 +164,7 @@ public class MusicPlayer implements IControlPlayer {
     @Override
     public void setSongList(List<Song> songList, int position) {
         if (songList == null) {
+            LogTools.w(TAG, "setSongList", "songList == null");
             return;
         }
         if (mSongList == null) {
@@ -156,7 +174,7 @@ public class MusicPlayer implements IControlPlayer {
             mSongList.addAll(songList);
         }
 
-        if(position == Constants.ONLY_RESET_SONG_LIST){
+        if (position == Constants.ONLY_RESET_SONG_LIST) {
             position = mSongIndex;
         } else {
             int size = songList.size();
@@ -170,7 +188,8 @@ public class MusicPlayer implements IControlPlayer {
 
         Song song = mSongList.get(position);
         String path = song.getSongPath();
-        Log.w(TAG, "setSongList-path="+path);
+        LogTools.w(TAG, "setSongList", "path=" + path);
+        mIsResetSongList = true;
         prepare(path);
     }
 
@@ -238,6 +257,7 @@ public class MusicPlayer implements IControlPlayer {
         if (size() == 0) {
             return;
         }
+        LogTools.i(TAG, "next", "------");
         pause();
         calculationIndex(1);
         prepare(null);
@@ -291,7 +311,7 @@ public class MusicPlayer implements IControlPlayer {
         mPlayerCallback = callback;
     }
 
-    private void callbackError(@PlayerErrorCode int code){
+    private void callbackError(@PlayerErrorCode int code) {
         if (mPlayerCallback != null) {
             try {
                 mPlayerCallback.callbackError(code, getCurrentSong());

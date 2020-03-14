@@ -7,18 +7,19 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.ccbfm.music.player.IPlayer;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.service.MusicService;
+import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.SharedPreferencesTools;
 
 import java.util.List;
 
 public class MusicControl implements ControlConstants {
+    private static final String TAG = "MusicControl";
     private PlayHandler mHandler;
     private IPlayer mPlayer;
 
@@ -34,10 +35,10 @@ public class MusicControl implements ControlConstants {
 
     }
 
-    public void initMusicService(final Context context){
+    public void initMusicService(final Context context) {
         Intent intent = new Intent(context.getApplicationContext(), MusicService.class);
         context.getApplicationContext().startService(intent);
-        context.getApplicationContext().bindService(intent, new ServiceConnection(){
+        context.getApplicationContext().bindService(intent, new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 mPlayer = IPlayer.Stub.asInterface(service);
@@ -51,56 +52,59 @@ public class MusicControl implements ControlConstants {
 
     }
 
-    public void prepare(String path){
+    public void prepare(String path) {
         sendMessage(STATUS_PREPARE, path);
     }
 
-    public void setSongList(List<Song> songList, int index){
+    public void setSongList(List<Song> songList, int index) {
         sendMessage(createMessage(STATUS_SET_LIST, songList, index), 300);
     }
 
-    public void play(){
+    public void play() {
         sendMessage(createMessage(STATUS_PLAY, null), 300);
     }
 
-    public void pause(){
+    public void pause() {
         sendMessage(STATUS_PAUSE, null);
     }
 
+    public void release() {
+        sendMessage(STATUS_RELEASE, null);
+    }
 
-    public boolean isPlaying(){
+    public boolean isPlaying() {
         try {
             return mPlayer != null && mPlayer.isPlaying();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    private void sendMessage(int what, Object obj){
+    private void sendMessage(int what, Object obj) {
         sendMessage(createMessage(what, obj), 0);
     }
 
-    private void sendMessage(Message message, long delayMillis){
-        if(mPlayer == null){
-            Log.e("MusicControl", ">>>>>>(mPlayer == null)");
+    private void sendMessage(Message message, long delayMillis) {
+        if (mPlayer == null) {
+            LogTools.e(TAG, "sendMessage", ">>>>>>(mPlayer == null)");
             return;
         }
-        if(mHandler == null){
+        if (mHandler == null) {
             mHandler = new PlayHandler(mPlayer);
         }
         mHandler.removeMessages(message.what);
-        mHandler.sendMessageDelayed(message, delayMillis);
+        mHandler.sendMessageDelayed(message, (delayMillis == 0 ? 100 : delayMillis));
     }
 
-    private Message createMessage(int what, Object obj){
+    private Message createMessage(int what, Object obj) {
         Message message = Message.obtain();
         message.what = what;
         message.obj = obj;
         return message;
     }
 
-    private Message createMessage(int what, Object obj, int arg1){
+    private Message createMessage(int what, Object obj, int arg1) {
         Message message = Message.obtain();
         message.what = what;
         message.obj = obj;
@@ -119,7 +123,8 @@ public class MusicControl implements ControlConstants {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            if(mPlayer == null){
+            LogTools.i(TAG, "handleMessage", "msg.what=" + msg.what + ",mPlayer=" + mPlayer);
+            if (mPlayer == null) {
                 return;
             }
             try {
@@ -128,13 +133,14 @@ public class MusicControl implements ControlConstants {
                         break;
                     case STATUS_SET_LIST:
                         seekTo(msg.arg1);
-                        List<Song> songs = (List<Song>)msg.obj;
-                        if(songs != null && songs.size() > 0) {
+                        List<Song> songs = (List<Song>) msg.obj;
+                        LogTools.i(TAG, "handleMessage", "songs=" + (songs != null ? songs.size() : null));
+                        if (songs != null && songs.size() > 0) {
                             mPlayer.setSongList(songs, msg.arg1);
                         }
                         break;
                     case STATUS_PREPARE:
-                        String path = (String)msg.obj;
+                        String path = (String) msg.obj;
                         mPlayer.prepare(path);
                         break;
                     case STATUS_PLAY:
@@ -163,17 +169,17 @@ public class MusicControl implements ControlConstants {
                         break;
 
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        private void seekTo(int newIndex){
-            if(newIndex < 0){
+        private void seekTo(int newIndex) {
+            if (newIndex < 0) {
                 return;
             }
             int index = SharedPreferencesTools.getIntValue(SharedPreferencesTools.KEY_INIT_SONG_INDEX);
-            if(newIndex == index) {
+            if (newIndex == index) {
                 int msec = SharedPreferencesTools.getIntValue(SharedPreferencesTools.KEY_INIT_SONG_MSEC);
                 Message message = Message.obtain();
                 message.what = STATUS_SEEK;

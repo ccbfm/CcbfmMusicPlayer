@@ -1,6 +1,5 @@
 package com.ccbfm.music.player.ui.fragment;
 
-import android.os.RemoteException;
 import android.view.View;
 import android.widget.TextView;
 
@@ -15,16 +14,16 @@ import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.databinding.FragmentControlBinding;
 import com.ccbfm.music.player.service.LocalService;
+import com.ccbfm.music.player.tool.Constants;
 import com.ccbfm.music.player.tool.LiveDataBus;
+import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.MathTools;
 import com.ccbfm.music.player.tool.SharedPreferencesTools;
 
 import java.util.List;
 
-import static com.ccbfm.music.player.tool.Constants.SCAN_SUCCESS_NOTIFICATION;
-
 public class ControlFragment extends BaseFragment<FragmentControlBinding> {
-
+    private static final String TAG = "ControlFragment";
     private List<Playlist> mPlaylists;
     private List<Song> mSongList;
     private int mSongIndex;
@@ -38,12 +37,7 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
             int playlistIndex = SharedPreferencesTools.getIntValue(SharedPreferencesTools.KEY_INIT_PLAYLIST_INDEX);
             if (mPlaylists != null) {
                 List<Song> songs = mPlaylists.get(playlistIndex).getSongList();
-                if(mSongList == null){
-                    mSongList = songs;
-                } else {
-                    mSongList.clear();
-                    mSongList.addAll(songs);
-                }
+                mSongList = songs;
                 Song song = songs.get(index);
                 updateUI(song.getSongName(), song.getSingerName());
             }
@@ -58,10 +52,10 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
 
         LocalService.addPlayerCallbackAdapter(mPlayerCallback);
 
-        LiveDataBus.get().<Boolean>with(SCAN_SUCCESS_NOTIFICATION).observe(this, new Observer<Boolean>() {
+        LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean flag) {
-                if (flag != null && flag && (mSongList == null || mSongList.size() == 0)) {
+                if (flag != null && flag) {
                     loadData(mViewDataBinding);
                 }
             }
@@ -104,6 +98,7 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
     }
 
     private void initData(FragmentControlBinding binding, List<Playlist> playlists) {
+        LogTools.i(TAG, "initData", "--------");
         mPlaylists = playlists;
         int playlistIndex = SharedPreferencesTools.getIntValue(SharedPreferencesTools.KEY_INIT_PLAYLIST_INDEX);
         int songIndex = SharedPreferencesTools.getIntValue(SharedPreferencesTools.KEY_INIT_SONG_INDEX);
@@ -120,6 +115,8 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
                     mSongIndex = songIndex;
                     Song song = songList.get(songIndex);
                     updateUI(song.getSongName(), song.getSingerName());
+                } else {
+                    updateUI("xx", "xx");
                 }
             }
         }
@@ -148,6 +145,6 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
     public void onDestroy() {
         super.onDestroy();
         LocalService.removePlayerCallbackAdapter(mPlayerCallback);
-        LiveDataBus.get().<Boolean>with(SCAN_SUCCESS_NOTIFICATION).postValue(null);
+        LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).postValue(null);
     }
 }
