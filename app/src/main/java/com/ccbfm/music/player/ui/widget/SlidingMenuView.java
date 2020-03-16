@@ -40,7 +40,7 @@ public class SlidingMenuView extends FrameLayout {
             mSlidingViewId = typedArray.getResourceId(R.styleable.SlidingMenuView_sliding_view_id, 0);
             final float maxDistance = typedArray.getDimension(R.styleable.SlidingMenuView_sliding_max_distance, 0f);
             typedArray.recycle();
-            mMaxDistance = (int)maxDistance;
+            mMaxDistance = (int) maxDistance;
         }
     }
 
@@ -50,18 +50,13 @@ public class SlidingMenuView extends FrameLayout {
         init();
     }
 
-    private void init(){
-        Log.w("wds", "mSlidingViewId = " + mSlidingViewId);
-        Log.w("wds", "mMaxDistance = " + mMaxDistance);
-        if(mSlidingViewId > 0){
+    private void init() {
+        if (mSlidingViewId > 0) {
             mSlidingView = findViewById(mSlidingViewId);
-
-            Log.w("wds", "mSlidingView = " + mSlidingView);
-
-            if(mSlidingView != null){
+            if (mSlidingView != null) {
                 int index = indexOfChild(mSlidingView);
-                if(index != getChildCount() - 1){
-                    throw new ChildPlaceException("需要滑动的View要在最后位置");
+                if (index != getChildCount() - 1) {
+                    throw new ChildPlaceException("滑动的View要在最后位置");
                 }
             }
             mDragHelper = ViewDragHelper.create(this, new SlidingViewCallback());
@@ -70,7 +65,8 @@ public class SlidingMenuView extends FrameLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if(mDragHelper != null){
+        Log.w("wds", "onInterceptTouchEvent-"+isSlidable()+","+ev);
+        if (mDragHelper != null) {
             return mDragHelper.shouldInterceptTouchEvent(ev);
         }
         return super.onInterceptTouchEvent(ev);
@@ -78,14 +74,8 @@ public class SlidingMenuView extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Log.w("wds", "onTouchEvent = " + isSlidable() +",event="+event);
-        if(isSlidable()){
-            final int action = event.getAction();
-            switch (action){
-                case MotionEvent.ACTION_UP:
-                    mDragHelper.smoothSlideViewTo(mSlidingView, -mMaxDistance, 0);
-                    break;
-            }
+        Log.w("wds", "onTouchEvent-"+isSlidable()+","+event);
+        if (isSlidable()) {
             mDragHelper.processTouchEvent(event);
             return true;
         }
@@ -99,29 +89,44 @@ public class SlidingMenuView extends FrameLayout {
         }
     }
 
-    private boolean isSlidable(){
+    private boolean isSlidable() {
         return mMaxDistance > 0 && mSlidingView != null && mDragHelper != null;
     }
 
-    private class SlidingViewCallback extends ViewDragHelper.Callback{
+    private class SlidingViewCallback extends ViewDragHelper.Callback {
         @Override
         public boolean tryCaptureView(@NonNull View child, int pointerId) {
-            return true;
+            return isSlidable();
         }
 
         @Override
         public void onViewReleased(@NonNull View releasedChild, float xvel, float yvel) {
-            super.onViewReleased(releasedChild, xvel, yvel);
+            if (mSlidingView != null) {
+                int left = mSlidingView.getLeft();
+                if (left < 0) {
+                    //left
+                    if (xvel < 0) {
+                        mDragHelper.smoothSlideViewTo(mSlidingView, -mMaxDistance, 0);
+                    }
+                    //right
+                    else {
+                        mDragHelper.smoothSlideViewTo(mSlidingView, 0, 0);
+                    }
+                    ViewCompat.postInvalidateOnAnimation(SlidingMenuView.this);
+                }
+            }
         }
 
         @Override
         public int clampViewPositionHorizontal(@NonNull View child, int left, int dx) {
-            if(left > 0){
+            if (left > 0) {
                 left = 0;
-            } else if(left < -mMaxDistance){
+            } else if (left < -mMaxDistance) {
                 left = -mMaxDistance;
             }
             return left;
         }
+
     }
+
 }

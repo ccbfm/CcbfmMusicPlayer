@@ -3,7 +3,6 @@ package com.ccbfm.music.player.ui.widget;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,6 @@ import android.widget.AbsListView;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 
-import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.MathTools;
 
 /**
