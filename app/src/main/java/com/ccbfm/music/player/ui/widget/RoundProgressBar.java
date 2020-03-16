@@ -103,16 +103,17 @@ public class RoundProgressBar extends View {
 
     public RoundProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundProgressBar);
-        mRoundWidth = typedArray.getDimension(R.styleable.RoundProgressBar_round_width, 0);
-        mRoundFloorColor = typedArray.getColor(R.styleable.RoundProgressBar_round_floor_color, Color.parseColor(("#556677")));
-        mRoundProgressStartColor = typedArray.getColor(R.styleable.RoundProgressBar_round_progress_start_color, Color.parseColor(("#FFFFFF")));
-        mRoundProgressEndColor = typedArray.getColor(R.styleable.RoundProgressBar_round_progress_end_color, Color.parseColor(("#000000")));
-        mRoundProgressRadius = typedArray.getDimension(R.styleable.RoundProgressBar_round_progress_radius, 0);
-        mRoundTextColor = typedArray.getColor(R.styleable.RoundProgressBar_round_text_color, mRoundFloorColor);
-        mRoundTextSize = typedArray.getDimension(R.styleable.RoundProgressBar_round_text_size, 0);
-        typedArray.recycle();
-
+        if(attrs != null) {
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundProgressBar);
+            mRoundWidth = typedArray.getDimension(R.styleable.RoundProgressBar_round_width, 0);
+            mRoundFloorColor = typedArray.getColor(R.styleable.RoundProgressBar_round_floor_color, Color.parseColor(("#556677")));
+            mRoundProgressStartColor = typedArray.getColor(R.styleable.RoundProgressBar_round_progress_start_color, Color.parseColor(("#FFFFFF")));
+            mRoundProgressEndColor = typedArray.getColor(R.styleable.RoundProgressBar_round_progress_end_color, Color.parseColor(("#000000")));
+            mRoundProgressRadius = typedArray.getDimension(R.styleable.RoundProgressBar_round_progress_radius, 0);
+            mRoundTextColor = typedArray.getColor(R.styleable.RoundProgressBar_round_text_color, mRoundFloorColor);
+            mRoundTextSize = typedArray.getDimension(R.styleable.RoundProgressBar_round_text_size, 0);
+            typedArray.recycle();
+        }
         init();
     }
 

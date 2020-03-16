@@ -16,4 +16,9 @@
         <!--圆环中心百分比字体大小-->
         <attr name="round_text_size" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="SlidingMenuView">
+        <attr name="sliding_view_id" format="reference"/>
+        <attr name="sliding_max_distance" format="dimension"/>
+    </declare-styleable>
 </resources>
