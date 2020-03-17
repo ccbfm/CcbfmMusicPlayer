@@ -11,6 +11,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Playlist extends LitePalSupport implements Parcelable {
+    private long id;
+
+    private long orderId;
 
     @Column(nullable = false, defaultValue = "新建列表")
     private String name = "新建列表";
@@ -24,6 +27,22 @@ public class Playlist extends LitePalSupport implements Parcelable {
 
     public Playlist(String name) {
         this.name = name;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
     }
 
     public String getName() {
@@ -53,6 +72,8 @@ public class Playlist extends LitePalSupport implements Parcelable {
     }
 
     private Playlist(Parcel in){
+        this.id = in.readLong();
+        this.orderId = in.readLong();
         this.name = in.readString();
         this.description = in.readString();
         this.songList = in.createTypedArrayList(Song.CREATOR);
@@ -65,6 +86,8 @@ public class Playlist extends LitePalSupport implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.id);
+        dest.writeLong(this.orderId);
         dest.writeString(this.name);
         dest.writeString(this.description);
         dest.writeTypedList(this.songList);

@@ -2,7 +2,6 @@ package com.ccbfm.music.player.ui.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -27,7 +26,7 @@ import com.ccbfm.music.player.ui.widget.PinnedHeaderExpandableListView;
 
 public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
     private static final String TAG = "SongListFragment";
-    private static final int CODE_CREATE_PLAYLIST = 0x12;
+    public static final int CODE_CREATE_PLAYLIST = 0x12;
     private SongListModel mSongListModel;
     private TextView mHeadName;
     private View mAddSongList;
@@ -61,7 +60,7 @@ public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
                 setHeadNameText(groupItem);
             }
         });
-        model.setAdapter(new SongListExpandableListAdapter(getContext(), binding.musicSongList));
+        model.setAdapter(new SongListExpandableListAdapter(this, binding.musicSongList));
         binding.setSongListModel(model);
         mSongListModel = model;
 

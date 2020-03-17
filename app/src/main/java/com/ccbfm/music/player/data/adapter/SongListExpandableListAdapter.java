@@ -3,6 +3,7 @@ package com.ccbfm.music.player.data.adapter;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,10 @@ import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.tool.DialogTools;
 import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.SPTools;
+import com.ccbfm.music.player.tool.StartActivityTools;
+import com.ccbfm.music.player.ui.activity.CreatePlaylistActivity;
+import com.ccbfm.music.player.ui.fragment.BaseFragment;
+import com.ccbfm.music.player.ui.fragment.SongListFragment;
 import com.ccbfm.music.player.ui.widget.SlidingMenuView;
 
 import java.util.HashMap;
@@ -36,8 +41,8 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
     private LinkedList<Playlist> mPlaylists = new LinkedList<>();
     private OnChildClickListener mChildClickListener;
     private boolean mInitDisplay = true;
-    private int mPlaylistIndex;
-    private int mSongIndex;
+    private int mPlaylistIndex = -1;
+    private int mSongIndex = -1;
     private ExpandableListView mListView;
     private View mCurrentView;
     private HashMap<GroupHolder, String> mGroupHolderMap;
@@ -61,7 +66,8 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
         }
     };
 
-    public SongListExpandableListAdapter(final Context context, ExpandableListView listView) {
+    public SongListExpandableListAdapter(final BaseFragment fragment, ExpandableListView listView) {
+        final Context context = fragment.getContext();
         mListView = listView;
         listView.setAdapter(this);
         mGroupHolderMap = new HashMap<>(8);
@@ -100,6 +106,10 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
                     case R.id.music_song_delete:
                         int messageId = (groupPosition == 0) ? R.string.music_delete_song_1
                                 : R.string.music_delete_song_2;
+                        if (mSongIndex > childPosition) {
+                            mSongIndex--;
+                            SPTools.putIntValue(SPTools.KEY_INIT_SONG_INDEX, mSongIndex);
+                        }
                         Dialog dialog = DialogTools.buildDeleteDialog(context, messageId, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -110,6 +120,7 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
                             }
                         });
                         dialog.show();
+                        changeChildSlidingView(-1, -1);
                         break;
                     case R.id.music_playlist_delete:
                         Dialog dialogPlaylist = DialogTools.buildDeleteDialog(context, R.string.music_delete_playlist,
@@ -120,6 +131,16 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
                                     }
                                 });
                         dialogPlaylist.show();
+                        changeGroupSlidingView(-1);
+                        break;
+                    case R.id.music_playlist_edit:
+                        Playlist oldPlaylist = mPlaylists.get(groupPosition);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable(CreatePlaylistActivity.KEY_OLD_PLAYLIST, oldPlaylist);
+                        StartActivityTools.startForResult(fragment,
+                                CreatePlaylistActivity.class, bundle,
+                                SongListFragment.CODE_CREATE_PLAYLIST);
+                        changeGroupSlidingView(-1);
                         break;
                 }
             }
@@ -127,10 +148,20 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     public void updatePlaylist(List<Playlist> playlists) {
+        if (DEBUG) {
+            LogTools.d(TAG, "updatePlaylist-=" + mPlaylistIndex + "," + mSongIndex);
+        }
         mPlaylists.clear();
         mPlaylists.addAll(playlists);
+        boolean flag = mPlaylistIndex != -1 && mSongIndex != -1;
         mPlaylistIndex = SPTools.getIntValue(SPTools.KEY_INIT_PLAYLIST_INDEX);
         mSongIndex = SPTools.getIntValue(SPTools.KEY_INIT_SONG_INDEX);
+        if (flag) {
+            if(MusicControl.getInstance().isPlaying()) {
+                MusicControl.getInstance().setSongList(
+                        mPlaylists.get(mPlaylistIndex).getSongList(), mSongIndex);
+            }
+        }
         notifyDataSetChanged();
         changeGroupSlidingView(-1);
         changeChildSlidingView(-1, -1);
@@ -187,6 +218,7 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
             groupHolder = new GroupHolder();
             groupHolder.listName = convertView.findViewById(R.id.music_song_list_name);
             groupHolder.playlistDelete = convertView.findViewById(R.id.music_playlist_delete);
+            groupHolder.playlistEdit = convertView.findViewById(R.id.music_playlist_edit);
             groupHolder.convertView = (SlidingMenuView) convertView;
             convertView.setTag(groupHolder);
         } else {
@@ -217,6 +249,17 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
                 }
             }
         });
+        groupHolder.playlistEdit.setTag(R.id.tag_group_position, groupPosition);
+        groupHolder.playlistEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mChildClickListener != null && v != null) {
+                    int groupPosition = (int) v.getTag(R.id.tag_group_position);
+                    mChildClickListener.onClick(v, groupPosition, -1);
+                }
+            }
+        });
+
         groupHolder.convertView.setSlidingStateListener(mGroupSlidingStateListener);
         if (mInitDisplay && mPlaylistIndex == groupPosition) {
             mInitDisplay = false;
@@ -377,6 +420,7 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
         SlidingMenuView convertView;
         TextView listName;
         ImageButton playlistDelete;
+        ImageButton playlistEdit;
 
         @Override
         public boolean equals(Object o) {

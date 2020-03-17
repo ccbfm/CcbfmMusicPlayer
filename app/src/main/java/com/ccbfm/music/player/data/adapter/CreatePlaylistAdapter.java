@@ -2,6 +2,7 @@ package com.ccbfm.music.player.data.adapter;
 
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,22 +30,34 @@ public class CreatePlaylistAdapter extends BaseAdapter {
     private Handler mHandler;
     private HashSet<Integer> mCheckedSet;
 
-    public CreatePlaylistAdapter(List<Song> songList) {
+    public CreatePlaylistAdapter(List<Song> songList, List<Song> oldSongs) {
         if (songList != null) {
-            if (mSongList == null) {
-                mSongList = new ArrayList<>(songList);
+            if (oldSongs != null) {
+                matchChecked(songList, oldSongs);
             } else {
-                mSongList.clear();
-                mSongList.addAll(songList);
+                if (mSongList == null) {
+                    mSongList = new ArrayList<>(songList);
+                } else {
+                    mSongList.clear();
+                    mSongList.addAll(songList);
+                }
             }
         } else {
             mSongList = new LinkedList<>();
         }
     }
 
-    public void updateData(List<Song> songList, final ListView listView, Integer position) {
-        mSongList.clear();
-        mSongList.addAll(songList);
+    public void updateData(List<Song> songList, List<Song> oldSongs,
+                           final ListView listView, Integer position) {
+        if (songList == null) {
+            return;
+        }
+        if (oldSongs != null) {
+            matchChecked(songList, oldSongs);
+        } else {
+            mSongList.clear();
+            mSongList.addAll(songList);
+        }
         notifyDataSetChanged();
         if (mHandler == null) {
             mHandler = new Handler();
@@ -59,6 +72,27 @@ public class CreatePlaylistAdapter extends BaseAdapter {
                 listView.setSelection(pos);
             }
         }, 0);
+    }
+
+    private void matchChecked(List<Song> songList, List<Song> oldSongs) {
+        if (mSongList == null) {
+            mSongList = new LinkedList<>();
+        } else {
+            mSongList.clear();
+        }
+        if (mCheckedSet == null) {
+            mCheckedSet = new HashSet<>(getCount() / 4);
+        } else {
+            mCheckedSet.clear();
+        }
+        int size = songList.size();
+        for (int i = 0; i < size; i++) {
+            Song song = songList.get(i);
+            if (oldSongs.contains(song)) {
+                mCheckedSet.add(i);
+            }
+            mSongList.add(song);
+        }
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -101,7 +135,7 @@ public class CreatePlaylistAdapter extends BaseAdapter {
         holder.fileName.setText(song.getSongName());
         holder.checkBox.setTag(position);
 
-        if(mCheckedSet != null) {
+        if (mCheckedSet != null) {
             holder.checkBox.setChecked(mCheckedSet.contains(position));
         }
         convertView.setOnClickListener(new View.OnClickListener() {
@@ -135,7 +169,7 @@ public class CreatePlaylistAdapter extends BaseAdapter {
     }
 
     public List<Song> getSelectSongList() {
-        if(mCheckedSet == null){
+        if (mCheckedSet == null) {
             return null;
         }
         int size = mCheckedSet.size();

@@ -1,22 +1,17 @@
 package com.ccbfm.music.player.data.model;
 
-import android.util.Log;
-import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ListView;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
 import com.ccbfm.music.player.BR;
-import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.data.adapter.CreatePlaylistAdapter;
 import com.ccbfm.music.player.database.SongLoader;
 import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.tool.LogTools;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class CreatePlaylistModel extends BaseObservable {
@@ -25,13 +20,18 @@ public class CreatePlaylistModel extends BaseObservable {
     private ListView mListView;
     private List<Song> mSongList;
     private String mPlaylistName;
+    private Playlist mOldPlaylist;
 
-    public CreatePlaylistModel(ListView listView) {
+    public CreatePlaylistModel(ListView listView, Playlist oldPlaylist) {
         mListView = listView;
-        loadData();
+        mOldPlaylist = oldPlaylist;
+        if(oldPlaylist != null){
+            setPlaylistName(oldPlaylist.getName());
+        }
+        loadData(oldPlaylist);
     }
 
-    private void loadData() {
+    private void loadData(final Playlist oldPlaylist) {
         LogTools.i(TAG, "loadData", "-------");
         List<Playlist> playlists = SongLoader.getSongData(new SongLoader.LoadSongCallBack() {
             @Override
@@ -41,7 +41,7 @@ public class CreatePlaylistModel extends BaseObservable {
 
             @Override
             public void onPostExecute(List<Playlist> playlists) {
-                loadSongEnd(playlists);
+                loadSongEnd(playlists, oldPlaylist);
             }
 
             @Override
@@ -50,26 +50,28 @@ public class CreatePlaylistModel extends BaseObservable {
             }
         });
         if (playlists != null) {
-            loadSongEnd(playlists);
+            loadSongEnd(playlists, oldPlaylist);
         }
     }
 
-    public boolean addPlaylist(){
-        return SongLoader.addPlaylist(getPlaylistName(), mCreatePlaylistAdapter.getSelectSongList());
+    public boolean addOrUpdatePlaylist(){
+        return SongLoader.addOrUpdatePlaylist(mOldPlaylist, getPlaylistName(),
+                mCreatePlaylistAdapter.getSelectSongList());
     }
 
     private void loadSongStart() {
 
     }
 
-    private void loadSongEnd(List<Playlist> playlists) {
+    private void loadSongEnd(List<Playlist> playlists, Playlist oldPlaylist) {
         if (playlists != null && playlists.size() != 0) {
             mSongList = playlists.get(0).getSongList();
+            List<Song> oldSongs = oldPlaylist != null ? oldPlaylist.getSongList() : null;
             if(mCreatePlaylistAdapter == null){
-                CreatePlaylistAdapter adapter = new CreatePlaylistAdapter(mSongList);
+                CreatePlaylistAdapter adapter = new CreatePlaylistAdapter(mSongList, oldSongs);
                 setCreatePlaylistAdapter(adapter);
             } else if(mListView != null){
-                mCreatePlaylistAdapter.updateData(mSongList, mListView, 0);
+                mCreatePlaylistAdapter.updateData(mSongList, oldSongs, mListView, 0);
             }
         }
     }

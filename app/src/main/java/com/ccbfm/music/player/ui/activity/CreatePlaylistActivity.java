@@ -5,15 +5,18 @@ import android.view.View;
 
 import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.data.model.CreatePlaylistModel;
+import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.databinding.ActivityCreatePlaylistBinding;
 
 public class CreatePlaylistActivity extends BaseActivity<ActivityCreatePlaylistBinding> {
+    public static final String KEY_OLD_PLAYLIST = "key_old_playlist";
 
     private CreatePlaylistModel mModel;
 
     @Override
     protected void initView(ActivityCreatePlaylistBinding binding) {
-        CreatePlaylistModel model = new CreatePlaylistModel(binding.musicCreatePlaylist);
+        Playlist playlist = getIntent().getParcelableExtra(KEY_OLD_PLAYLIST);
+        CreatePlaylistModel model = new CreatePlaylistModel(binding.musicCreatePlaylist, playlist);
         binding.setCreatePlaylistModel(model);
         mModel = model;
     }
@@ -29,7 +32,7 @@ public class CreatePlaylistActivity extends BaseActivity<ActivityCreatePlaylistB
     }
 
     public void selectConfirm(View view){
-        boolean flag = mModel.addPlaylist();
+        boolean flag = mModel.addOrUpdatePlaylist();
         if(!flag){
             selectCancel(view);
             return;

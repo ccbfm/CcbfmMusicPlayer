@@ -3,6 +3,8 @@ package com.ccbfm.music.player.database;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
@@ -12,8 +14,11 @@ import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.tool.Constants;
 import com.ccbfm.music.player.tool.LiveDataBus;
+import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.SPTools;
 import com.ccbfm.music.player.tool.ToastTools;
+
+import org.litepal.LitePal;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -23,10 +28,11 @@ import java.util.concurrent.TimeUnit;
 
 public final class SongLoader {
     private static final String TAG = "SongLoader";
+    private static final boolean DEBUG = false;
 
     private static final Executor EXECUTOR = new ThreadPoolExecutor(1, 5, 1,
             TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(100));
-
+    private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
     private static String[] PROJECTION = new String[]{
             MediaStore.Audio.AudioColumns._ID,
@@ -53,10 +59,11 @@ public final class SongLoader {
         return null;
     }
 
-    public static int loadAudioSong(Context context, String path) {
+    public static int[] loadAudioSong(Context context, String path) {
         Cursor cursor = makeSongCursor(context, path);
         if (cursor != null) {
             int count = cursor.getCount();
+            int skip = 0;
             if (count > 0) {
                 while (cursor.moveToNext()) {
                     //long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.AudioColumns._ID));
@@ -66,6 +73,13 @@ public final class SongLoader {
                     int album_id = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ALBUM_ID));
                     int duration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DURATION));
                     String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DATA));
+
+                    List<Song> songs = LitePal.where("songPath=? and status != 0", data).find(Song.class);
+                    if (songs != null && songs.size() > 0) {
+                        skip++;
+                        continue;
+                    }
+
                     Song song = new Song(title, artist, data);
                     song.setDuration(duration);
                     song.setAlbum(album);
@@ -74,17 +88,23 @@ public final class SongLoader {
                 }
                 sPlaylists = null;
             }
-            return count;
+            return new int[]{count, skip};
         }
-        return 0;
+        return null;
     }
 
     private static List<Playlist> sPlaylists;
     private static LoadDBSong sLoadDBSong;
 
     public static List<Playlist> getSongData(LoadSongCallBack callBack) {
+        if (DEBUG) {
+            LogTools.d(TAG, "getSongData", "sPlaylists=" + (sPlaylists != null));
+        }
         if (sPlaylists != null) {
             return sPlaylists;
+        }
+        if (DEBUG) {
+            LogTools.d(TAG, "getSongData", "--->---");
         }
         if (sLoadDBSong != null && !sLoadDBSong.isCancelled()) {
             sLoadDBSong.cancel(true);
@@ -129,6 +149,9 @@ public final class SongLoader {
         @Override
         protected void onPostExecute(List<Playlist> playlists) {
             super.onPostExecute(playlists);
+            if (DEBUG) {
+                LogTools.d(TAG, "onPostExecute", "playlists=" + playlists);
+            }
             if (mCallBack != null) {
                 mCallBack.onPostExecute(playlists);
             }
@@ -180,13 +203,38 @@ public final class SongLoader {
         MusicControl.getInstance().release();
     }
 
-    public static boolean addPlaylist(String name, List<Song> songs) {
+    public static boolean addOrUpdatePlaylist(Playlist oldPlaylist, String name, List<Song> songs) {
         if (songs == null || songs.size() == 0) {
             return false;
         }
+        if (oldPlaylist != null) {
+            oldPlaylist.setName(name);
+            oldPlaylist.setSongList(songs);
+            if (oldPlaylist.getOrderId() == 0) {
+                oldPlaylist.setOrderId(oldPlaylist.getId());
+            }
+            int deleteAffected = LitePal.delete(Playlist.class, oldPlaylist.getId());
+            if (DEBUG) {
+                LogTools.d(TAG, "addOrUpdatePlaylist", "deleteAffected=" + deleteAffected);
+            }
+            if (deleteAffected > 0) {
+                boolean flag = oldPlaylist.save();
+                if (DEBUG) {
+                    LogTools.d(TAG, "addOrUpdatePlaylist", "flag=" + flag);
+                }
+                if (flag) {
+                    sPlaylists = null;
+                    return true;
+                }
+            }
+            return false;
+        }
+
         Playlist playlist = new Playlist();
         playlist.setName(name);
         playlist.setSongList(songs);
+        int count = DBDao.queryPlaylistCount() + 1;
+        playlist.setOrderId(count);
         boolean flag = playlist.save();
         if (flag) {
             sPlaylists.add(playlist);
@@ -232,29 +280,41 @@ public final class SongLoader {
         EXECUTOR.execute(runnable);
     }
 
-    public static void loadBlacklist(final CallbackSongList callback){
+    public static void loadBlacklist(final CallbackSongList callback) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                List<Song> songList = DBDao.queryAllSong("1");
-                if(callback != null){
-                    callback.callback(songList);
-                }
+                final List<Song> songList = DBDao.queryAllSong("1");
+                MAIN_HANDLER.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (callback != null) {
+                            callback.callback(songList);
+                        }
+                    }
+                });
+
             }
         };
         EXECUTOR.execute(runnable);
     }
 
-    public static void restoreBlacklist(final Song song, final Callback callback){
+    public static void restoreBlacklist(final Song song, final Callback callback) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 song.setStatus(0);
                 song.save();
 
-                if(callback != null){
-                    callback.callback();
-                }
+                MAIN_HANDLER.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (callback != null) {
+                            callback.callback();
+                        }
+                    }
+                });
+
                 sPlaylists = null;
                 loadDBSong();
                 LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).postValue(true);

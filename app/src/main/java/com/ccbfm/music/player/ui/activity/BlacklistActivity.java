@@ -1,5 +1,6 @@
 package com.ccbfm.music.player.ui.activity;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.view.View;
 
@@ -24,7 +25,7 @@ public class BlacklistActivity extends BaseActivity<ActivityBlacklistBinding> {
         mAdapter.setClickListener(new BlacklistAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, final Song song) {
-                DialogTools.buildRestoreDialog(BlacklistActivity.this, R.string.music_restore_hint,
+                Dialog dialog = DialogTools.buildRestoreDialog(BlacklistActivity.this, R.string.music_restore_hint,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -36,6 +37,7 @@ public class BlacklistActivity extends BaseActivity<ActivityBlacklistBinding> {
                                 });
                             }
                         });
+                dialog.show();
             }
         });
         binding.musicBlacklist.setAdapter(mAdapter);
@@ -64,7 +66,7 @@ public class BlacklistActivity extends BaseActivity<ActivityBlacklistBinding> {
     }
 
     private void loadSongEnd(List<Song> songList) {
-        if(songList != null){
+        if (songList != null) {
             mAdapter.updateData(songList);
         }
     }

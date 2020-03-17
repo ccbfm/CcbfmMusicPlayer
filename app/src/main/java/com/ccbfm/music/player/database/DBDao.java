@@ -19,9 +19,12 @@ public final class DBDao {
     }
 
     public static List<Playlist> queryAllPlaylist(){
-        return LitePal.findAll(Playlist.class, true);
+        return LitePal.order("orderId asc").find(Playlist.class, true);
     }
 
+    public static int queryPlaylistCount(){
+        return LitePal.count(Playlist.class);
+    }
 
     //delete
     public static void deleteSongById(long id){

@@ -74,7 +74,7 @@ public class SlidingMenuView extends FrameLayout {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if(DEBUG) {
+        if (DEBUG) {
             LogTools.d(TAG, "dispatchTouchEvent", isSlidable() + ",ev=" + ev);
         }
         return super.dispatchTouchEvent(ev);
@@ -82,30 +82,38 @@ public class SlidingMenuView extends FrameLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if(DEBUG) {
+        if (DEBUG) {
             LogTools.d(TAG, "onInterceptTouchEvent", isSlidable() + ",ev=" + ev);
         }
         if (mDragHelper != null) {
-            return mDragHelper.shouldInterceptTouchEvent(ev);
+            boolean flag = mDragHelper.shouldInterceptTouchEvent(ev);
+            if (DEBUG) {
+                LogTools.d(TAG, "onInterceptTouchEvent", "flag=" + flag);
+            }
+            return !mIsOpen;
         }
         return super.onInterceptTouchEvent(ev);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if(DEBUG) {
+        if (DEBUG) {
             LogTools.d(TAG, "onTouchEvent", isSlidable() + ",ev=" + ev);
         }
         if (isSlidable()) {
             final int action = ev.getAction();
-
+            final float x = ev.getX();
+            final float y = ev.getY();
             switch (action) {
                 case MotionEvent.ACTION_DOWN:
-                    mDx = ev.getX();
-                    mDy = ev.getY();
+                    mDx = x;
+                    mDy = y;
                     break;
                 case MotionEvent.ACTION_UP:
-                    if (mDx == ev.getX() && mDy == ev.getY() && !mIsOpen) {
+                    if (mDx == x && mDy == y && !mIsOpen) {
+                        if (DEBUG) {
+                            LogTools.d(TAG, "onTouchEvent", "performClick");
+                        }
                         performClick();
                     }
                     break;
@@ -128,10 +136,10 @@ public class SlidingMenuView extends FrameLayout {
     }
 
     private void openSlidingView() {
-        if(DEBUG) {
+        if (DEBUG) {
             LogTools.d(TAG, "openSlidingView", "mIsOpen=" + mIsOpen);
         }
-        if(mIsOpen){
+        if (mIsOpen) {
             return;
         }
         mIsOpen = true;
@@ -141,10 +149,10 @@ public class SlidingMenuView extends FrameLayout {
     }
 
     public void closeSlidingView() {
-        if(DEBUG) {
+        if (DEBUG) {
             LogTools.d(TAG, "closeSlidingView", "mIsOpen=" + mIsOpen);
         }
-        if(!mIsOpen){
+        if (!mIsOpen) {
             return;
         }
         mIsOpen = false;
@@ -153,8 +161,8 @@ public class SlidingMenuView extends FrameLayout {
         changeSlidingStateListener(false);
     }
 
-    private void changeSlidingStateListener(boolean open){
-        if(mSlidingStateListener != null){
+    private void changeSlidingStateListener(boolean open) {
+        if (mSlidingStateListener != null) {
             int groupPosition = (int) getTag(R.id.tag_group_position);
             int childPosition = (int) getTag(R.id.tag_child_position);
             mSlidingStateListener.onSlidingState(open, groupPosition, childPosition);
@@ -176,7 +184,7 @@ public class SlidingMenuView extends FrameLayout {
 
         @Override
         public void onViewReleased(@NonNull View releasedChild, float xvel, float yvel) {
-            if(DEBUG) {
+            if (DEBUG) {
                 LogTools.d(TAG, "onViewReleased", "mLeft=" + mLeft);
             }
             if (mSlidingView != null) {

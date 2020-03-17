@@ -82,16 +82,17 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
         SPTools.putStringValue(KEY_SELECT_DIRECTORY_NAME, directoryName);
     }
 
-    private void loadSongEnd(int count) {
+    private void loadSongEnd(int[] count) {
         mLoadSong = null;
-        boolean flag = (count > 0);
-        ToastTools.showToast(mFragment.getContext(), "扫描完成：" + (flag ? "成功 " + count + "个" : "失败"));
+        boolean flag = (count != null && count[0] > 0);
+        ToastTools.showToast(mFragment.getContext(), "扫描完成：" +
+                (flag ? "成功 " + count[0] + "个，跳过黑名单 " + count[1] + "个" : "失败"));
         if (flag) {
             LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).postValue(true);
         }
     }
 
-    private static class LoadSong extends AsyncTask<String, Integer, Integer> {
+    private static class LoadSong extends AsyncTask<String, int[], int[]> {
         private ScanningModel mScanningModel;
 
         private LoadSong(ScanningModel scanningModel) {
@@ -99,7 +100,7 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
         }
 
         @Override
-        protected Integer doInBackground(String... strings) {
+        protected int[] doInBackground(String... strings) {
             String path = mScanningModel.getDirectoryName();
             return SongLoader.loadAudioSong(mScanningModel.mFragment.getContext(), path);
         }
@@ -110,21 +111,20 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
         }
 
         @Override
-        protected void onPostExecute(Integer integer) {
-            super.onPostExecute(integer);
-            int count = integer != null ? integer : 0;
-            mScanningModel.loadSongEnd(count);
+        protected void onPostExecute(int[] ints) {
+            super.onPostExecute(ints);
+            mScanningModel.loadSongEnd(ints);
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values) {
+        protected void onProgressUpdate(int[]... values) {
             super.onProgressUpdate(values);
         }
 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            mScanningModel.loadSongEnd(0);
+            mScanningModel.loadSongEnd(null);
         }
     }
 }

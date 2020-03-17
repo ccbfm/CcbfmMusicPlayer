@@ -1,6 +1,7 @@
 package com.ccbfm.music.player.data.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,16 +11,30 @@ import android.widget.TextView;
 
 import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.database.entity.Song;
+import com.ccbfm.music.player.ui.widget.SlidingMenuView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class BlacklistAdapter extends BaseAdapter {
     private static final String TAG = "BlacklistAdapter";
     private List<Song> mSongList;
     private LayoutInflater mLayoutInflater;
     private OnItemClickListener mClickListener;
+    private HashMap<ViewHolder, String> mViewHolderMap;
+
+    private SlidingMenuView.SlidingStateListener mViewSlidingStateListener = new SlidingMenuView.SlidingStateListener() {
+        @Override
+        public void onSlidingState(boolean open, int groupIndex, int childIndex) {
+            if (open) {
+                changeViewSlidingView(groupIndex);
+            }
+        }
+    };
 
     public BlacklistAdapter(List<Song> songList) {
         if (songList != null) {
@@ -32,6 +47,7 @@ public class BlacklistAdapter extends BaseAdapter {
         } else {
             mSongList = new LinkedList<>();
         }
+        mViewHolderMap = new HashMap<>(16);
     }
 
     public void setClickListener(OnItemClickListener clickListener) {
@@ -71,27 +87,47 @@ public class BlacklistAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.fileName = (TextView) convertView.findViewById(R.id.music_blacklist_song);
             holder.songRestore = convertView.findViewById(R.id.music_blacklist_song_restore);
-            holder.convertView = convertView;
+            holder.convertView = (SlidingMenuView) convertView;
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.songRestore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mClickListener != null){
-                    mClickListener.onItemClick(v, getItem(position));
+        convertView.setTag(R.id.tag_group_position, position);
+        convertView.setTag(R.id.tag_child_position, position);
+        mViewHolderMap.put(holder, position+"");
+        holder.convertView.setSlidingStateListener(mViewSlidingStateListener);
+        if(mClickListener != null) {
+            holder.songRestore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mClickListener != null) {
+                        mClickListener.onItemClick(v, getItem(position));
+                    }
+                    changeViewSlidingView(-1);
                 }
-            }
-        });
+            });
+        }
         final Song song = getItem(position);
         holder.fileName.setText(song.getSongName());
 
         return convertView;
     }
 
+    private void changeViewSlidingView(int position) {
+        if (mViewHolderMap != null) {
+            Set<Map.Entry<ViewHolder, String>> set = mViewHolderMap.entrySet();
+            String targetKey = position + "";
+            for (Map.Entry<ViewHolder, String> entry : set) {
+                if (TextUtils.equals(entry.getValue(), targetKey)) {
+                    continue;
+                }
+                entry.getKey().convertView.closeSlidingView();
+            }
+        }
+    }
+
     private static class ViewHolder {
-        View convertView;
+        SlidingMenuView convertView;
         TextView fileName;
         ImageButton songRestore;
     }

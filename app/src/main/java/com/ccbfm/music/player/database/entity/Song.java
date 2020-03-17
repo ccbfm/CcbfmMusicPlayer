@@ -7,6 +7,7 @@ import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Song extends LitePalSupport implements Parcelable {
 
@@ -200,5 +201,18 @@ public class Song extends LitePalSupport implements Parcelable {
                 ", albumId=" + albumId +
                 ", status=" + status +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Song song = (Song) o;
+        return Objects.equals(songPath, song.songPath);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(songPath);
     }
 }
