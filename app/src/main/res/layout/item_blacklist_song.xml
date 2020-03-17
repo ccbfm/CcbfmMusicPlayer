@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.ccbfm.music.player.ui.widget.SlidingMenuView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:sliding_max_distance="64dp"
+    app:sliding_view_id="@+id/music_blacklist_song">
+
+    <ImageButton
+        android:id="@+id/music_blacklist_song_restore"
+        android:layout_width="64dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="@color/colorAccent"
+        android:scaleType="center"
+        android:src="@drawable/ic_restore_asset_24dp" />
+
+    <TextView
+        android:id="@+id/music_blacklist_song"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center_vertical"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp" />
+
+</com.ccbfm.music.player.ui.widget.SlidingMenuView>

@@ -16,7 +16,9 @@ import com.ccbfm.music.player.database.SongLoader;
 import com.ccbfm.music.player.tool.Constants;
 import com.ccbfm.music.player.tool.LiveDataBus;
 import com.ccbfm.music.player.tool.SPTools;
+import com.ccbfm.music.player.tool.StartActivityTools;
 import com.ccbfm.music.player.tool.ToastTools;
+import com.ccbfm.music.player.ui.activity.BlacklistActivity;
 import com.ccbfm.music.player.ui.activity.SelectFolderActivity;
 import com.ccbfm.music.player.ui.fragment.ScanningFragment;
 
@@ -41,6 +43,7 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
                 SongLoader.deleteAllSongAsync();
                 break;
             case R.id.music_blacklist:
+                StartActivityTools.start(mFragment, BlacklistActivity.class);
                 break;
             case R.id.music_scanning:
                 if (mLoadSong == null) {

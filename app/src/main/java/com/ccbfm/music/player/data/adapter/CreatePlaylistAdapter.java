@@ -37,6 +37,8 @@ public class CreatePlaylistAdapter extends BaseAdapter {
                 mSongList.clear();
                 mSongList.addAll(songList);
             }
+        } else {
+            mSongList = new LinkedList<>();
         }
     }
 
@@ -157,7 +159,7 @@ public class CreatePlaylistAdapter extends BaseAdapter {
     }
 
     public interface OnItemClickListener {
-        void onItemClickListener(File file);
+        void onItemClick();
     }
 
 }

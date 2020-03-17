@@ -24,4 +24,7 @@
     <string name="music_delete_song_2">是否将选择的音乐从列表中移除</string>
 
     <string name="music_delete_playlist">是否删除选中列表</string>
+
+    <string name="music_blacklist_name">黑名单</string>
+    <string name="music_restore_hint">是否将选择的音乐从黑名单中恢复</string>
 </resources>

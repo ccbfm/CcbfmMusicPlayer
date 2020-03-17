@@ -232,7 +232,42 @@ public final class SongLoader {
         EXECUTOR.execute(runnable);
     }
 
-    public interface CallbackPlaylists {
-        void callback(List<Playlist> playlists);
+    public static void loadBlacklist(final CallbackSongList callback){
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                List<Song> songList = DBDao.queryAllSong("1");
+                if(callback != null){
+                    callback.callback(songList);
+                }
+            }
+        };
+        EXECUTOR.execute(runnable);
+    }
+
+    public static void restoreBlacklist(final Song song, final Callback callback){
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                song.setStatus(0);
+                song.save();
+
+                if(callback != null){
+                    callback.callback();
+                }
+                sPlaylists = null;
+                loadDBSong();
+                LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).postValue(true);
+            }
+        };
+        EXECUTOR.execute(runnable);
+    }
+
+    public interface CallbackSongList {
+        void callback(List<Song> songList);
+    }
+
+    public interface Callback {
+        void callback();
     }
 }

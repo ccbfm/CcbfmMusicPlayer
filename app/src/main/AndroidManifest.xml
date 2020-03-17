@@ -30,6 +30,10 @@
             android:name=".ui.activity.CreatePlaylistActivity"
             android:theme="@style/MusicActivityTheme" />
 
+        <activity
+            android:name=".ui.activity.BlacklistActivity"
+            android:theme="@style/MusicActivityTheme" />
+
         <service
             android:name=".service.MusicService"
             android:exported="true"

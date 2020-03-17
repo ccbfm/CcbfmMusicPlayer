@@ -18,4 +18,13 @@ public final class DialogTools {
         builder.setNegativeButton(R.string.music_cancel, null);
         return builder.create();
     }
+
+    public static Dialog buildRestoreDialog(Context context, int messageId, DialogInterface.OnClickListener positive){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("恢复");
+        builder.setMessage(messageId);
+        builder.setPositiveButton(R.string.music_confirm, positive);
+        builder.setNegativeButton(R.string.music_cancel, null);
+        return builder.create();
+    }
 }
