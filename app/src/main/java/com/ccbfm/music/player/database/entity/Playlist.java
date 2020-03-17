@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import org.litepal.annotation.Column;
 import org.litepal.crud.LitePalSupport;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class Playlist extends LitePalSupport implements Parcelable {
@@ -16,7 +17,7 @@ public class Playlist extends LitePalSupport implements Parcelable {
 
     private String description;
 
-    private List<Song> songList;
+    private List<Song> songList = new LinkedList<>();
 
     public Playlist() {
     }

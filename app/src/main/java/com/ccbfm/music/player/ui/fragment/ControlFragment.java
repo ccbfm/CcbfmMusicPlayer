@@ -55,6 +55,7 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
         LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean flag) {
+                LogTools.i(TAG, "onChanged", "flag="+flag);
                 if (flag != null && flag) {
                     loadData(mViewDataBinding);
                 }

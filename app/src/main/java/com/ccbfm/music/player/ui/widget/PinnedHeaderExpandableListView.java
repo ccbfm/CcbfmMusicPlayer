@@ -23,6 +23,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
     private int mNextGroup;
     private int mPinnedHeaderWidth;
     private int mPinnedHeaderHeight;
+    private float mDx, mDy;
 
     public PinnedHeaderExpandableListView(Context context) {
         super(context);
@@ -152,31 +153,39 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
 
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                mDx = x;
+                mDy = y;
                 if (mPinnedHeader != null && y >= mPinnedHeader.getTop() && y <= mPinnedHeader.getBottom()) {
+                    mIsClickPinnedHeader = true;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                if(mDx != x || mDy != y){
+                    return super.dispatchTouchEvent(ev);
+                }
+                if (mPinnedHeader != null && mIsClickPinnedHeader &&
+                        y >= mPinnedHeader.getTop() && y <= mPinnedHeader.getBottom()) {
+
                     if(mPinnedHeader instanceof ViewGroup){
                         ViewGroup ph = (ViewGroup)mPinnedHeader;
                         int count = ph.getChildCount();
                         for (int i = 0; i < count; i++) {
                             View view = ph.getChildAt(i);
                             boolean clickable = view.isClickable();
-                             if(!clickable){
-                                 continue;
-                             }
+                            if(!clickable){
+                                continue;
+                            }
                             boolean flag = MathTools.inRangeOfView(view, x, y);
-                             if(flag) {
-                                 view.performClick();
-                                 return false;
-                             }
+                            if(flag) {
+                                view.performClick();
+                                return false;
+                            }
                         }
                     }
-                    mIsClickPinnedHeader = true;
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                if (mPinnedHeader != null && mIsClickPinnedHeader &&
-                        y >= mPinnedHeader.getTop() && y <= mPinnedHeader.getBottom()) {
+
                     int position = pointToPosition(x, y);
                     int positionGroup = getPackedPositionGroup(getExpandableListPosition(position));
+
                     if (positionGroup != INVALID_POSITION) {
                         if (isGroupExpanded(positionGroup)) {
                             collapseGroup(positionGroup);

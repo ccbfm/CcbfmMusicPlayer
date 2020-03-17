@@ -22,4 +22,10 @@
         android:scaleType="center"
         android:src="@drawable/ic_add_circle_outline_asset_24dp"
         android:background="@android:color/transparent"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        android:background="@color/color_11111111"/>
 </FrameLayout>

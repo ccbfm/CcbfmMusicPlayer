@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 public final class SongLoader {
     private static final String TAG = "SongLoader";
 
-    private static final Executor EXECUTOR = new ThreadPoolExecutor(1,5,1,
+    private static final Executor EXECUTOR = new ThreadPoolExecutor(1, 5, 1,
             TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(100));
 
 
@@ -101,6 +101,7 @@ public final class SongLoader {
         playlist.setSongList(allSong);
         List<Playlist> allPlaylist = DBDao.queryAllPlaylist();
         allPlaylist.add(0, playlist);
+        sPlaylists = allPlaylist;
         return allPlaylist;
     }
 
@@ -128,7 +129,6 @@ public final class SongLoader {
         @Override
         protected void onPostExecute(List<Playlist> playlists) {
             super.onPostExecute(playlists);
-            sPlaylists = playlists;
             if (mCallBack != null) {
                 mCallBack.onPostExecute(playlists);
             }
@@ -173,24 +173,66 @@ public final class SongLoader {
         EXECUTOR.execute(runnable);
     }
 
-    private static void clearData(){
+    private static void clearData() {
         SPTools.putIntValue(SPTools.KEY_INIT_PLAYLIST_INDEX, 0);
         SPTools.putIntValue(SPTools.KEY_INIT_SONG_INDEX, 0);
         SPTools.putIntValue(SPTools.KEY_INIT_SONG_MSEC, 0);
         MusicControl.getInstance().release();
     }
 
-    public static boolean addPlaylist(String name, List<Song> songs){
-        if(songs == null || songs.size() == 0){
+    public static boolean addPlaylist(String name, List<Song> songs) {
+        if (songs == null || songs.size() == 0) {
             return false;
         }
         Playlist playlist = new Playlist();
         playlist.setName(name);
         playlist.setSongList(songs);
         boolean flag = playlist.save();
-        if(flag){
+        if (flag) {
             sPlaylists.add(playlist);
         }
         return flag;
+    }
+
+    public static void deleteSong(final int groupPosition, final int childPosition) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                Playlist playlist = sPlaylists.get(groupPosition);
+                Song song = playlist.getSongList().remove(childPosition);
+                if (groupPosition == 0) {
+                    song.setStatus(1);
+                    song.save();
+                } else {
+                    playlist.save();
+                }
+                sPlaylists = null;
+                loadDBSong();
+                LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).postValue(true);
+            }
+        };
+        EXECUTOR.execute(runnable);
+    }
+
+    public static void deletePlaylist(final int groupPosition) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                Playlist playlist = sPlaylists.get(groupPosition);
+                if (groupPosition == 0) {
+                    return;
+                } else {
+                    playlist.delete();
+                }
+                sPlaylists = null;
+                loadDBSong();
+                LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).postValue(true);
+            }
+        };
+        EXECUTOR.execute(runnable);
+    }
+
+    public interface CallbackPlaylists {
+        void callback(List<Playlist> playlists);
     }
 }

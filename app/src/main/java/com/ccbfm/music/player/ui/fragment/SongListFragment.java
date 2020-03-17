@@ -17,13 +17,16 @@ import com.ccbfm.music.player.data.adapter.SongListExpandableListAdapter;
 import com.ccbfm.music.player.data.model.SongListModel;
 import com.ccbfm.music.player.databinding.FragmentSongListBinding;
 import com.ccbfm.music.player.service.LocalService;
+import com.ccbfm.music.player.tool.Constants;
+import com.ccbfm.music.player.tool.LiveDataBus;
+import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.StartActivityTools;
 import com.ccbfm.music.player.ui.activity.CreatePlaylistActivity;
 import com.ccbfm.music.player.ui.widget.PinnedHeaderExpandableListView;
 
 
 public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
-
+    private static final String TAG = "SongListFragment";
     private static final int CODE_CREATE_PLAYLIST = 0x12;
     private SongListModel mSongListModel;
     private TextView mHeadName;
@@ -33,6 +36,7 @@ public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
         @Override
         public void callbackIndex(int index) {
             boolean isPlaying = MusicControl.getInstance().isPlaying();
+            LogTools.d(TAG, "callbackIndex", "index="+index+",isPlaying="+isPlaying);
             mSongListModel.getAdapter().changePlayView(-1, index, isPlaying);
         }
     };
@@ -97,5 +101,6 @@ public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
     public void onDestroy() {
         super.onDestroy();
         LocalService.removePlayerCallbackAdapter(mPlayerCallback);
+        LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).postValue(null);
     }
 }

@@ -3,7 +3,6 @@ package com.ccbfm.music.player.ui.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -14,12 +13,18 @@ import androidx.customview.widget.ViewDragHelper;
 
 import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.exception.ChildPlaceException;
+import com.ccbfm.music.player.tool.LogTools;
 
 public class SlidingMenuView extends FrameLayout {
+    private static final String TAG = "SlidingMenuView";
+    private static final boolean DEBUG = false;
     private int mSlidingViewId;
     private int mMaxDistance;
     private View mSlidingView;
     private ViewDragHelper mDragHelper;
+    private float mDx, mDy;
+    private boolean mIsOpen = false;
+    private SlidingStateListener mSlidingStateListener;
 
     public SlidingMenuView(Context context) {
         this(context, null);
@@ -63,9 +68,23 @@ public class SlidingMenuView extends FrameLayout {
         }
     }
 
+    public void setSlidingStateListener(SlidingStateListener slidingStateListener) {
+        mSlidingStateListener = slidingStateListener;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if(DEBUG) {
+            LogTools.d(TAG, "dispatchTouchEvent", isSlidable() + ",ev=" + ev);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        Log.w("wds", "onInterceptTouchEvent-"+isSlidable()+","+ev);
+        if(DEBUG) {
+            LogTools.d(TAG, "onInterceptTouchEvent", isSlidable() + ",ev=" + ev);
+        }
         if (mDragHelper != null) {
             return mDragHelper.shouldInterceptTouchEvent(ev);
         }
@@ -73,13 +92,28 @@ public class SlidingMenuView extends FrameLayout {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        Log.w("wds", "onTouchEvent-"+isSlidable()+","+event);
+    public boolean onTouchEvent(MotionEvent ev) {
+        if(DEBUG) {
+            LogTools.d(TAG, "onTouchEvent", isSlidable() + ",ev=" + ev);
+        }
         if (isSlidable()) {
-            mDragHelper.processTouchEvent(event);
+            final int action = ev.getAction();
+
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    mDx = ev.getX();
+                    mDy = ev.getY();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    if (mDx == ev.getX() && mDy == ev.getY() && !mIsOpen) {
+                        performClick();
+                    }
+                    break;
+            }
+            mDragHelper.processTouchEvent(ev);
             return true;
         }
-        return super.onTouchEvent(event);
+        return super.onTouchEvent(ev);
     }
 
     @Override
@@ -93,26 +127,72 @@ public class SlidingMenuView extends FrameLayout {
         return mMaxDistance > 0 && mSlidingView != null && mDragHelper != null;
     }
 
+    private void openSlidingView() {
+        if(DEBUG) {
+            LogTools.d(TAG, "openSlidingView", "mIsOpen=" + mIsOpen);
+        }
+        if(mIsOpen){
+            return;
+        }
+        mIsOpen = true;
+        mDragHelper.smoothSlideViewTo(mSlidingView, -mMaxDistance, 0);
+        ViewCompat.postInvalidateOnAnimation(SlidingMenuView.this);
+        changeSlidingStateListener(true);
+    }
+
+    public void closeSlidingView() {
+        if(DEBUG) {
+            LogTools.d(TAG, "closeSlidingView", "mIsOpen=" + mIsOpen);
+        }
+        if(!mIsOpen){
+            return;
+        }
+        mIsOpen = false;
+        mDragHelper.smoothSlideViewTo(mSlidingView, 0, 0);
+        ViewCompat.postInvalidateOnAnimation(SlidingMenuView.this);
+        changeSlidingStateListener(false);
+    }
+
+    private void changeSlidingStateListener(boolean open){
+        if(mSlidingStateListener != null){
+            int groupPosition = (int) getTag(R.id.tag_group_position);
+            int childPosition = (int) getTag(R.id.tag_child_position);
+            mSlidingStateListener.onSlidingState(open, groupPosition, childPosition);
+        }
+    }
+
     private class SlidingViewCallback extends ViewDragHelper.Callback {
+        private int mLeft;
+
         @Override
         public boolean tryCaptureView(@NonNull View child, int pointerId) {
             return isSlidable();
         }
 
         @Override
+        public void onViewPositionChanged(@NonNull View changedView, int left, int top, int dx, int dy) {
+            mLeft = left;
+        }
+
+        @Override
         public void onViewReleased(@NonNull View releasedChild, float xvel, float yvel) {
+            if(DEBUG) {
+                LogTools.d(TAG, "onViewReleased", "mLeft=" + mLeft);
+            }
             if (mSlidingView != null) {
                 int left = mSlidingView.getLeft();
                 if (left < 0) {
                     //left
-                    if (xvel < 0) {
-                        mDragHelper.smoothSlideViewTo(mSlidingView, -mMaxDistance, 0);
+                    int dis = -mMaxDistance;
+                    if (mLeft < (dis / 2)) {
+                        mIsOpen = false;
+                        openSlidingView();
                     }
                     //right
                     else {
-                        mDragHelper.smoothSlideViewTo(mSlidingView, 0, 0);
+                        mIsOpen = true;
+                        closeSlidingView();
                     }
-                    ViewCompat.postInvalidateOnAnimation(SlidingMenuView.this);
                 }
             }
         }
@@ -126,7 +206,9 @@ public class SlidingMenuView extends FrameLayout {
             }
             return left;
         }
-
     }
 
+    public interface SlidingStateListener {
+        void onSlidingState(boolean open, int groupIndex, int childIndex);
+    }
 }

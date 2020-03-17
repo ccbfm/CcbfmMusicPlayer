@@ -2,16 +2,21 @@ package com.ccbfm.music.player.data.model;
 
 import android.util.Log;
 
+import androidx.lifecycle.Observer;
+
 import com.ccbfm.music.player.data.adapter.SongListExpandableListAdapter;
 import com.ccbfm.music.player.database.SongLoader;
 import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.databinding.FragmentSongListBinding;
+import com.ccbfm.music.player.tool.Constants;
+import com.ccbfm.music.player.tool.LiveDataBus;
+import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.ui.fragment.BaseFragment;
 
 import java.util.List;
 
 public class SongListModel {
-
+    private static final String TAG = "SongListModel";
     private SongListExpandableListAdapter mAdapter;
     private CallBack mCallBack;
     private BaseFragment<FragmentSongListBinding> mFragment;
@@ -22,6 +27,15 @@ public class SongListModel {
     public SongListModel(BaseFragment<FragmentSongListBinding> fragment, CallBack callBack) {
         mFragment = fragment;
         mCallBack = callBack;
+        LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).observe(fragment, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean flag) {
+                LogTools.i(TAG, "onChanged", "flag="+flag);
+                if (flag != null && flag) {
+                    loadData();
+                }
+            }
+        });
     }
 
     public SongListExpandableListAdapter getAdapter() {
@@ -34,7 +48,7 @@ public class SongListModel {
     }
 
     public void loadData() {
-        Log.i("SongListModel", "loadData--->---");
+        LogTools.i(TAG, "loadData", "--->---");
         List<Playlist> playlists = SongLoader.getSongData(new SongLoader.LoadSongCallBack() {
             @Override
             public void onPreExecute() {

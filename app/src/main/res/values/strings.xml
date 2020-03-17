@@ -19,4 +19,9 @@
 
     <string name="music_create_playlist">新建列表</string>
     <string name="music_create_playlist_name_hint">请输入列表名字</string>
+
+    <string name="music_delete_song_1">是否将选择的音乐从列表中删除并拉黑</string>
+    <string name="music_delete_song_2">是否将选择的音乐从列表中移除</string>
+
+    <string name="music_delete_playlist">是否删除选中列表</string>
 </resources>
