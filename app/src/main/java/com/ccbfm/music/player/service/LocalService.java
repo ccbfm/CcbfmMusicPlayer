@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 
 import com.ccbfm.music.player.IPlayerCallback;
 import com.ccbfm.music.player.database.entity.Song;
-import com.ccbfm.music.player.tool.PlayerErrorCode;
+import com.ccbfm.music.player.control.PlayerErrorCode;
 import com.ccbfm.music.player.tool.SPTools;
 import com.ccbfm.music.player.tool.ToastTools;
 

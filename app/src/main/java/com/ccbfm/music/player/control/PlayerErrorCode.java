@@ -1,4 +1,4 @@
-package com.ccbfm.music.player.tool;
+package com.ccbfm.music.player.control;
 
 public @interface PlayerErrorCode {
 
