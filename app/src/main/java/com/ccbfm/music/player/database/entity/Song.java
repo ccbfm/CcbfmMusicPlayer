@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Song extends LitePalSupport implements Parcelable {
+    private long id;
 
     @Column(nullable = false, unique = true)
     private String songName;
@@ -28,7 +29,7 @@ public class Song extends LitePalSupport implements Parcelable {
 
     private String album;
 
-    private int albumId;
+    private long albumId;
 
     private int status = 0;
 
@@ -41,6 +42,14 @@ public class Song extends LitePalSupport implements Parcelable {
         this.songName = songName;
         this.singerName = singerName;
         this.songPath = songPath;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getSongName() {
@@ -107,11 +116,11 @@ public class Song extends LitePalSupport implements Parcelable {
         this.album = album;
     }
 
-    public int getAlbumId() {
+    public long getAlbumId() {
         return albumId;
     }
 
-    public void setAlbumId(int albumId) {
+    public void setAlbumId(long albumId) {
         this.albumId = albumId;
     }
 
@@ -137,8 +146,9 @@ public class Song extends LitePalSupport implements Parcelable {
     }
 
 
-    public Song(String songName, String singerName, String lyricist, String composer,
-                long duration, String songPath, String lyricsPath, String album, int albumId) {
+    public Song(long id, String songName, String singerName, String lyricist, String composer,
+                long duration, String songPath, String lyricsPath, String album, long albumId) {
+        this.id = id;
         this.songName = songName;
         this.singerName = singerName;
         this.lyricist = lyricist;
@@ -151,7 +161,8 @@ public class Song extends LitePalSupport implements Parcelable {
     }
 
     private Song(Parcel in) {
-        this(in.readString(),
+        this(in.readLong(),
+                in.readString(),
                 in.readString(),
                 in.readString(),
                 in.readString(),
@@ -159,11 +170,12 @@ public class Song extends LitePalSupport implements Parcelable {
                 in.readString(),
                 in.readString(),
                 in.readString(),
-                in.readInt());
+                in.readLong());
     }
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
+        out.writeLong(id);
         out.writeString(songName);
         out.writeString(singerName);
         out.writeString(lyricist);
@@ -172,7 +184,7 @@ public class Song extends LitePalSupport implements Parcelable {
         out.writeString(songPath);
         out.writeString(lyricsPath);
         out.writeString(album);
-        out.writeInt(albumId);
+        out.writeLong(albumId);
     }
 
     public static Parcelable.Creator<Song> CREATOR = new Parcelable.Creator<Song>() {

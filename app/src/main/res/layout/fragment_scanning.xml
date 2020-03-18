@@ -57,11 +57,22 @@
             android:textColor="@color/color_515151"
             android:textSize="24sp" />
 
+        <CheckBox
+            android:id="@+id/music_scanning_album_to_playlist"
+            android:theme="@style/PlaylistCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/music_scanning_album_to_playlist"
+            android:textColor="@color/color_f2f2f2"
+            android:checked="@={scanningModel.playlistChecked}"
+            android:textSize="12sp" />
+
         <Button
             android:id="@+id/music_select_directory"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:background="@drawable/button_scanning_bg"
             android:onClickListener="@{scanningModel}"
             android:text="@string/music_select_directory"
@@ -72,8 +83,9 @@
             android:id="@+id/music_select_directory_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:text="@{scanningModel.directoryName}"
-            android:textColor="@color/color_f2f2f2" />
+            android:textColor="@color/color_f2f2f2"
+            android:textSize="12sp" />
     </LinearLayout>
 </layout>

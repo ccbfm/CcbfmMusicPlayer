@@ -33,4 +33,6 @@
     <string name="music_restore_hint">是否将选择的音乐从黑名单中恢复</string>
 
     <string name="music_permission_hint">是否去设置中打开所需权限</string>
+
+    <string name="music_scanning_album_to_playlist">专辑生成歌单列表</string>
 </resources>

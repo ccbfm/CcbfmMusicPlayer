@@ -98,11 +98,11 @@ public class MusicPlayer implements IControlPlayer {
     public void play() {
         if (mPlayer != null && !isPlaying() && mIsPrepared) {
             LogTools.i(TAG, "play", "------");
-            mIsResetSongList = false;
             startTimer();
             mPlayer.start();
             seekTo(mSeekTime);
             changeDisplay();
+            mIsResetSongList = false;
         }
     }
 

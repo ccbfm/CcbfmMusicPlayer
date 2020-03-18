@@ -19,7 +19,7 @@ public final class DBDao {
     }
 
     public static List<Playlist> queryAllPlaylist(){
-        return LitePal.order("orderId asc").find(Playlist.class, true);
+        return LitePal.findAll(Playlist.class, true);
     }
 
     public static int queryPlaylistCount(){

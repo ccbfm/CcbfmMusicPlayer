@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.LongSparseArray;
 
 import com.ccbfm.music.player.App;
 import com.ccbfm.music.player.callback.Callback;
@@ -22,6 +23,7 @@ import com.ccbfm.music.player.tool.ToastTools;
 
 import org.litepal.LitePal;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executor;
 
@@ -57,12 +59,18 @@ public final class SongLoader {
         return null;
     }
 
-    public static int[] loadAudioSong(Context context, String path) {
+    public static int[] loadAudioSong(Context context, String path, boolean playlistChecked) {
+        LogTools.d(TAG, "loadAudioSong", "path=" + path + ",playlistChecked=" + playlistChecked);
         Cursor cursor = makeSongCursor(context, path);
         if (cursor != null) {
             int count = cursor.getCount();
             int skip = 0;
+            int playlistCount = 0;
             if (count > 0) {
+                LongSparseArray<Playlist> playlistArray = null;
+                if (playlistChecked) {
+                    playlistArray = new LongSparseArray<>();
+                }
                 while (cursor.moveToNext()) {
                     //long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.AudioColumns._ID));
                     String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.TITLE));
@@ -72,21 +80,55 @@ public final class SongLoader {
                     int duration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DURATION));
                     String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DATA));
 
-                    List<Song> songs = LitePal.where("songPath=? and status != 0", data).find(Song.class);
+                    List<Song> songs = LitePal.where("songPath=?", data).find(Song.class, true);
+                    Song song = null;
                     if (songs != null && songs.size() > 0) {
-                        skip++;
-                        continue;
+                        song = songs.get(0);
+                        if (song.getStatus() != 0) {
+                            skip++;
+                            continue;
+                        }
                     }
-
-                    Song song = new Song(title, artist, data);
+                    if (song == null) {
+                        song = new Song();
+                    }
+                    song.setSongName(title);
+                    song.setSingerName(artist);
+                    song.setSongPath(data);
                     song.setDuration(duration);
                     song.setAlbum(album);
                     song.setAlbumId(album_id);
-                    song.saveOrUpdate("songPath=?", data);
+                    song.saveOrUpdate("id=?", song.getId() + "");
+
+                    if (playlistArray != null) {
+                        Playlist playlist = playlistArray.get(album_id);
+                        if (playlist == null) {
+                            playlist = new Playlist();
+                            playlist.setName(album);
+                            playlistArray.put(album_id, playlist);
+                        }
+                        List<Song> songList = playlist.getSongList();
+                        if (songList == null) {
+                            songList = new LinkedList<>();
+                            playlist.setSongList(songList);
+                        }
+                        songList.add(song);
+                    }
+                }
+                LogTools.d(TAG, "loadAudioSong", "playlistArray=" + playlistArray);
+                if (playlistArray != null) {
+                    int size = playlistArray.size();
+                    playlistCount = size;
+                    if (size > 0) {
+                        for (int i = 0; i < size; i++) {
+                            Playlist playlist = playlistArray.valueAt(i);
+                            playlist.saveOrUpdate("name=?", playlist.getName());
+                        }
+                    }
                 }
                 sPlaylists = null;
             }
-            return new int[]{count, skip};
+            return new int[]{count, skip, playlistCount};
         }
         return null;
     }
@@ -205,37 +247,14 @@ public final class SongLoader {
         if (songs == null || songs.size() == 0) {
             return false;
         }
-        if (oldPlaylist != null) {
-            oldPlaylist.setName(name);
-            oldPlaylist.setSongList(songs);
-            if (oldPlaylist.getOrderId() == 0) {
-                oldPlaylist.setOrderId(oldPlaylist.getId());
-            }
-            int deleteAffected = LitePal.delete(Playlist.class, oldPlaylist.getId());
-            if (DEBUG) {
-                LogTools.d(TAG, "addOrUpdatePlaylist", "deleteAffected=" + deleteAffected);
-            }
-            if (deleteAffected > 0) {
-                boolean flag = oldPlaylist.save();
-                if (DEBUG) {
-                    LogTools.d(TAG, "addOrUpdatePlaylist", "flag=" + flag);
-                }
-                if (flag) {
-                    sPlaylists = null;
-                    return true;
-                }
-            }
-            return false;
+        if (oldPlaylist == null) {
+            oldPlaylist = new Playlist();
         }
-
-        Playlist playlist = new Playlist();
-        playlist.setName(name);
-        playlist.setSongList(songs);
-        int count = DBDao.queryPlaylistCount() + 1;
-        playlist.setOrderId(count);
-        boolean flag = playlist.save();
+        oldPlaylist.setName(name);
+        oldPlaylist.setSongList(songs);
+        boolean flag = oldPlaylist.saveOrUpdate("id=?", oldPlaylist.getId() + "");
         if (flag) {
-            sPlaylists.add(playlist);
+            sPlaylists = null;
         }
         return flag;
     }
