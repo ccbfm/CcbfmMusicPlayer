@@ -187,6 +187,11 @@ public class MusicControl implements ControlConstants {
             if (newIndex < 0) {
                 return;
             }
+            int need = SPTools.getIntValue(SPTools.KEY_NEED_SEEK_TO);
+            if(need == 1){
+                SPTools.putIntValue(SPTools.KEY_NEED_SEEK_TO, 0);
+                return;
+            }
             int index = SPTools.getIntValue(SPTools.KEY_INIT_SONG_INDEX);
             if (newIndex == index) {
                 int msec = SPTools.getIntValue(SPTools.KEY_INIT_SONG_MSEC);

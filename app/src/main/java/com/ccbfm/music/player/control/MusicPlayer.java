@@ -96,9 +96,10 @@ public class MusicPlayer implements IControlPlayer {
     @Override
     public void play() {
         if (mPlayer != null && !isPlaying() && mIsPrepared) {
-            LogTools.i(TAG, "play", "------");
+            LogTools.i(TAG, "play", "------" + mIsResetSongList);
             startTimer();
             mPlayer.start();
+            //在start之后执行
             seekTo(mSeekTime);
             changeDisplay();
             mIsResetSongList = false;
@@ -185,11 +186,11 @@ public class MusicPlayer implements IControlPlayer {
         }
         mSongIndex = (position);
 
+        mIsResetSongList = true;
         if(isPlay) {
             Song song = mSongList.get(position);
             String path = song.getSongPath();
-            LogTools.w(TAG, "setSongList", "path=" + path);
-            mIsResetSongList = true;
+            LogTools.w(TAG, "setSongList", "path=" + path + ","+mIsResetSongList);
             prepare(path);
         }
     }

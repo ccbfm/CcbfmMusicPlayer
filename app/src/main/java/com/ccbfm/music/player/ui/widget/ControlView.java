@@ -45,8 +45,8 @@ public class ControlView extends View {
 
         canvas.drawCircle(100, 100, 100, mBgPaint);
 
-        mPlayPath.rewind();
-        mPausePath.rewind();
+        //mPlayPath.rewind();
+        //mPausePath.rewind();
 
         
     }
