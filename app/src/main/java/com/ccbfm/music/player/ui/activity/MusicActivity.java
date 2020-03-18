@@ -1,14 +1,22 @@
 package com.ccbfm.music.player.ui.activity;
 
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
+import android.view.View;
+import android.widget.TextView;
 
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.ccbfm.music.player.R;
+import com.ccbfm.music.player.callback.Callback;
 import com.ccbfm.music.player.data.adapter.MusicFragmentAdapter;
 import com.ccbfm.music.player.databinding.ActivityMusicBinding;
 import com.ccbfm.music.player.tool.SPTools;
+import com.ccbfm.music.player.tool.SystemTools;
+import com.ccbfm.music.player.tool.TimePickerTools;
 import com.ccbfm.music.player.ui.fragment.BaseFragment;
 import com.ccbfm.music.player.ui.fragment.ControlFragment;
 import com.ccbfm.music.player.ui.fragment.LyricsFragment;
@@ -23,9 +31,13 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
     private int mScrollState;
     private BaseFragment mSongListFragment;
     private boolean mIsShowSongList = false;
+    private DrawerLayout mMusicMenu;
+    private TextView mExitTime;
 
     @Override
     protected void initView(ActivityMusicBinding binding) {
+        mMusicMenu = binding.musicMenu;
+        mExitTime = binding.musicExitTime;
         MusicFragmentAdapter adapter = new MusicFragmentAdapter(getSupportFragmentManager());
         adapter.addFragment(new ScanningFragment());
         adapter.addFragment(new ControlFragment());
@@ -48,6 +60,8 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
         int initPage = SPTools.getIntValue(SPTools.KEY_INIT_SHOW_PAGE);
         binding.musicViewPager.setCurrentItem(initPage);
         SPTools.putIntValue(SPTools.KEY_INIT_SHOW_PAGE, INDEX_CONTROL);
+
+        setExitTime();
     }
 
     @Override
@@ -63,6 +77,10 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
        /* if (mCurrentPosition != INDEX_CONTROL) {
             return super.dispatchTouchEvent(ev);
         }*/
+        if (mMusicMenu.isDrawerOpen(GravityCompat.START)) {
+            return super.dispatchTouchEvent(ev);
+        }
+
         final int action = ev.getAction();
         if (mVelocityTracker == null) {
             mVelocityTracker = VelocityTracker.obtain();
@@ -118,6 +136,7 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
         }
         replaceFragment(mSongListFragment);
         mIsShowSongList = true;
+        mMusicMenu.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 
     private void leftSwipe() {
@@ -128,7 +147,7 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
             removeFragment(mSongListFragment);
             mIsShowSongList = false;
         }
-
+        mMusicMenu.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
     }
 
     private void replaceFragment(BaseFragment fragment) {
@@ -153,5 +172,41 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
                 .setCustomAnimations(R.anim.slide_in_form_right, R.anim.slide_out_to_right)
                 .remove(mSongListFragment)
                 .commitNowAllowingStateLoss();
+    }
+
+    public void onClickOpenMenu(View view) {
+        if (mMusicMenu.isDrawerOpen(GravityCompat.START)) {
+            mMusicMenu.closeDrawer(GravityCompat.START);
+        } else {
+            mMusicMenu.openDrawer(GravityCompat.START);
+        }
+    }
+
+    public void onClickOpenPlaylist(View view) {
+        rightSwipe();
+    }
+
+    public void onClickMenuView(View view) {
+        final int id = view.getId();
+        switch (id) {
+            case R.id.music_menu_timing:
+                TimePickerTools.showExitTimePicker(this, new Callback() {
+                    @Override
+                    public void callback() {
+                        setExitTime();
+                    }
+                });
+                break;
+            case R.id.music_menu_exit:
+                SystemTools.killAppProcess(this);
+                break;
+        }
+    }
+
+    private void setExitTime(){
+        String exitTime = TimePickerTools.getExitTime();
+        if (!TextUtils.isEmpty(exitTime)) {
+            mExitTime.setText(exitTime);
+        }
     }
 }

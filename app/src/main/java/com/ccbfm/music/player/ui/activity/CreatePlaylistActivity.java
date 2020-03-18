@@ -16,6 +16,8 @@ public class CreatePlaylistActivity extends BaseActivity<ActivityCreatePlaylistB
     @Override
     protected void initView(ActivityCreatePlaylistBinding binding) {
         Playlist playlist = getIntent().getParcelableExtra(KEY_OLD_PLAYLIST);
+        binding.musicCreatePlaylistTitle.setText((playlist == null ? R.string.music_create_playlist
+                : R.string.music_create_playlist_edit));
         CreatePlaylistModel model = new CreatePlaylistModel(binding.musicCreatePlaylist, playlist);
         binding.setCreatePlaylistModel(model);
         mModel = model;
@@ -26,14 +28,14 @@ public class CreatePlaylistActivity extends BaseActivity<ActivityCreatePlaylistB
         return R.layout.activity_create_playlist;
     }
 
-    public void selectCancel(View view){
+    public void selectCancel(View view) {
         setResult(RESULT_CANCELED);
         onBackPressed();
     }
 
-    public void selectConfirm(View view){
+    public void selectConfirm(View view) {
         boolean flag = mModel.addOrUpdatePlaylist();
-        if(!flag){
+        if (!flag) {
             selectCancel(view);
             return;
         }

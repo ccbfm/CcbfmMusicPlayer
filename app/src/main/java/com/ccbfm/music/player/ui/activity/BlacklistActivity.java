@@ -5,9 +5,9 @@ import android.content.DialogInterface;
 import android.view.View;
 
 import com.ccbfm.music.player.R;
+import com.ccbfm.music.player.callback.Callback;
 import com.ccbfm.music.player.data.adapter.BlacklistAdapter;
 import com.ccbfm.music.player.database.SongLoader;
-import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.databinding.ActivityBlacklistBinding;
 import com.ccbfm.music.player.tool.DialogTools;
@@ -29,7 +29,7 @@ public class BlacklistActivity extends BaseActivity<ActivityBlacklistBinding> {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                SongLoader.restoreBlacklist(song, new SongLoader.Callback() {
+                                SongLoader.restoreBlacklist(song, new Callback() {
                                     @Override
                                     public void callback() {
                                         loadData();

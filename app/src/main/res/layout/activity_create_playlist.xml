@@ -2,6 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+
         <variable
             name="createPlaylistModel"
             type="com.ccbfm.music.player.data.model.CreatePlaylistModel" />
@@ -20,10 +21,13 @@
             android:showDividers="middle">
 
             <TextView
+                android:id="@+id/music_create_playlist_title"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:gravity="center"
-                android:text="@string/music_create_playlist" />
+                android:text="@string/music_create_playlist"
+                android:textColor="@color/color_f2f2f2"
+                android:textSize="24sp" />
 
             <EditText
                 android:id="@+id/music_create_playlist_name"
@@ -31,16 +35,18 @@
                 android:layout_height="48dp"
                 android:background="@android:color/transparent"
                 android:gravity="center"
-                android:textSize="16sp"
                 android:hint="@string/music_create_playlist_name_hint"
+                android:singleLine="true"
                 android:text="@={createPlaylistModel.playlistName}"
-                android:singleLine="true" />
+                android:textColor="@color/color_f2f2f2"
+                android:textColorHint="@color/color_f2f2f2"
+                android:textSize="16sp" />
 
             <ListView
                 android:id="@+id/music_create_playlist"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:adapter="@{createPlaylistModel.createPlaylistAdapter}"/>
+                android:adapter="@{createPlaylistModel.createPlaylistAdapter}" />
         </LinearLayout>
 
         <LinearLayout
@@ -54,14 +60,18 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:onClick="selectCancel"
-                android:text="@string/music_cancel" />
+                android:text="@string/music_cancel"
+                android:textColor="@color/color_515151"
+                android:textSize="16sp" />
 
             <Button
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:onClick="selectConfirm"
-                android:text="@string/music_confirm" />
+                android:text="@string/music_confirm"
+                android:textColor="@color/color_515151"
+                android:textSize="16sp" />
         </LinearLayout>
     </FrameLayout>
 </layout>

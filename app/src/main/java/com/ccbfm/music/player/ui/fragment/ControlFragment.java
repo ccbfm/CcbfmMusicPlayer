@@ -117,7 +117,7 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
                     Song song = songList.get(songIndex);
                     updateUI(song.getSongName(), song.getSingerName());
                 } else {
-                    updateUI("xx", "xx");
+                    updateUI(getString(R.string.app_name), "");
                 }
             }
         }

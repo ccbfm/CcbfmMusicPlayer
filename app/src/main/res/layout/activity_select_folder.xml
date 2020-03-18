@@ -24,7 +24,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:gravity="center"
-                android:text="@string/music_select_folder" />
+                android:text="@string/music_select_folder"
+                android:textColor="@color/color_f2f2f2"
+                android:textSize="24sp" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -34,7 +36,9 @@
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
                 android:singleLine="true"
-                android:text="@{selectFolderModel.rootPath}" />
+                android:text="@{selectFolderModel.rootPath}"
+                android:textColor="@color/color_f2f2f2"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/music_back_root_path"
@@ -47,6 +51,8 @@
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
                 android:text="@string/music_back_root_path"
+                android:textColor="@color/color_f2f2f2"
+                android:textSize="16sp"
                 android:visibility="@{selectFolderModel.backVisible}" />
 
             <TextView
@@ -60,6 +66,8 @@
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
                 android:text="@string/music_back_pre"
+                android:textColor="@color/color_f2f2f2"
+                android:textSize="16sp"
                 android:visibility="@{selectFolderModel.backVisible}" />
 
             <ListView
@@ -80,14 +88,18 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:onClick="selectCancel"
-                android:text="@string/music_cancel" />
+                android:text="@string/music_cancel"
+                android:textColor="@color/color_515151"
+                android:textSize="16sp" />
 
             <Button
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:onClick="selectConfirm"
-                android:text="@string/music_confirm" />
+                android:text="@string/music_confirm"
+                android:textColor="@color/color_515151"
+                android:textSize="16sp" />
         </LinearLayout>
     </FrameLayout>
 </layout>

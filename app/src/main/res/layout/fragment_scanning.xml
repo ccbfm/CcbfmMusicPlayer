@@ -30,7 +30,9 @@
                 android:layout_gravity="start"
                 android:background="@drawable/button_scanning_bg"
                 android:onClickListener="@{scanningModel}"
-                android:text="@string/music_scanning_clear" />
+                android:text="@string/music_scanning_clear"
+                android:textColor="@color/color_515151"
+                android:textSize="16sp" />
 
             <Button
                 android:id="@+id/music_blacklist"
@@ -39,7 +41,9 @@
                 android:layout_gravity="end"
                 android:background="@drawable/button_scanning_bg"
                 android:onClickListener="@{scanningModel}"
-                android:text="@string/music_blacklist" />
+                android:text="@string/music_blacklist"
+                android:textColor="@color/color_515151"
+                android:textSize="16sp" />
         </FrameLayout>
 
         <Button
@@ -49,7 +53,9 @@
             android:layout_marginTop="50dp"
             android:background="@drawable/button_scanning_bg"
             android:onClickListener="@{scanningModel}"
-            android:text="@string/music_scanning" />
+            android:text="@string/music_scanning"
+            android:textColor="@color/color_515151"
+            android:textSize="24sp" />
 
         <Button
             android:id="@+id/music_select_directory"
@@ -58,13 +64,16 @@
             android:layout_marginTop="50dp"
             android:background="@drawable/button_scanning_bg"
             android:onClickListener="@{scanningModel}"
-            android:text="@string/music_select_directory" />
+            android:text="@string/music_select_directory"
+            android:textColor="@color/color_515151"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/music_select_directory_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
-            android:text="@{scanningModel.directoryName}" />
+            android:text="@{scanningModel.directoryName}"
+            android:textColor="@color/color_f2f2f2" />
     </LinearLayout>
 </layout>

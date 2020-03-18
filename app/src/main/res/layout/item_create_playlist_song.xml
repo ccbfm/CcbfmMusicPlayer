@@ -9,11 +9,14 @@
         android:id="@+id/music_create_playlist_song"
         android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:textSize="16sp"
+        android:textColor="@color/color_f2f2f2"
         android:gravity="center_vertical" />
 
     <CheckBox
         android:id="@+id/music_create_playlist_check"
         android:layout_width="30dp"
         android:layout_height="30dp"
+        android:theme="@style/PlaylistCheckBox"
         android:layout_gravity="center_vertical|end" />
 </FrameLayout>

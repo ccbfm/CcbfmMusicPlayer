@@ -162,7 +162,7 @@ public class MusicPlayer implements IControlPlayer {
     }
 
     @Override
-    public void setSongList(List<Song> songList, int position) {
+    public void setSongList(List<Song> songList, int position, boolean isPlay) {
         if (songList == null) {
             LogTools.w(TAG, "setSongList", "songList == null");
             return;
@@ -186,11 +186,13 @@ public class MusicPlayer implements IControlPlayer {
         }
         mSongIndex = (position);
 
-        Song song = mSongList.get(position);
-        String path = song.getSongPath();
-        LogTools.w(TAG, "setSongList", "path=" + path);
-        mIsResetSongList = true;
-        prepare(path);
+        if(isPlay) {
+            Song song = mSongList.get(position);
+            String path = song.getSongPath();
+            LogTools.w(TAG, "setSongList", "path=" + path);
+            mIsResetSongList = true;
+            prepare(path);
+        }
     }
 
     private void callbackSongIndex(int songIndex) {

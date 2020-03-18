@@ -9,10 +9,12 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 
 import com.ccbfm.music.player.App;
+import com.ccbfm.music.player.callback.Callback;
 import com.ccbfm.music.player.control.MusicControl;
 import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.tool.Constants;
+import com.ccbfm.music.player.tool.Executors;
 import com.ccbfm.music.player.tool.LiveDataBus;
 import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.SPTools;
@@ -22,16 +24,12 @@ import org.litepal.LitePal;
 
 import java.util.List;
 import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 public final class SongLoader {
     private static final String TAG = "SongLoader";
     private static final boolean DEBUG = false;
 
-    private static final Executor EXECUTOR = new ThreadPoolExecutor(1, 5, 1,
-            TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(100));
+    private static final Executor EXECUTOR = Executors.EXECUTOR;
     private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
     private static String[] PROJECTION = new String[]{
@@ -327,7 +325,4 @@ public final class SongLoader {
         void callback(List<Song> songList);
     }
 
-    public interface Callback {
-        void callback();
-    }
 }

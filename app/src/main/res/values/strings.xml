@@ -3,6 +3,9 @@
 
     <string name="music_service_permission">permission.ccbfm.music.player.service</string>
 
+    <string name="music_menu_timing">定时</string>
+    <string name="music_menu_exit">退出</string>
+
     <string name="music_scanning_clear">清除</string>
     <string name="music_blacklist">黑名</string>
     <string name="music_scanning">扫描</string>
@@ -18,6 +21,7 @@
     <string name="music_confirm">确认</string>
 
     <string name="music_create_playlist">新建列表</string>
+    <string name="music_create_playlist_edit">编辑列表</string>
     <string name="music_create_playlist_name_hint">请输入列表名字</string>
 
     <string name="music_delete_song_1">是否将选择的音乐从列表中删除并拉黑</string>
@@ -27,4 +31,6 @@
 
     <string name="music_blacklist_name">黑名单</string>
     <string name="music_restore_hint">是否将选择的音乐从黑名单中恢复</string>
+
+    <string name="music_permission_hint">是否去设置中打开所需权限</string>
 </resources>

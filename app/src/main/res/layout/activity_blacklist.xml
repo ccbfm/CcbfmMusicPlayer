@@ -16,6 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:gravity="center"
+            android:textColor="@color/color_f2f2f2"
+            android:textSize="24sp"
             android:text="@string/music_blacklist_name" />
 
         <View

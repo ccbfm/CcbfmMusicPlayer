@@ -2,30 +2,32 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     android:clickable="true"
-    android:focusable="true"
-    android:background="@color/colorPrimary">
+    android:focusable="true">
 
     <TextView
         android:id="@+id/music_song_list_name"
         android:layout_width="match_parent"
-        android:padding="5dp"
         android:layout_height="64dp"
-        android:gravity="center_vertical|start" />
+        android:gravity="center_vertical|start"
+        android:padding="5dp"
+        android:textColor="@color/color_f2f2f2"
+        android:textSize="24sp" />
 
     <ImageButton
         android:id="@+id/music_song_list_add"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:layout_margin="10dp"
         android:layout_gravity="center_vertical|end"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent"
         android:scaleType="center"
-        android:src="@drawable/ic_add_circle_outline_asset_24dp"
-        android:background="@android:color/transparent"/>
+        android:src="@drawable/ic_add_circle_outline_asset_24dp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_gravity="bottom"
-        android:background="@color/color_11111111"/>
+        android:background="@color/color_11111111" />
 </FrameLayout>

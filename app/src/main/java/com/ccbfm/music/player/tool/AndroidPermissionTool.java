@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
@@ -43,21 +44,13 @@ public final class AndroidPermissionTool {
     }
 
     private static Dialog createDialog(final Activity activity, String[] permissions) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.PermissionDialog);
-        LinearLayout linearLayout = new LinearLayout(activity);
-        TextView textView = new TextView(activity);
-        textView.setText("立即开启");
-        linearLayout.addView(textView, new LinearLayout.LayoutParams(300, 400));
-        builder.setView(linearLayout);
-        textView.setOnClickListener(new View.OnClickListener() {
+        return DialogTools.buildDialog(activity, "权限", R.string.music_permission_hint, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(DialogInterface dialog, int which) {
                 Intent intent = getIntent(activity);
                 activity.startActivity(intent);
             }
         });
-        builder.setCancelable(false);
-        return builder.create();
     }
 
     private static Intent getIntent(Context context) {

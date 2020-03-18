@@ -153,15 +153,14 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
         }
         mPlaylists.clear();
         mPlaylists.addAll(playlists);
-        boolean flag = mPlaylistIndex != -1 && mSongIndex != -1;
+
         mPlaylistIndex = SPTools.getIntValue(SPTools.KEY_INIT_PLAYLIST_INDEX);
         mSongIndex = SPTools.getIntValue(SPTools.KEY_INIT_SONG_INDEX);
-        if (flag) {
-            if(MusicControl.getInstance().isPlaying()) {
-                MusicControl.getInstance().setSongList(
-                        mPlaylists.get(mPlaylistIndex).getSongList(), mSongIndex);
-            }
-        }
+
+        MusicControl.getInstance().setSongList(
+                mPlaylists.get(mPlaylistIndex).getSongList(), mSongIndex,
+                MusicControl.getInstance().isPlaying());
+
         notifyDataSetChanged();
         changeGroupSlidingView(-1);
         changeChildSlidingView(-1, -1);
@@ -282,6 +281,7 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = mLayoutInflater.inflate(R.layout.item_child_song_name, null);
             childHolder = new ChildHolder();
             childHolder.songName = convertView.findViewById(R.id.music_song_name);
+            childHolder.singerName = convertView.findViewById(R.id.music_singer_name);
             childHolder.songPlay = convertView.findViewById(R.id.music_song_play);
             childHolder.songDelete = convertView.findViewById(R.id.music_song_delete);
             childHolder.convertView = (SlidingMenuView) convertView;
@@ -327,8 +327,9 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
         } else {
             childHolder.songPlay.setVisibility(View.GONE);
         }
-
-        childHolder.songName.setText(getChild(groupPosition, childPosition).getSongName());
+        final Song song = getChild(groupPosition, childPosition);
+        childHolder.songName.setText(song.getSongName());
+        childHolder.singerName.setText(song.getSingerName());
         return convertView;
     }
 
@@ -440,6 +441,7 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
     private static class ChildHolder {
         SlidingMenuView convertView;
         TextView songName;
+        TextView singerName;
         ImageButton songPlay;
         ImageButton songDelete;
 

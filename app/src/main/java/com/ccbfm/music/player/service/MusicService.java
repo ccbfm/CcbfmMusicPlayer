@@ -102,8 +102,8 @@ public class MusicService extends Service {
         }
 
         @Override
-        public void setSongList(List<Song> songList, int index) throws RemoteException {
-            mControlPlayer.setSongList(songList, index);
+        public void setSongList(List<Song> songList, int index, boolean isPlay) throws RemoteException {
+            mControlPlayer.setSongList(songList, index, isPlay);
         }
 
         @Override

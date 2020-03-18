@@ -8,7 +8,7 @@ import java.util.List;
 
 interface IPlayer {
 
-    void setSongList(in List<Song> songList, in int index);
+    void setSongList(in List<Song> songList, in int index, boolean isPlay);
 
     void prepare(in String path);
 

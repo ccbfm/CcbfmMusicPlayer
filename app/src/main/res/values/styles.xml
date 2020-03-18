@@ -17,5 +17,23 @@
         <item name="android:windowBackground">@color/colorPrimary</item>
     </style>
 
-    <style name="PermissionDialog" parent="Base.Theme.AppCompat.Light.Dialog"/>
+    <style name="PermissionDialog" parent="Base.Theme.AppCompat.Light.Dialog">
+        <item name="buttonBarPositiveButtonStyle">@style/positiveBtnStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/negativeBtnStyle</item>
+    </style>
+
+    <!--确定按钮样式-->
+    <style name="positiveBtnStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <!--取消按钮样式-->
+    <style name="negativeBtnStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
+    <style name="PlaylistCheckBox" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/color_f2f2f2</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
 </resources>

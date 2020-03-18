@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IControlPlayer {
 
-    void setSongList(List<Song> songList, int position);
+    void setSongList(List<Song> songList, int position, boolean isPlay);
 
     void prepare(String path);
 

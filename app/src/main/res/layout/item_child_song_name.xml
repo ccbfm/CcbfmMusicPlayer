@@ -20,16 +20,28 @@
     <FrameLayout
         android:id="@+id/music_song_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
+        android:background="@color/colorPrimary"
         android:paddingStart="8dp"
-        android:paddingEnd="16dp"
-        android:background="@color/colorPrimary">
+        android:paddingEnd="16dp">
 
         <TextView
             android:id="@+id/music_song_name"
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:gravity="center_vertical" />
+            android:layout_height="48dp"
+            android:layout_gravity="start|top"
+            android:gravity="center_vertical"
+            android:textColor="@color/color_f2f2f2"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/music_singer_name"
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:layout_gravity="start|bottom"
+            android:gravity="top"
+            android:textColor="@color/color_B8B8B8"
+            android:textSize="12sp" />
 
         <ImageButton
             android:id="@+id/music_song_play"

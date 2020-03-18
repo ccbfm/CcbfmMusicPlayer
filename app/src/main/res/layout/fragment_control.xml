@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app = "http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -10,13 +9,37 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageButton
+            android:id="@+id/music_open_menu"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="top|start"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:onClick="onClickOpenMenu"
+            android:scaleType="center"
+            android:src="@drawable/ic_menu_asset_24dp" />
+
+        <ImageButton
+            android:id="@+id/music_open_playlist"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="top|end"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:onClick="onClickOpenPlaylist"
+            android:scaleType="center"
+            android:src="@drawable/ic_playlist_play_asset_24dp" />
+
         <TextView
             android:id="@+id/music_control_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="72dp"
-            android:text="xx" />
+            android:ellipsize="marquee"
+            android:singleLine="true"
+            android:text="@string/app_name"
+            android:textColor="@color/color_f2f2f2"
+            android:textSize="32sp" />
 
         <TextView
             android:id="@+id/music_control_singer"
@@ -24,7 +47,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="132dp"
-            android:text="xx" />
+            android:textColor="@color/color_f2f2f2"
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/music_control_play"

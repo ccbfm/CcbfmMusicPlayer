@@ -1,24 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
     </data>
 
-    <FrameLayout
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/music_menu"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.ccbfm.music.player.ui.widget.VerticalViewPager
-            android:id="@+id/music_view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
         <FrameLayout
-            android:id="@+id/music_song_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
 
-    </FrameLayout>
+            <com.ccbfm.music.player.ui.widget.VerticalViewPager
+                android:id="@+id/music_view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <FrameLayout
+                android:id="@+id/music_song_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="180dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/colorPrimary"
+            android:clickable="true"
+            android:divider="@color/color_f2f2f2"
+            android:focusable="true"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:showDividers="middle|end">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:gravity="center"
+                android:text="@string/app_name"
+                android:textColor="@color/color_f2f2f2"
+                android:textSize="24sp" />
+
+            <FrameLayout
+                android:id="@+id/music_menu_timing"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:onClick="onClickMenuView"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:drawableStart="@drawable/ic_access_alarm_asset_24dp"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/music_menu_timing"
+                    android:textColor="@color/color_f2f2f2"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/music_exit_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:textColor="@color/color_B8B8B8"
+                    android:textSize="12sp" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/music_menu_exit"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_exit_to_app_asset_24dp"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:onClick="onClickMenuView"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="@string/music_menu_exit"
+                android:textColor="@color/color_f2f2f2"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+    </androidx.drawerlayout.widget.DrawerLayout>
 </layout>

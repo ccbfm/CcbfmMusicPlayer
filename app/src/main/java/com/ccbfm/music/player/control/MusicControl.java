@@ -58,7 +58,11 @@ public class MusicControl implements ControlConstants {
     }
 
     public void setSongList(List<Song> songList, int index) {
-        sendMessage(createMessage(STATUS_SET_LIST, songList, index), 300);
+        setSongList(songList, index, true);
+    }
+
+    public void setSongList(List<Song> songList, int index, boolean isPlay) {
+        sendMessage(createMessage(STATUS_SET_LIST, songList, index, (isPlay ? 1 : 0)), 300);
     }
 
     public void play() {
@@ -92,7 +96,7 @@ public class MusicControl implements ControlConstants {
             return;
         }
         if (mHandler == null) {
-            if(Looper.myLooper() == null){
+            if (Looper.myLooper() == null) {
                 Looper.prepare();
             }
             mHandler = new PlayHandler(mPlayer);
@@ -108,11 +112,12 @@ public class MusicControl implements ControlConstants {
         return message;
     }
 
-    private Message createMessage(int what, Object obj, int arg1) {
+    private Message createMessage(int what, Object obj, int arg1, int arg2) {
         Message message = Message.obtain();
         message.what = what;
         message.obj = obj;
         message.arg1 = arg1;
+        message.arg2 = arg2;
         return message;
     }
 
@@ -140,7 +145,7 @@ public class MusicControl implements ControlConstants {
                         List<Song> songs = (List<Song>) msg.obj;
                         LogTools.i(TAG, "handleMessage", "songs=" + (songs != null ? songs.size() : null));
                         if (songs != null && songs.size() > 0) {
-                            mPlayer.setSongList(songs, msg.arg1);
+                            mPlayer.setSongList(songs, msg.arg1, (msg.arg2 == 1));
                         }
                         break;
                     case STATUS_PREPARE:

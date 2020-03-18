@@ -11,7 +11,7 @@
         android:layout_width="64dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:background="@color/colorAccent"
+        android:background="@color/color_698B22"
         android:scaleType="center"
         android:src="@drawable/ic_restore_asset_24dp" />
 
@@ -21,6 +21,8 @@
         android:layout_height="64dp"
         android:background="@color/colorPrimary"
         android:gravity="center_vertical"
+        android:textColor="@color/color_f2f2f2"
+        android:textSize="18sp"
         android:paddingStart="8dp"
         android:paddingEnd="8dp" />
 
