@@ -21,6 +21,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
     private PinnedHeaderListener mPinnedHeaderListener;
     private int mPinnedHeaderWidth;
     private int mPinnedHeaderHeight;
+    private int mPinnedHeaderDelta;
     private float mDx, mDy;
 
     public PinnedHeaderExpandableListView(Context context) {
@@ -44,6 +45,15 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
     }
 
     public void initView() {
+        addOnLayoutChangeListener(new OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if (mPinnedHeaderDelta != 0) {
+                    mPinnedHeader.layout(0, -mPinnedHeaderDelta, mPinnedHeaderWidth, mPinnedHeaderHeight - mPinnedHeaderDelta);
+                    mPinnedHeaderDelta = 0;
+                }
+            }
+        });
         setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -66,8 +76,10 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
                 if (nextGroup == firstGroup + 1) {
                     if (top <= mPinnedHeaderHeight) {
                         int delta = mPinnedHeaderHeight - top;
+                        mPinnedHeaderDelta = delta;
                         mPinnedHeader.layout(0, -delta, mPinnedHeaderWidth, mPinnedHeaderHeight - delta);
                     } else {
+                        mPinnedHeaderDelta = 0;
                         mPinnedHeader.layout(0, 0, mPinnedHeaderWidth, mPinnedHeaderHeight);
                     }
                     if (mPinnedHeaderListener != null) {
@@ -87,6 +99,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
                         }
                         mPinnedHeaderListener.changeContent(mPinnedHeader, groupItem);
                     }
+                    mPinnedHeaderDelta = 0;
                     mPinnedHeader.layout(0, 0, mPinnedHeaderWidth, mPinnedHeaderHeight);
                 }
             }
