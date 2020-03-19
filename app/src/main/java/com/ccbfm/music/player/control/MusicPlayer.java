@@ -66,7 +66,6 @@ public class MusicPlayer implements IControlPlayer {
         if (!TextUtils.isEmpty(mCurrentPath)
                 && TextUtils.equals(mCurrentPath, path)) {
             if (mIsPrepared) {
-
                 play();
             }
             return;
@@ -103,13 +102,13 @@ public class MusicPlayer implements IControlPlayer {
             mPlayer.start();
             //在start之后执行
             seekTo(mSeekTime);
-            changeDisplay();
             callbackStatus(ControlConstants.STATUS_PLAY);
             mIsResetSongList = false;
         }
         if (isPlaying) {
             mIsResetSongList = false;
         }
+        changeDisplay();
     }
 
     @Override
