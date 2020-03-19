@@ -11,4 +11,6 @@ interface IPlayerCallback {
     void callbackMsec(int msec);
 
     void callbackError(int code, in Song song);
+
+    void callbackStatus(int status);
 }

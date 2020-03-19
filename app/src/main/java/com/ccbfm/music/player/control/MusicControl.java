@@ -11,11 +11,13 @@ import android.os.Message;
 
 import androidx.annotation.NonNull;
 
+import com.ccbfm.music.player.App;
 import com.ccbfm.music.player.IPlayer;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.service.MusicService;
 import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.SPTools;
+import com.ccbfm.music.player.tool.ToastTools;
 
 import java.util.List;
 
@@ -143,10 +145,7 @@ public class MusicControl implements ControlConstants {
                     case STATUS_SET_LIST:
                         seekTo(msg.arg1);
                         List<Song> songs = (List<Song>) msg.obj;
-                        LogTools.i(TAG, "handleMessage", "songs=" + (songs != null ? songs.size() : null));
-                        if (songs != null && songs.size() > 0) {
-                            mPlayer.setSongList(songs, msg.arg1, (msg.arg2 == 1));
-                        }
+                        mPlayer.setSongList(songs, msg.arg1, (msg.arg2 == 1));
                         break;
                     case STATUS_PREPARE:
                         String path = (String) msg.obj;

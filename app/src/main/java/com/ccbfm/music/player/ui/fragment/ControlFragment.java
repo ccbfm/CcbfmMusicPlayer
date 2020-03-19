@@ -1,6 +1,5 @@
 package com.ccbfm.music.player.ui.fragment;
 
-import android.view.View;
 import android.widget.TextView;
 
 import androidx.lifecycle.Observer;
@@ -9,6 +8,7 @@ import com.ccbfm.music.player.IPlayerCallback;
 import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.callback.PlayerCallbackAdapter;
 import com.ccbfm.music.player.control.MusicControl;
+import com.ccbfm.music.player.control.PlayerErrorCode;
 import com.ccbfm.music.player.database.SongLoader;
 import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
@@ -19,6 +19,7 @@ import com.ccbfm.music.player.tool.LiveDataBus;
 import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.MathTools;
 import com.ccbfm.music.player.tool.SPTools;
+import com.ccbfm.music.player.ui.widget.PlayPauseView;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
     private int mSongIndex;
     private TextView mControlTitle;
     private TextView mControlSinger;
+    private PlayPauseView mPlayPauseView;
 
     private IPlayerCallback mPlayerCallback = new PlayerCallbackAdapter() {
         @Override
@@ -41,7 +43,20 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
                 Song song = songs.get(index);
                 updateUI(song.getSongName(), song.getSingerName());
             }
+            if (mPlayPauseView != null) {
+                boolean isPlaying = MusicControl.getInstance().isPlaying();
+                mPlayPauseView.setBarPlayingState(isPlaying);
+            }
+        }
 
+        @Override
+        public void callbackError(int code, Song song) {
+            super.callbackError(code, song);
+            if (code == PlayerErrorCode.NULL) {
+                if (mPlayPauseView != null) {
+                    mPlayPauseView.setBarPlayingState(false);
+                }
+            }
         }
     };
 
@@ -55,7 +70,7 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
         LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean flag) {
-                LogTools.i(TAG, "onChanged", "flag="+flag);
+                LogTools.i(TAG, "onChanged", "flag=" + flag);
                 if (flag != null && flag) {
                     loadData(mViewDataBinding);
                 }
@@ -63,15 +78,16 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
         });
 
         loadData(binding);
-
-        binding.musicControlPlay.setOnClickListener(new View.OnClickListener() {
+        mPlayPauseView = binding.musicControlPlay;
+        binding.musicControlPlay.setCallbackClick(new PlayPauseView.CallbackClick() {
             @Override
-            public void onClick(View v) {
+            public boolean onClick(boolean isPlaying) {
                 if (!MusicControl.getInstance().isPlaying()) {
                     MusicControl.getInstance().setSongList(mSongList, mSongIndex);
                 } else {
                     MusicControl.getInstance().pause();
                 }
+                return true;
             }
         });
     }

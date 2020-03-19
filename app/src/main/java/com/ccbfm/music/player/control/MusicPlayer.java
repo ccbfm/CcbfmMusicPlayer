@@ -102,6 +102,7 @@ public class MusicPlayer implements IControlPlayer {
             //在start之后执行
             seekTo(mSeekTime);
             changeDisplay();
+            callbackStatus(ControlConstants.STATUS_PLAY);
             mIsResetSongList = false;
         }
     }
@@ -113,6 +114,7 @@ public class MusicPlayer implements IControlPlayer {
             mPlayer.stop();
             cancelTimer();
             changeDisplay();
+            callbackStatus(ControlConstants.STATUS_STOP);
         }
     }
 
@@ -131,6 +133,7 @@ public class MusicPlayer implements IControlPlayer {
             mSeekTime = 0;
             cancelTimer();
             changeDisplay();
+            callbackStatus(ControlConstants.STATUS_RELEASE);
         }
     }
 
@@ -141,6 +144,7 @@ public class MusicPlayer implements IControlPlayer {
             mPlayer.pause();
             cancelTimer();
             changeDisplay();
+            callbackStatus(ControlConstants.STATUS_PAUSE);
         }
     }
 
@@ -163,8 +167,11 @@ public class MusicPlayer implements IControlPlayer {
 
     @Override
     public void setSongList(List<Song> songList, int position, boolean isPlay) {
-        if (songList == null) {
-            LogTools.w(TAG, "setSongList", "songList == null");
+        if (songList == null || songList.size() == 0) {
+            LogTools.w(TAG, "setSongList", "无音乐");
+            if(mPlayerCallback != null){
+                callbackError(PlayerErrorCode.NULL);
+            }
             return;
         }
         if (mSongList == null) {
@@ -316,6 +323,16 @@ public class MusicPlayer implements IControlPlayer {
         if (mPlayerCallback != null) {
             try {
                 mPlayerCallback.callbackError(code, getCurrentSong());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void callbackStatus(int status) {
+        if (mPlayerCallback != null) {
+            try {
+                mPlayerCallback.callbackStatus(status);
             } catch (Exception e) {
                 e.printStackTrace();
             }

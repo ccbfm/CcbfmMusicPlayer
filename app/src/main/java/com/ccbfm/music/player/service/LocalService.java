@@ -8,8 +8,8 @@ import android.os.RemoteException;
 import androidx.annotation.Nullable;
 
 import com.ccbfm.music.player.IPlayerCallback;
-import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.control.PlayerErrorCode;
+import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.tool.SPTools;
 import com.ccbfm.music.player.tool.ToastTools;
 
@@ -40,7 +40,7 @@ public class LocalService extends Service {
         @Override
         public void callbackIndex(int index) throws RemoteException {
             SPTools.putIntValue(KEY_INIT_SONG_INDEX, index);
-            if(isNotifyCallback()){
+            if (isNotifyCallback()) {
                 for (IPlayerCallback adapter : sPlayerCallbackAdapters) {
                     adapter.callbackIndex(index);
                 }
@@ -50,7 +50,7 @@ public class LocalService extends Service {
         @Override
         public void callbackMsec(int msec) throws RemoteException {
             SPTools.putIntValue(KEY_INIT_SONG_MSEC, msec);
-            if(isNotifyCallback()){
+            if (isNotifyCallback()) {
                 for (IPlayerCallback adapter : sPlayerCallbackAdapters) {
                     adapter.callbackMsec(msec);
                 }
@@ -59,35 +59,47 @@ public class LocalService extends Service {
 
         @Override
         public void callbackError(int code, Song song) throws RemoteException {
-            if(isNotifyCallback()){
+            if (isNotifyCallback()) {
                 for (IPlayerCallback adapter : sPlayerCallbackAdapters) {
                     adapter.callbackError(code, song);
                 }
             }
 
             String message = "";
-            switch (code){
+            switch (code) {
                 case PlayerErrorCode.PREPARE:
                     message = "歌曲 " + song.getSongName() + " 播放错误";
+                    break;
+                case PlayerErrorCode.NULL:
+                    message = "没有可播放音乐";
                     break;
             }
             ToastTools.showToast(getApplicationContext(), message);
         }
+
+        @Override
+        public void callbackStatus(int status) throws RemoteException {
+            if (isNotifyCallback()) {
+                for (IPlayerCallback adapter : sPlayerCallbackAdapters) {
+                    adapter.callbackStatus(status);
+                }
+            }
+        }
     }
 
-    private boolean isNotifyCallback(){
+    private boolean isNotifyCallback() {
         return sPlayerCallbackAdapters != null && sPlayerCallbackAdapters.size() != 0;
     }
 
-    public static void addPlayerCallbackAdapter(IPlayerCallback adapter){
-        if(sPlayerCallbackAdapters == null){
+    public static void addPlayerCallbackAdapter(IPlayerCallback adapter) {
+        if (sPlayerCallbackAdapters == null) {
             sPlayerCallbackAdapters = new LinkedList<>();
         }
         sPlayerCallbackAdapters.add(adapter);
     }
 
-    public static void removePlayerCallbackAdapter(IPlayerCallback adapter){
-        if(sPlayerCallbackAdapters == null || sPlayerCallbackAdapters.size() == 0){
+    public static void removePlayerCallbackAdapter(IPlayerCallback adapter) {
+        if (sPlayerCallbackAdapters == null || sPlayerCallbackAdapters.size() == 0) {
             return;
         }
         sPlayerCallbackAdapters.remove(adapter);
