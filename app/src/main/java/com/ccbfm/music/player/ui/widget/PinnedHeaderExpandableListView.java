@@ -18,9 +18,7 @@ import com.ccbfm.music.player.tool.MathTools;
 public class PinnedHeaderExpandableListView extends ExpandableListView {
 
     private View mPinnedHeader;
-    private boolean mCheckPinnedHeaderContent = true;
     private PinnedHeaderListener mPinnedHeaderListener;
-    private int mNextGroup;
     private int mPinnedHeaderWidth;
     private int mPinnedHeaderHeight;
     private float mDx, mDy;
@@ -72,32 +70,25 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
                     } else {
                         mPinnedHeader.layout(0, 0, mPinnedHeaderWidth, mPinnedHeaderHeight);
                     }
-                    if (!mCheckPinnedHeaderContent || mNextGroup != nextGroup) {
-                        if (mPinnedHeaderListener != null) {
-                            Object groupItem = null;
-                            if (getExpandableListAdapter() instanceof BaseExpandableListAdapter) {
-                                BaseExpandableListAdapter adapter = (BaseExpandableListAdapter) getExpandableListAdapter();
-                                groupItem = adapter.getGroup(firstGroup);
-                            }
-                            mPinnedHeaderListener.changeContent(mPinnedHeader, groupItem);
+                    if (mPinnedHeaderListener != null) {
+                        Object groupItem = null;
+                        if (getExpandableListAdapter() instanceof BaseExpandableListAdapter) {
+                            BaseExpandableListAdapter adapter = (BaseExpandableListAdapter) getExpandableListAdapter();
+                            groupItem = adapter.getGroup(firstGroup);
                         }
-                        mCheckPinnedHeaderContent = true;
+                        mPinnedHeaderListener.changeContent(mPinnedHeader, groupItem);
                     }
                 } else {
-                    if (mCheckPinnedHeaderContent) {
-                        if (mPinnedHeaderListener != null) {
-                            Object groupItem = null;
-                            if (getExpandableListAdapter() instanceof BaseExpandableListAdapter) {
-                                BaseExpandableListAdapter adapter = (BaseExpandableListAdapter) getExpandableListAdapter();
-                                groupItem = adapter.getGroup(firstGroup);
-                            }
-                            mPinnedHeaderListener.changeContent(mPinnedHeader, groupItem);
+                    if (mPinnedHeaderListener != null) {
+                        Object groupItem = null;
+                        if (getExpandableListAdapter() instanceof BaseExpandableListAdapter) {
+                            BaseExpandableListAdapter adapter = (BaseExpandableListAdapter) getExpandableListAdapter();
+                            groupItem = adapter.getGroup(firstGroup);
                         }
-                        mCheckPinnedHeaderContent = false;
+                        mPinnedHeaderListener.changeContent(mPinnedHeader, groupItem);
                     }
                     mPinnedHeader.layout(0, 0, mPinnedHeaderWidth, mPinnedHeaderHeight);
                 }
-                mNextGroup = nextGroup;
             }
         });
     }
@@ -160,23 +151,23 @@ public class PinnedHeaderExpandableListView extends ExpandableListView {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if(mDx != x || mDy != y){
+                if (mDx != x || mDy != y) {
                     return super.dispatchTouchEvent(ev);
                 }
                 if (mPinnedHeader != null && mIsClickPinnedHeader &&
                         y >= mPinnedHeader.getTop() && y <= mPinnedHeader.getBottom()) {
 
-                    if(mPinnedHeader instanceof ViewGroup){
-                        ViewGroup ph = (ViewGroup)mPinnedHeader;
+                    if (mPinnedHeader instanceof ViewGroup) {
+                        ViewGroup ph = (ViewGroup) mPinnedHeader;
                         int count = ph.getChildCount();
                         for (int i = 0; i < count; i++) {
                             View view = ph.getChildAt(i);
                             boolean clickable = view.isClickable();
-                            if(!clickable){
+                            if (!clickable) {
                                 continue;
                             }
                             boolean flag = MathTools.inRangeOfView(view, x, y);
-                            if(flag) {
+                            if (flag) {
                                 view.performClick();
                                 return false;
                             }

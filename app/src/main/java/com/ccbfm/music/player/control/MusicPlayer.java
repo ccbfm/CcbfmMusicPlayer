@@ -186,8 +186,8 @@ public class MusicPlayer implements IControlPlayer {
         }
         mSongIndex = (position);
 
-        mIsResetSongList = true;
         if(isPlay) {
+            mIsResetSongList = true;
             Song song = mSongList.get(position);
             String path = song.getSongPath();
             LogTools.w(TAG, "setSongList", "path=" + path + ","+mIsResetSongList);

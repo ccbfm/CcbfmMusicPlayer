@@ -1,7 +1,12 @@
 package com.ccbfm.music.player.tool;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.listener.OnTimeSelectListener;
@@ -43,8 +48,9 @@ import java.util.Date;
  * .setDecorView(null)//设置要将pickerview显示到的容器id 必须是viewgroup
  * .isDialog(false)//是否显示为对话框样式
  */
-public class TimePickerTools {
+public class ExitTimeTools {
     private static String sExitTime;
+    private static Handler sHandler;
 
     public static String getExitTime() {
         return sExitTime;
@@ -59,14 +65,18 @@ public class TimePickerTools {
                 long time = date.getTime();
                 long delayTime = time - startTime;
                 if (delayTime <= 0) {
-                    ToastTools.showToast(context, "无效时间");
+                    boolean result = cancelExitMessage();
+                    if (result) {
+                        sExitTime = "";
+                    }
+                    ToastTools.showToast(context, result ? "取消定时" : "无效时间");
                 } else {
-                    new Thread(new ExitRunnable(delayTime)).start();
+                    sendExitMessage(delayTime);
                     sExitTime = DateTools.dateToString(date, DateTools.FORMAT_YMDHMS);
                     ToastTools.showToast(context, "设置成功");
-                    if (callback != null) {
-                        callback.callback();
-                    }
+                }
+                if (callback != null) {
+                    callback.callback();
                 }
             }
         });
@@ -77,6 +87,41 @@ public class TimePickerTools {
         TimePickerView tpView = builder.build();
         tpView.setDate(Calendar.getInstance());
         tpView.show();
+    }
+
+    private static boolean cancelExitMessage() {
+        if (sHandler == null) {
+            return false;
+        }
+        boolean result = sHandler.hasMessages(EXECUTE_EXIT);
+        if (result) {
+            sHandler.removeMessages(EXECUTE_EXIT);
+        }
+        return result;
+    }
+
+    private static void sendExitMessage(long delayTime) {
+        if (sHandler == null) {
+            sHandler = new ExitHandler(Executors.getHandlerLooper());
+        }
+        sHandler.removeMessages(EXECUTE_EXIT);
+        sHandler.sendEmptyMessageDelayed(EXECUTE_EXIT, delayTime);
+    }
+
+    private static final int EXECUTE_EXIT = 1;
+
+    private static class ExitHandler extends Handler {
+
+        private ExitHandler(@NonNull Looper looper) {
+            super(looper);
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            if (msg.what == EXECUTE_EXIT) {
+                SystemTools.killAppProcess(App.getApp());
+            }
+        }
     }
 
     private static class ExitRunnable implements Runnable {

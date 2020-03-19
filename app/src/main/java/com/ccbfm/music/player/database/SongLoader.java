@@ -31,7 +31,7 @@ public final class SongLoader {
     private static final String TAG = "SongLoader";
     private static final boolean DEBUG = false;
 
-    private static final Executor EXECUTOR = Executors.EXECUTOR;
+    private static final Executor EXECUTOR = Executors.SONG_LOADER_EXECUTOR;
     private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
     private static String[] PROJECTION = new String[]{
