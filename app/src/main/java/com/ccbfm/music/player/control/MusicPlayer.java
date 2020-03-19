@@ -24,7 +24,7 @@ public class MusicPlayer implements IControlPlayer {
     private Random mRandom;
     private String mCurrentPath;
     private boolean mIsPrepared = false;
-    private boolean mIsResetSongList = true;
+    private boolean mIsResetSongList = false;
     private Timer mTimer;
     private int mSeekTime = 0;
     private MusicService.NotificationCallback mCallback;
@@ -44,7 +44,7 @@ public class MusicPlayer implements IControlPlayer {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 LogTools.i(TAG, "onCompletion", "mIsResetSongList=" + mIsResetSongList);
-                if(!mIsResetSongList) {
+                if (!mIsResetSongList) {
                     next();
                 }
             }
@@ -66,6 +66,7 @@ public class MusicPlayer implements IControlPlayer {
         if (!TextUtils.isEmpty(mCurrentPath)
                 && TextUtils.equals(mCurrentPath, path)) {
             if (mIsPrepared) {
+
                 play();
             }
             return;
@@ -95,7 +96,8 @@ public class MusicPlayer implements IControlPlayer {
 
     @Override
     public void play() {
-        if (mPlayer != null && !isPlaying() && mIsPrepared) {
+        boolean isPlaying = isPlaying();
+        if (mPlayer != null && !isPlaying && mIsPrepared) {
             LogTools.i(TAG, "play", "------" + mIsResetSongList);
             startTimer();
             mPlayer.start();
@@ -103,6 +105,9 @@ public class MusicPlayer implements IControlPlayer {
             seekTo(mSeekTime);
             changeDisplay();
             callbackStatus(ControlConstants.STATUS_PLAY);
+            mIsResetSongList = false;
+        }
+        if (isPlaying) {
             mIsResetSongList = false;
         }
     }
@@ -169,7 +174,7 @@ public class MusicPlayer implements IControlPlayer {
     public void setSongList(List<Song> songList, int position, boolean isPlay) {
         if (songList == null || songList.size() == 0) {
             LogTools.w(TAG, "setSongList", "无音乐");
-            if(mPlayerCallback != null){
+            if (mPlayerCallback != null) {
                 callbackError(PlayerErrorCode.NULL);
             }
             return;
@@ -193,11 +198,11 @@ public class MusicPlayer implements IControlPlayer {
         }
         mSongIndex = (position);
 
-        if(isPlay) {
+        if (isPlay) {
             mIsResetSongList = true;
             Song song = mSongList.get(position);
             String path = song.getSongPath();
-            LogTools.w(TAG, "setSongList", "path=" + path + ","+mIsResetSongList);
+            LogTools.w(TAG, "setSongList", "path=" + path + "," + mIsResetSongList);
             prepare(path);
         }
     }

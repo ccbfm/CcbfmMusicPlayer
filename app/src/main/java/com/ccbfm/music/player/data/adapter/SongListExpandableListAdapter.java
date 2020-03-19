@@ -154,12 +154,15 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
         mPlaylists.clear();
         mPlaylists.addAll(playlists);
 
+        boolean flag = mPlaylistIndex != -1;
         mPlaylistIndex = SPTools.getIntValue(SPTools.KEY_INIT_PLAYLIST_INDEX);
         mSongIndex = SPTools.getIntValue(SPTools.KEY_INIT_SONG_INDEX);
 
-        MusicControl.getInstance().setSongList(
-                mPlaylists.get(mPlaylistIndex).getSongList(), mSongIndex,
-                MusicControl.getInstance().isPlaying());
+        if(flag) {
+            MusicControl.getInstance().setSongList(
+                    mPlaylists.get(mPlaylistIndex).getSongList(), mSongIndex,
+                    MusicControl.getInstance().isPlaying());
+        }
 
         notifyDataSetChanged();
         changeGroupSlidingView(-1);
