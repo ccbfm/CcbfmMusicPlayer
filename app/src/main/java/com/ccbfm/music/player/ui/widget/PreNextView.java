@@ -4,20 +4,22 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.ccbfm.music.player.R;
 
 public class PreNextView extends View {
     private static final String TAG = "PreNextView";
     private Paint mBarPaint;
     private Path mBarPath;
-    private RectF mOuterRectF, mInnerRectF;
+    private float mBarStrokeWidth = 10;
+    private int mBarColor, mBarActiveColor;
     private int mDirection = Direction.LEFT;
     private int mWidth, mHeight, mCenterWidth, mCenterHeight;
     private float mProgress = 0;
@@ -37,20 +39,25 @@ public class PreNextView extends View {
     public PreNextView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         if (attrs != null) {
-
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.PreNextView);
+            mBarStrokeWidth = typedArray.getDimension(R.styleable.PreNextView_pn_barStrokeWidth, 10);
+            mBarColor = typedArray.getColor(R.styleable.PreNextView_pn_barColor, getResources().getColor(R.color.color_f2f2f2));
+            mBarActiveColor = typedArray.getColor(R.styleable.PreNextView_pn_barActiveColor, getResources().getColor(R.color.colorAccent));
+            mDirection = typedArray.getInt(R.styleable.PreNextView_pn_barDirection, Direction.LEFT);
+            typedArray.recycle();
         }
         init();
     }
 
     private void init() {
+        setFocusable(true);
+        setClickable(true);
         mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBarPaint.setColor(Color.WHITE);
-        mBarPaint.setStrokeWidth(10);
+        mBarPaint.setColor(mBarColor);
+        mBarPaint.setStrokeWidth(mBarStrokeWidth);
         mBarPaint.setStyle(Paint.Style.STROKE);
 
         mBarPath = new Path();
-        mOuterRectF = new RectF();
-        mInnerRectF = new RectF();
     }
 
     private void setCenterPosition() {
@@ -84,34 +91,56 @@ public class PreNextView extends View {
         int centerH = mCenterHeight;
         int width = mWidth, height = mHeight;
         float progress = mProgress;
+        if (progress > 0.5f) {
+            mBarPaint.setColor(mBarActiveColor);
+        } else {
+            mBarPaint.setColor(mBarColor);
+        }
         float startX = 0, endX = 0, startY = 0, endY = 0;
         float vertexX1 = 0, vertexY1 = 0, vertexX2 = 0, vertexY2 = 0;
         switch (mDirection) {
             case Direction.LEFT:
                 startX = endX = width - centerW / 4f + centerW / 4f * progress;
                 startY = (centerH / 2f) * progress;
-                endY = height - (centerH / 2f) * progress;
+                endY = height - startY;
                 vertexX1 = -(centerW + centerW / 2f);
                 vertexY1 = centerH;
                 vertexX2 = 0;
                 vertexY2 = centerH;
                 break;
             case Direction.RIGHT:
-                startX = endX = width - centerW / 4f + centerW / 4f * progress;
+                startX = endX = centerW / 4f - centerW / 4f * progress;
                 startY = (centerH / 2f) * progress;
-                endY = height - (centerH / 2f) * progress;
+                endY = height - startY;
                 vertexX1 = width + (centerW + centerW / 2f);
                 vertexY1 = centerH;
                 vertexX2 = width;
                 vertexY2 = centerH;
                 break;
+            case Direction.TOP:
+                startX = (centerW / 2f) * progress;
+                endX = width - startX;
+                startY = endY = height - centerH / 4f + centerH / 4f * progress;
+                vertexX1 = centerW;
+                vertexY1 = -(centerH + centerH / 2f);
+                vertexX2 = centerW;
+                vertexY2 = 0;
+                break;
+            case Direction.BOTTOM:
+                startX = (centerW / 2f) * progress;
+                endX = width - startX;
+                startY = endY = centerH / 4f - centerH / 4f * progress;
+                vertexX1 = centerW;
+                vertexY1 = height + (centerH + centerH / 2f);
+                vertexX2 = centerW;
+                vertexY2 = height;
+                break;
         }
         mBarPath.rewind();
         mBarPath.moveTo(startX, startY);
         mBarPath.cubicTo(startX, startY, vertexX1, vertexY1, endX, endY);
-        mBarPath.cubicTo(startX, endY, vertexX2, vertexY2, endX, startY);
+        mBarPath.cubicTo(endX, endY, vertexX2, vertexY2, startX, startY);
         canvas.drawPath(mBarPath, mBarPaint);
-        //canvas.drawCircle(mCenterWidth, mCenterHeight, 10, mBarPaint);
     }
 
     private Animator getAnimator(boolean flag) {
@@ -160,14 +189,18 @@ public class PreNextView extends View {
                 startAnimator(true);
                 break;
             case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
                 startAnimator(false);
                 break;
         }
+        super.onTouchEvent(event);
         return true;
     }
 
     public @interface Direction {
         int LEFT = 1;
         int RIGHT = 2;
+        int TOP = 3;
+        int BOTTOM = 4;
     }
 }

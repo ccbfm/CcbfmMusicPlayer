@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -51,9 +52,22 @@
             android:textSize="16sp" />
 
         <com.ccbfm.music.player.ui.widget.PreNextView
+            android:id="@+id/music_control_previous"
             android:layout_width="80dp"
             android:layout_height="150dp"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="start|center_vertical"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            app:pn_barDirection="left"
+            app:pn_barStrokeWidth="2dp" />
+
+        <com.ccbfm.music.player.ui.widget.PreNextView
+            android:id="@+id/music_control_next"
+            android:layout_width="80dp"
+            android:layout_height="150dp"
+            android:layout_gravity="end|center_vertical"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            app:pn_barDirection="right"
+            app:pn_barStrokeWidth="2dp" />
 
         <com.ccbfm.music.player.ui.widget.PlayPauseView
             android:id="@+id/music_control_play"
@@ -61,7 +75,6 @@
             android:layout_height="200dp"
             android:layout_gravity="center"
             android:background="@drawable/button_scanning_bg" />
-
 
     </FrameLayout>
 </layout>

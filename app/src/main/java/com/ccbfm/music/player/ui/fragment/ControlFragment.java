@@ -1,5 +1,6 @@
 package com.ccbfm.music.player.ui.fragment;
 
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.lifecycle.Observer;
@@ -86,6 +87,19 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
                 return true;
             }
         });
+
+        binding.musicControlPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MusicControl.getInstance().previous();
+            }
+        });
+        binding.musicControlNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MusicControl.getInstance().next();
+            }
+        });
     }
 
     private void loadData(final FragmentControlBinding binding) {
@@ -127,6 +141,7 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
                 if (songIndex >= 0 && songIndex < songListSize) {
                     mSongIndex = songIndex;
                     Song song = songList.get(songIndex);
+                    MusicControl.getInstance().setSongList(mSongList, mSongIndex, false);
                     updateUI(song.getSongName(), song.getSingerName());
                 } else {
                     updateUI(getString(R.string.app_name), "");

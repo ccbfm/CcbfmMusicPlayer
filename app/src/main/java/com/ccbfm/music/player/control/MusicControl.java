@@ -75,6 +75,14 @@ public class MusicControl implements ControlConstants {
         sendMessage(STATUS_PAUSE, null);
     }
 
+    public void previous() {
+        sendMessage(STATUS_PREVIOUS, null);
+    }
+
+    public void next() {
+        sendMessage(STATUS_NEXT, null);
+    }
+
     public void release() {
         sendMessage(STATUS_RELEASE, null);
     }

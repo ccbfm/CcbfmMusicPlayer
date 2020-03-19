@@ -22,7 +22,7 @@ public class PlayPauseView extends View implements View.OnClickListener {
     private int mWidth, mHeight, mCenterWidth, mCenterHeight;
     private int mBarWidth, mBarHeight, mBarPadding, mBarHalfPadding, mBarSpace, mBarHalfSpace, mRadius;
     private float mProgress;
-    private int mBarBgColor, mBarColor;
+    private int mBarBgColor, mBarColor, mBarActiveColor;
     private boolean mIsClockWise = false;
     private boolean mBarPlayingState = false;
     private CallbackClick mCallbackClick;
@@ -43,12 +43,13 @@ public class PlayPauseView extends View implements View.OnClickListener {
         super(context, attrs, defStyleAttr, defStyleRes);
         if (attrs != null) {
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.PlayPauseView);
-            mBarWidth = (int) typedArray.getDimension(R.styleable.PlayPauseView_barWidth, 50);
-            mBarHeight = (int) typedArray.getDimension(R.styleable.PlayPauseView_barHeight, 150);
-            mBarHalfPadding = (int) typedArray.getDimension(R.styleable.PlayPauseView_barPadding, 50);
-            mBarBgColor = typedArray.getColor(R.styleable.PlayPauseView_barBgColor, getResources().getColor(R.color.color_f2f2f2));
-            mBarColor = typedArray.getColor(R.styleable.PlayPauseView_barColor, getResources().getColor(R.color.color_515151));
-            mBarPlayingState = typedArray.getBoolean(R.styleable.PlayPauseView_barPlayingState, false);
+            mBarWidth = (int) typedArray.getDimension(R.styleable.PlayPauseView_pp_barWidth, 50);
+            mBarHeight = (int) typedArray.getDimension(R.styleable.PlayPauseView_pp_barHeight, 150);
+            mBarHalfPadding = (int) typedArray.getDimension(R.styleable.PlayPauseView_pp_barPadding, 50);
+            mBarBgColor = typedArray.getColor(R.styleable.PlayPauseView_pp_barBgColor, getResources().getColor(R.color.color_f2f2f2));
+            mBarColor = typedArray.getColor(R.styleable.PlayPauseView_pp_barColor, getResources().getColor(R.color.color_515151));
+            mBarActiveColor = typedArray.getColor(R.styleable.PlayPauseView_pp_barActiveColor, getResources().getColor(R.color.color_698B22));
+            mBarPlayingState = typedArray.getBoolean(R.styleable.PlayPauseView_pp_barPlayingState, false);
             typedArray.recycle();
             mProgress = mBarPlayingState ? 0f : 1f;
             mBarPadding = mBarHalfPadding + mBarHalfPadding;
@@ -122,7 +123,11 @@ public class PlayPauseView extends View implements View.OnClickListener {
         int padding = mBarPadding, barWidth = mBarWidth, barHhWidth = mBarWidth / 4,
                 barSpace = mBarSpace, barHalfSpace = mBarHalfSpace, barHeight = mBarHeight;
         final float progress = mProgress;
-
+        if (progress > 0.5) {
+            mBarPaint.setColor(mBarColor);
+        } else {
+            mBarPaint.setColor(mBarActiveColor);
+        }
         float proWhs = (barWidth + barHalfSpace) * progress;
         float proHs = barHalfSpace * progress;
         float proHhw = barHhWidth * progress;
