@@ -17,6 +17,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         sApp = this;
+        CrashHandler.getInstance().init();
         if (!isMainProcess()) {
             return;
         }

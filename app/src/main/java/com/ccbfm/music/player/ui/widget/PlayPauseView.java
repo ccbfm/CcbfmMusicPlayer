@@ -14,7 +14,7 @@ import android.view.View;
 import com.ccbfm.music.player.R;
 
 public class PlayPauseView extends View implements View.OnClickListener {
-    private static final String TAG = "wds";
+    private static final String TAG = "PlayPauseView";
     private Paint mBgPaint;
     private Paint mBarPaint;
     private Path mLeftPath;
