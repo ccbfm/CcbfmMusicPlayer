@@ -224,7 +224,7 @@ public final class SongLoader {
             @Override
             public void run() {
                 DBDao.deleteAllPlaylist();
-                int rowsAffected = DBDao.deleteAllSong("0");
+                int rowsAffected = DBDao.deleteAllSong();
                 ToastTools.showToast(App.getApp(), "清除" + rowsAffected + "个");
                 if (rowsAffected > 0) {
                     sPlaylists = null;

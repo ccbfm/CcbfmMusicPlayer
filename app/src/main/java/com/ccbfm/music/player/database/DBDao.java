@@ -35,8 +35,8 @@ public final class DBDao {
         LitePal.delete(Playlist.class, id);
     }
 
-    public static void deleteAllSong(){
-        LitePal.deleteAll(Song.class);
+    public static int deleteAllSong(){
+        return LitePal.deleteAll(Song.class);
     }
 
     public static int deleteAllSong(String status){
