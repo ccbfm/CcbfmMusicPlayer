@@ -43,10 +43,6 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
                 Song song = songs.get(index);
                 updateUI(song.getSongName(), song.getSingerName());
             }
-            if (mPlayPauseView != null) {
-                boolean isPlaying = MusicControl.getInstance().isPlaying();
-                mPlayPauseView.setBarPlayingState(isPlaying);
-            }
         }
 
         @Override
@@ -149,8 +145,13 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
                 if (mControlSinger != null) {
                     mControlSinger.setText(singerName);
                 }
+                if (mPlayPauseView != null) {
+                    boolean isPlaying = MusicControl.getInstance().isPlaying();
+                    mPlayPauseView.setBarPlayingState(isPlaying);
+                }
             }
         });
+
     }
 
     @Override
