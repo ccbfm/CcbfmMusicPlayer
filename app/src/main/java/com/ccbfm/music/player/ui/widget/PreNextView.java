@@ -152,7 +152,7 @@ public class PreNextView extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 mProgress = (float) animation.getAnimatedValue();
-                invalidate();
+                postInvalidate();
             }
         });
         animator.addListener(new AnimatorListenerAdapter() {
@@ -173,12 +173,17 @@ public class PreNextView extends View {
 
     private Animator mAnimator;
 
-    private void startAnimator(boolean flag) {
-        if (mAnimator != null) {
-            mAnimator.cancel();
-        }
-        mAnimator = getAnimator(flag);
-        mAnimator.start();
+    private void startAnimator(final boolean flag) {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                if (mAnimator != null) {
+                    mAnimator.cancel();
+                }
+                mAnimator = getAnimator(flag);
+                mAnimator.start();
+            }
+        });
     }
 
     @Override

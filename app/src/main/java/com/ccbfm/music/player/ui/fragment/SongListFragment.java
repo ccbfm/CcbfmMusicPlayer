@@ -31,7 +31,7 @@ public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
     private TextView mHeadName;
     private View mAddSongList;
 
-    private IPlayerCallback mPlayerCallback = new PlayerCallbackAdapter() {
+    private PlayerCallbackAdapter mPlayerCallback = new PlayerCallbackAdapter() {
         @Override
         public void callbackIndex(int index) {
             boolean isPlaying = MusicControl.getInstance().isPlaying();

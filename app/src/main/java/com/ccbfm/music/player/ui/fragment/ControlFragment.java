@@ -33,7 +33,7 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
     private TextView mControlSinger;
     private PlayPauseView mPlayPauseView;
 
-    private IPlayerCallback mPlayerCallback = new PlayerCallbackAdapter() {
+    private PlayerCallbackAdapter mPlayerCallback = new PlayerCallbackAdapter() {
         @Override
         public void callbackIndex(int index) {
             mSongIndex = index;

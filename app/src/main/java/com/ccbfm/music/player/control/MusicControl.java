@@ -11,13 +11,12 @@ import android.os.Message;
 
 import androidx.annotation.NonNull;
 
-import com.ccbfm.music.player.App;
 import com.ccbfm.music.player.IPlayer;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.service.MusicService;
+import com.ccbfm.music.player.tool.Executors;
 import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.SPTools;
-import com.ccbfm.music.player.tool.ToastTools;
 
 import java.util.List;
 
@@ -106,10 +105,7 @@ public class MusicControl implements ControlConstants {
             return;
         }
         if (mHandler == null) {
-            if (Looper.myLooper() == null) {
-                Looper.prepare();
-            }
-            mHandler = new PlayHandler(mPlayer);
+            mHandler = new PlayHandler(Executors.getHandlerLooper(), mPlayer);
         }
         mHandler.removeMessages(message.what);
         mHandler.sendMessageDelayed(message, (delayMillis == 0 ? 100 : delayMillis));
@@ -133,6 +129,11 @@ public class MusicControl implements ControlConstants {
 
     private static class PlayHandler extends Handler {
         private IPlayer mPlayer;
+
+        public PlayHandler(@NonNull Looper looper, IPlayer player) {
+            super(looper);
+            mPlayer = player;
+        }
 
         private PlayHandler(IPlayer player) {
             mPlayer = player;

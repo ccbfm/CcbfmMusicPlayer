@@ -2,14 +2,17 @@ package com.ccbfm.music.player.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 
 import androidx.annotation.Nullable;
 
 import com.ccbfm.music.player.IPlayerCallback;
+import com.ccbfm.music.player.callback.PlayerCallbackAdapter;
 import com.ccbfm.music.player.control.PlayerErrorCode;
 import com.ccbfm.music.player.database.entity.Song;
+import com.ccbfm.music.player.tool.Executors;
 import com.ccbfm.music.player.tool.SPTools;
 import com.ccbfm.music.player.tool.ToastTools;
 
@@ -22,12 +25,14 @@ import static com.ccbfm.music.player.tool.SPTools.KEY_INIT_SONG_MSEC;
 public class LocalService extends Service {
     private static final String TAG = "LocalService";
     private LocalBinder mBinder;
-    private static List<IPlayerCallback> sPlayerCallbackAdapters;
+    private static List<PlayerCallbackAdapter> sPlayerCallbackAdapters;
+    private Handler mHandler;
 
     @Override
     public void onCreate() {
         super.onCreate();
         mBinder = new LocalBinder();
+        mHandler = new Handler(Executors.getHandlerLooper());
     }
 
     @Nullable
@@ -38,52 +43,72 @@ public class LocalService extends Service {
 
     private class LocalBinder extends IPlayerCallback.Stub {
         @Override
-        public void callbackIndex(int index) throws RemoteException {
-            SPTools.putIntValue(KEY_INIT_SONG_INDEX, index);
-            if (isNotifyCallback()) {
-                for (IPlayerCallback adapter : sPlayerCallbackAdapters) {
-                    adapter.callbackIndex(index);
+        public void callbackIndex(final int index) throws RemoteException {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    SPTools.putIntValue(KEY_INIT_SONG_INDEX, index);
+                    if (isNotifyCallback()) {
+                        for (PlayerCallbackAdapter adapter : sPlayerCallbackAdapters) {
+                            adapter.callbackIndex(index);
+                        }
+                    }
                 }
-            }
+            });
         }
 
         @Override
-        public void callbackMsec(int msec) throws RemoteException {
-            SPTools.putIntValue(KEY_INIT_SONG_MSEC, msec);
-            if (isNotifyCallback()) {
-                for (IPlayerCallback adapter : sPlayerCallbackAdapters) {
-                    adapter.callbackMsec(msec);
+        public void callbackMsec(final int msec) throws RemoteException {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    SPTools.putIntValue(KEY_INIT_SONG_MSEC, msec);
+                    if (isNotifyCallback()) {
+                        for (PlayerCallbackAdapter adapter : sPlayerCallbackAdapters) {
+                            adapter.callbackMsec(msec);
+                        }
+                    }
                 }
-            }
+            });
         }
 
         @Override
-        public void callbackError(int code, Song song) throws RemoteException {
-            if (isNotifyCallback()) {
-                for (IPlayerCallback adapter : sPlayerCallbackAdapters) {
-                    adapter.callbackError(code, song);
-                }
-            }
+        public void callbackError(final int code, final Song song) throws RemoteException {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (isNotifyCallback()) {
+                        for (PlayerCallbackAdapter adapter : sPlayerCallbackAdapters) {
+                            adapter.callbackError(code, song);
+                        }
+                    }
 
-            String message = "";
-            switch (code) {
-                case PlayerErrorCode.PREPARE:
-                    message = "歌曲 " + song.getSongName() + " 播放错误";
-                    break;
-                case PlayerErrorCode.NULL:
-                    message = "没有可播放音乐";
-                    break;
-            }
-            ToastTools.showToast(getApplicationContext(), message);
+                    String message = "";
+                    switch (code) {
+                        case PlayerErrorCode.PREPARE:
+                            message = "歌曲 " + song.getSongName() + " 播放错误";
+                            break;
+                        case PlayerErrorCode.NULL:
+                            message = "没有可播放音乐";
+                            break;
+                    }
+                    ToastTools.showToast(getApplicationContext(), message);
+                }
+            });
         }
 
         @Override
-        public void callbackStatus(int status) throws RemoteException {
-            if (isNotifyCallback()) {
-                for (IPlayerCallback adapter : sPlayerCallbackAdapters) {
-                    adapter.callbackStatus(status);
+        public void callbackStatus(final int status) throws RemoteException {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (isNotifyCallback()) {
+                        for (PlayerCallbackAdapter adapter : sPlayerCallbackAdapters) {
+                            adapter.callbackStatus(status);
+                        }
+                    }
                 }
-            }
+            });
         }
     }
 
@@ -91,14 +116,14 @@ public class LocalService extends Service {
         return sPlayerCallbackAdapters != null && sPlayerCallbackAdapters.size() != 0;
     }
 
-    public static void addPlayerCallbackAdapter(IPlayerCallback adapter) {
+    public static void addPlayerCallbackAdapter(PlayerCallbackAdapter adapter) {
         if (sPlayerCallbackAdapters == null) {
             sPlayerCallbackAdapters = new LinkedList<>();
         }
         sPlayerCallbackAdapters.add(adapter);
     }
 
-    public static void removePlayerCallbackAdapter(IPlayerCallback adapter) {
+    public static void removePlayerCallbackAdapter(PlayerCallbackAdapter adapter) {
         if (sPlayerCallbackAdapters == null || sPlayerCallbackAdapters.size() == 0) {
             return;
         }
