@@ -60,9 +60,7 @@ public class MusicPlayer implements IControlPlayer {
     }
 
     @Override
-    public void prepare(String path) {
-        initPlayer();
-
+    public synchronized void prepare(String path) {
         if (!TextUtils.isEmpty(mCurrentPath)
                 && TextUtils.equals(mCurrentPath, path)) {
             if (mIsPrepared) {
@@ -77,6 +75,7 @@ public class MusicPlayer implements IControlPlayer {
                 path = song.getSongPath();
             }
         }
+
         if (mPlayer != null && !TextUtils.isEmpty(path)) {
             mCurrentPath = path;
             LogTools.w(TAG, "prepare", "path=" + path);
@@ -123,7 +122,7 @@ public class MusicPlayer implements IControlPlayer {
     }
 
     @Override
-    public void release() {
+    public synchronized void release() {
         if (mPlayer != null) {
             LogTools.i(TAG, "release", "------");
             mPlayer.stop();
@@ -202,6 +201,8 @@ public class MusicPlayer implements IControlPlayer {
             Song song = mSongList.get(position);
             String path = song.getSongPath();
             LogTools.w(TAG, "setSongList", "path=" + path + "," + mIsResetSongList);
+
+            initPlayer();
             prepare(path);
         }
     }

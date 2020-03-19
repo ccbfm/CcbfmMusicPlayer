@@ -50,6 +50,11 @@
 
     </application>
 
+    <permission
+        android:name="permission.ccbfm.music.player.service"
+        android:permissionGroup="permission.ccbfm.music.player"
+        android:protectionLevel="signature" />
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="permission.ccbfm.music.player.service" />

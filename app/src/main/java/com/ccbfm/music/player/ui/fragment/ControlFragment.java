@@ -41,8 +41,10 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
             if (mPlaylists != null) {
                 List<Song> songs = mPlaylists.get(playlistIndex).getSongList();
                 mSongList = songs;
-                Song song = songs.get(index);
-                updateUI(song.getSongName(), song.getSingerName());
+                if(songs != null && songs.size() > 0) {
+                    Song song = songs.get(index);
+                    updateUI(song.getSongName(), song.getSingerName());
+                }
             }
         }
 
@@ -64,7 +66,7 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
 
         LocalService.addPlayerCallbackAdapter(mPlayerCallback);
 
-        LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).observe(this, new Observer<Boolean>() {
+        LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION_CONTROL).observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean flag) {
                 LogTools.i(TAG, "onChanged", "flag=" + flag);
@@ -178,6 +180,6 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
     public void onDestroy() {
         super.onDestroy();
         LocalService.removePlayerCallbackAdapter(mPlayerCallback);
-        LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).postValue(null);
+        LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION_CONTROL).postValue(null);
     }
 }

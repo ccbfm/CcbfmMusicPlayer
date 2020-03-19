@@ -14,9 +14,8 @@ import com.ccbfm.music.player.callback.Callback;
 import com.ccbfm.music.player.control.MusicControl;
 import com.ccbfm.music.player.database.entity.Playlist;
 import com.ccbfm.music.player.database.entity.Song;
-import com.ccbfm.music.player.tool.Constants;
+import com.ccbfm.music.player.tool.ConstantTools;
 import com.ccbfm.music.player.tool.Executors;
-import com.ccbfm.music.player.tool.LiveDataBus;
 import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.SPTools;
 import com.ccbfm.music.player.tool.ToastTools;
@@ -134,7 +133,6 @@ public final class SongLoader {
     }
 
     private static List<Playlist> sPlaylists;
-    private static LoadDBSong sLoadDBSong;
 
     public static List<Playlist> getSongData(LoadSongCallBack callBack) {
         if (DEBUG) {
@@ -146,11 +144,7 @@ public final class SongLoader {
         if (DEBUG) {
             LogTools.d(TAG, "getSongData", "--->---");
         }
-        if (sLoadDBSong != null && !sLoadDBSong.isCancelled()) {
-            sLoadDBSong.cancel(true);
-        }
-        sLoadDBSong = new LoadDBSong(callBack);
-        sLoadDBSong.execute();
+        new LoadDBSong(callBack).execute();
         return null;
     }
 
@@ -228,7 +222,7 @@ public final class SongLoader {
                 ToastTools.showToast(App.getApp(), "清除" + rowsAffected + "个");
                 if (rowsAffected > 0) {
                     sPlaylists = null;
-                    LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).postValue(true);
+                    ConstantTools.postScanSuccess();
                     clearData();
                 }
             }
@@ -273,7 +267,7 @@ public final class SongLoader {
                 }
                 sPlaylists = null;
                 loadDBSong();
-                LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).postValue(true);
+                ConstantTools.postScanSuccess();
             }
         };
         EXECUTOR.execute(runnable);
@@ -291,7 +285,7 @@ public final class SongLoader {
                 }
                 sPlaylists = null;
                 loadDBSong();
-                LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).postValue(true);
+                ConstantTools.postScanSuccess();
             }
         };
         EXECUTOR.execute(runnable);
@@ -334,7 +328,7 @@ public final class SongLoader {
 
                 sPlaylists = null;
                 loadDBSong();
-                LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).postValue(true);
+                ConstantTools.postScanSuccess();
             }
         };
         EXECUTOR.execute(runnable);

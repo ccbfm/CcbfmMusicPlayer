@@ -13,8 +13,8 @@ import androidx.databinding.Bindable;
 import com.ccbfm.music.player.BR;
 import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.database.SongLoader;
+import com.ccbfm.music.player.tool.ConstantTools;
 import com.ccbfm.music.player.tool.Constants;
-import com.ccbfm.music.player.tool.LiveDataBus;
 import com.ccbfm.music.player.tool.SPTools;
 import com.ccbfm.music.player.tool.StartActivityTools;
 import com.ccbfm.music.player.tool.ToastTools;
@@ -103,7 +103,7 @@ public class ScanningModel extends BaseObservable implements View.OnClickListene
                 (flag ? "成功 " + count[0] + "个，跳过黑名单 " + count[1] + "个"
                         + (count[2] > 0 ? "，创建歌单列表 " + count[2] +"个" : "") : "失败"));
         if (flag) {
-            LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).postValue(true);
+            ConstantTools.postScanSuccess();
         }
     }
 

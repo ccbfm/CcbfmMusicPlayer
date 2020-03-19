@@ -1,7 +1,5 @@
 package com.ccbfm.music.player.data.model;
 
-import android.util.Log;
-
 import androidx.lifecycle.Observer;
 
 import com.ccbfm.music.player.data.adapter.SongListExpandableListAdapter;
@@ -27,10 +25,10 @@ public class SongListModel {
     public SongListModel(BaseFragment<FragmentSongListBinding> fragment, CallBack callBack) {
         mFragment = fragment;
         mCallBack = callBack;
-        LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).observe(fragment, new Observer<Boolean>() {
+        LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION_SONG_LIST).observe(fragment, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean flag) {
-                LogTools.i(TAG, "onChanged", "flag="+flag);
+                LogTools.i(TAG, "onChanged", "flag=" + flag);
                 if (flag != null && flag) {
                     loadData();
                 }

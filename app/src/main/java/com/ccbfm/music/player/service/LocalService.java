@@ -20,7 +20,7 @@ import static com.ccbfm.music.player.tool.SPTools.KEY_INIT_SONG_INDEX;
 import static com.ccbfm.music.player.tool.SPTools.KEY_INIT_SONG_MSEC;
 
 public class LocalService extends Service {
-
+    private static final String TAG = "LocalService";
     private LocalBinder mBinder;
     private static List<IPlayerCallback> sPlayerCallbackAdapters;
 

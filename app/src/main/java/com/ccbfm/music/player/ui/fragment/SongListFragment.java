@@ -70,7 +70,6 @@ public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
                 StartActivityTools.startForResult((SongListFragment.this), CreatePlaylistActivity.class, CODE_CREATE_PLAYLIST);
             }
         });
-
         LocalService.addPlayerCallbackAdapter(mPlayerCallback);
     }
 
@@ -100,6 +99,6 @@ public class SongListFragment extends BaseFragment<FragmentSongListBinding> {
     public void onDestroy() {
         super.onDestroy();
         LocalService.removePlayerCallbackAdapter(mPlayerCallback);
-        LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION).postValue(null);
+        LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION_SONG_LIST).postValue(null);
     }
 }
