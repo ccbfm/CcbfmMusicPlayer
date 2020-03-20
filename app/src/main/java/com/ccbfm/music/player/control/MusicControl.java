@@ -10,7 +10,9 @@ import android.os.Looper;
 import android.os.Message;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
+import com.ccbfm.music.player.App;
 import com.ccbfm.music.player.IPlayer;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.service.MusicService;
@@ -37,18 +39,26 @@ public class MusicControl implements ControlConstants {
 
     }
 
-    public void initMusicService(final Context context) {
+    public void initMusicService(final Context context, final Message message) {
         Intent intent = new Intent(context.getApplicationContext(), MusicService.class);
-        context.getApplicationContext().startService(intent);
+        ContextCompat.startForegroundService(context, intent);
         context.getApplicationContext().bindService(intent, new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 mPlayer = IPlayer.Stub.asInterface(service);
+                LogTools.d(TAG, "onServiceConnected", "mPlayer=" + mPlayer);
+                if(mHandler != null){
+                    mHandler.setPlayer(mPlayer);
+                }
+                if(message != null) {
+                    sendMessage(message, 0);
+                }
             }
 
             @Override
             public void onServiceDisconnected(ComponentName name) {
                 mPlayer = null;
+                LogTools.d(TAG, "onServiceDisconnected", "---");
             }
         }, Context.BIND_IMPORTANT);
 
@@ -102,6 +112,7 @@ public class MusicControl implements ControlConstants {
     private void sendMessage(Message message, long delayMillis) {
         if (mPlayer == null) {
             LogTools.e(TAG, "sendMessage", ">>>>>>(mPlayer == null)");
+            initMusicService(App.getApp(), message);
             return;
         }
         if (mHandler == null) {
@@ -136,6 +147,10 @@ public class MusicControl implements ControlConstants {
         }
 
         private PlayHandler(IPlayer player) {
+            mPlayer = player;
+        }
+
+        public void setPlayer(IPlayer player) {
             mPlayer = player;
         }
 
@@ -196,7 +211,7 @@ public class MusicControl implements ControlConstants {
                 return;
             }
             int need = SPTools.getIntValue(SPTools.KEY_NEED_SEEK_TO);
-            if(need == 1){
+            if (need == 1) {
                 SPTools.putIntValue(SPTools.KEY_NEED_SEEK_TO, 0);
                 return;
             }

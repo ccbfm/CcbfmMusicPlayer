@@ -10,6 +10,8 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
+        buildConfigField "boolean", "LOG_DISABLE", "false"
+        buildConfigField "int", "LOG_LEVEL", "3"
     }
 
     signingConfigs {
@@ -20,6 +22,7 @@ android {
             keyPassword 'ccbfmmusic'
             v1SigningEnabled true
             v2SigningEnabled true
+
         }
         release {
             storeFile file("${projectDir}${File.separator}keystore.jks")
@@ -28,6 +31,7 @@ android {
             keyAlias = 'ccbfmmusic'
             v1SigningEnabled true
             v2SigningEnabled true
+
         }
     }
 
@@ -36,10 +40,14 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+            buildConfigField("boolean", "LOG_DISABLE", "true")
+            buildConfigField "int", "LOG_LEVEL", "6"
         }
 
-        debug{
+        debug {
             signingConfig signingConfigs.debug
+            buildConfigField("boolean", "LOG_DISABLE", "false")
+            buildConfigField "int", "LOG_LEVEL", "3"
         }
     }
 
@@ -54,7 +62,7 @@ android {
             def flag = outputFileName.contains("release")
             def type = flag ? "release" : "debug"
             outputFileName = "MusicPlayer_${type}_${variant.versionName}.apk"
-            if(flag){
+            if (flag) {
                 def outDir = "${rootDir}${File.separator}musicBuild${File.separator}"
                 variant.getPackageApplicationProvider().get().outputDirectory = new File(outDir)
             }

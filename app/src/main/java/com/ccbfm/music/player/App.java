@@ -13,6 +13,8 @@ import org.litepal.LitePal;
 
 public class App extends Application {
     private static App sApp;
+    public static boolean sKeepAlive = true;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -27,7 +29,8 @@ public class App extends Application {
         AndroidPermissionTool.init();
         SPTools.init(this);
 
-        MusicControl.getInstance().initMusicService(this);
+        MusicControl.getInstance().initMusicService(this, null);
+
     }
 
     private boolean isMainProcess() {

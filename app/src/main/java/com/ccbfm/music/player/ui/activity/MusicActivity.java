@@ -1,6 +1,5 @@
 package com.ccbfm.music.player.ui.activity;
 
-import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -14,9 +13,9 @@ import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.callback.Callback;
 import com.ccbfm.music.player.data.adapter.MusicFragmentAdapter;
 import com.ccbfm.music.player.databinding.ActivityMusicBinding;
+import com.ccbfm.music.player.tool.ExitTimeTools;
 import com.ccbfm.music.player.tool.SPTools;
 import com.ccbfm.music.player.tool.SystemTools;
-import com.ccbfm.music.player.tool.ExitTimeTools;
 import com.ccbfm.music.player.ui.fragment.BaseFragment;
 import com.ccbfm.music.player.ui.fragment.ControlFragment;
 import com.ccbfm.music.player.ui.fragment.LyricsFragment;
@@ -115,6 +114,11 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
                 break;
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override

@@ -29,15 +29,15 @@ import static androidx.core.app.NotificationCompat.PRIORITY_MAX;
 public class MusicNotificationTool {
 
     public static final int NOTIFY_ID_MUSIC = 0x110;
-
     private static final String PACKAGE_NAME = "com.ccbfm.music.player.notification";
+    private static final String CHANNEL_ID = PACKAGE_NAME + ".player";
     public static final String ACTION_PREVIOUS = PACKAGE_NAME + ".music_previous";
     public static final String ACTION_PLAY = PACKAGE_NAME + ".music_play";
     public static final String ACTION_NEXT = PACKAGE_NAME + ".music_next";
     public static final String ACTION_CLOSE = PACKAGE_NAME + ".music_close";
 
-    public static RemoteViews createMusicView(Context context){
-        if(context == null){
+    public static RemoteViews createMusicView(Context context) {
+        if (context == null) {
             throw new NullPointerException("Context 为空！");
         }
 
@@ -70,15 +70,15 @@ public class MusicNotificationTool {
     }
 
 
-    public static Notification createNotification(Context context, RemoteViews remoteViews){
-        if(context == null){
+    public static Notification createNotification(Context context, RemoteViews remoteViews) {
+        if (context == null) {
             throw new NullPointerException("Context 为空！");
         }
-        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if(notificationManager == null){
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager == null) {
             return null;
         }
-        String channelId = context.getPackageName() + ".music.notification";
+        String channelId = CHANNEL_ID;
         //适配一下高版本
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String name = context.getPackageName() + ".music.name";
@@ -122,29 +122,29 @@ public class MusicNotificationTool {
     public static void showNotification(Service service,
                                         Notification notification,
                                         RemoteViews remoteViews,
-                                        String title, boolean isPlaying){
-        if(service == null){
+                                        String title, boolean isPlaying) {
+        if (service == null) {
             throw new NullPointerException("Context 为空！");
         }
-        if(remoteViews == null){
+        if (remoteViews == null) {
             return;
         }
-        if(!TextUtils.isEmpty(title)) {
+        if (!TextUtils.isEmpty(title)) {
             remoteViews.setTextViewText(R.id.music_notification_title, title);
         }
         remoteViews.setInt(R.id.music_notification_play, "setBackgroundResource",
                 (isPlaying ? R.drawable.ic_play_to_pause_40dp : R.drawable.ic_pause_to_play_40dp));
-        if(notification == null){
+        if (notification == null) {
             return;
         }
         service.startForeground(NOTIFY_ID_MUSIC, notification);
     }
 
-    public static String buildTitle(String...strings){
-        if(strings == null || strings.length == 0){
+    public static String buildTitle(String... strings) {
+        if (strings == null || strings.length == 0) {
             return null;
         }
-        if(strings.length == 1){
+        if (strings.length == 1) {
             return strings[0];
         }
         StringBuilder sb = new StringBuilder();

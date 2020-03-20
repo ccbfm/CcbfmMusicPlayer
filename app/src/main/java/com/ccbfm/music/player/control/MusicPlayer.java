@@ -1,13 +1,16 @@
 package com.ccbfm.music.player.control;
 
 import android.media.MediaPlayer;
+import android.os.PowerManager;
 import android.text.TextUtils;
 
+import com.ccbfm.music.player.App;
 import com.ccbfm.music.player.IPlayerCallback;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.service.MusicService;
 import com.ccbfm.music.player.tool.Constants;
 import com.ccbfm.music.player.tool.LogTools;
+import com.ccbfm.music.player.tool.SystemTools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,7 @@ public class MusicPlayer implements IControlPlayer {
     private int mSeekTime = 0;
     private MusicService.NotificationCallback mCallback;
     private IPlayerCallback mPlayerCallback;
+    private PowerManager.WakeLock mWakeLock;
 
     public MusicPlayer(MusicService.NotificationCallback callback) {
         mCallback = callback;
@@ -94,8 +98,12 @@ public class MusicPlayer implements IControlPlayer {
 
     @Override
     public void play() {
+        if (!mIsPrepared) {
+            prepare(null);
+            return;
+        }
         boolean isPlaying = isPlaying();
-        if (mPlayer != null && !isPlaying && mIsPrepared) {
+        if (mPlayer != null && !isPlaying) {
             LogTools.i(TAG, "play", "------" + mIsResetSongList);
             startTimer();
             mPlayer.start();
@@ -103,6 +111,7 @@ public class MusicPlayer implements IControlPlayer {
             seekTo(mSeekTime);
             callbackStatus(ControlConstants.STATUS_PLAY);
             mIsResetSongList = false;
+
         }
         if (isPlaying) {
             mIsResetSongList = false;
@@ -172,9 +181,7 @@ public class MusicPlayer implements IControlPlayer {
     public void setSongList(List<Song> songList, int position, boolean isPlay) {
         if (songList == null || songList.size() == 0) {
             LogTools.w(TAG, "setSongList", "无音乐");
-            if (mPlayerCallback != null) {
-                callbackError(PlayerErrorCode.NULL);
-            }
+            callbackError(PlayerErrorCode.NULL);
             return;
         }
         if (mSongList == null) {
@@ -205,6 +212,7 @@ public class MusicPlayer implements IControlPlayer {
             initPlayer();
             prepare(path);
         }
+        //changeDisplay(false);
     }
 
     private void callbackSongIndex(int songIndex) {
@@ -296,9 +304,18 @@ public class MusicPlayer implements IControlPlayer {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
+                    if (mWakeLock == null && App.sKeepAlive) {
+                        mWakeLock = SystemTools.newWakeLock(App.getApp(), TAG);
+                    }
+                    if (mWakeLock != null) {
+                        mWakeLock.acquire(600);
+                    }
                 }
             }
         }, 0, 500);
+
+
     }
 
     private void cancelTimer() {
@@ -308,10 +325,16 @@ public class MusicPlayer implements IControlPlayer {
     }
 
     private void changeDisplay() {
+        changeDisplay(true);
+    }
+
+    private void changeDisplay(boolean callback) {
         if (mCallback != null) {
             mCallback.changeDisplay(getCurrentSong(), isPlaying());
         }
-        callbackSongIndex(mSongIndex);
+        if (callback) {
+            callbackSongIndex(mSongIndex);
+        }
     }
 
     @Override
@@ -322,9 +345,11 @@ public class MusicPlayer implements IControlPlayer {
     @Override
     public void setPlayerCallback(IPlayerCallback callback) {
         mPlayerCallback = callback;
+        LogTools.w(TAG, "setPlayerCallback", "mPlayerCallback= " + mPlayerCallback + "," + callback + "," + this);
     }
 
     private void callbackError(@PlayerErrorCode int code) {
+        LogTools.w(TAG, "callbackError", "code= " + code + "," + mPlayerCallback + "," + this);
         if (mPlayerCallback != null) {
             try {
                 mPlayerCallback.callbackError(code, getCurrentSong());

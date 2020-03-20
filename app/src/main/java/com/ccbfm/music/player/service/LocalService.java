@@ -13,6 +13,7 @@ import com.ccbfm.music.player.callback.PlayerCallbackAdapter;
 import com.ccbfm.music.player.control.PlayerErrorCode;
 import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.tool.Executors;
+import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.SPTools;
 import com.ccbfm.music.player.tool.ToastTools;
 
@@ -44,6 +45,7 @@ public class LocalService extends Service {
     private class LocalBinder extends IPlayerCallback.Stub {
         @Override
         public void callbackIndex(final int index) throws RemoteException {
+            LogTools.d(TAG, "callbackIndex", "index=" + index);
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -74,6 +76,7 @@ public class LocalService extends Service {
 
         @Override
         public void callbackError(final int code, final Song song) throws RemoteException {
+            LogTools.d(TAG, "callbackError", "code=" + code);
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -99,6 +102,7 @@ public class LocalService extends Service {
 
         @Override
         public void callbackStatus(final int status) throws RemoteException {
+            LogTools.d(TAG, "callbackStatus", "status=" + status);
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {

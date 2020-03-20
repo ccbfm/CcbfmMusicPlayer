@@ -2,10 +2,12 @@ package com.ccbfm.music.player.tool;
 
 import android.util.Log;
 
+import com.ccbfm.music.player.BuildConfig;
+
 public class LogTools {
     private static final String TAG = "CCBFM_Music";
-    private static final boolean DISABLE = false;
-    private static final int LEVEL = Log.DEBUG;
+    private static final boolean DISABLE = BuildConfig.LOG_DISABLE;
+    private static final int LEVEL = BuildConfig.LOG_LEVEL;
 
     public static int d(String tag, String msg) {
         if (DISABLE && LEVEL > Log.DEBUG) {

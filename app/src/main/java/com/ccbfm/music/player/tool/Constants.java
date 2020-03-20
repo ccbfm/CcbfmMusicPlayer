@@ -10,4 +10,6 @@ public interface Constants {
     String SCAN_SUCCESS_NOTIFICATION_SONG_LIST = "scan_success_notification_song_list";
 
     int ONLY_RESET_SONG_LIST = -123;
+
+    String NOTIFICATION_FINISH_ONE_PX = "notification_finish_one_px";
 }

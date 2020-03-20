@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.animation.Animation;
 
 import androidx.annotation.Nullable;
@@ -13,6 +12,7 @@ import com.ccbfm.android.permission.APermission;
 import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.database.SongLoader;
 import com.ccbfm.music.player.databinding.ActivityStartBinding;
+import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.RestartTools;
 import com.ccbfm.music.player.ui.widget.RoundProgressBar;
 
@@ -44,6 +44,7 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
     }
 
     private void needJump() {
+        LogTools.d("StartActivity", "needJump", "---");
         SongLoader.getSongData(null);
 
         final RoundProgressBar progressBar = mViewDataBinding.musicRoundProgress;

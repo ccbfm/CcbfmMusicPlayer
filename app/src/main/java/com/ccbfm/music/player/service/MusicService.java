@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.text.TextUtils;
@@ -18,12 +19,13 @@ import com.ccbfm.music.player.IPlayerCallback;
 import com.ccbfm.music.player.control.IControlPlayer;
 import com.ccbfm.music.player.control.MusicPlayer;
 import com.ccbfm.music.player.database.entity.Song;
+import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.MusicNotificationTool;
 
 import java.util.List;
 
 public class MusicService extends Service {
-
+    private static final String TAG = "MusicService";
     private PlayerBinder mBinder;
     private Notification mNotification;
     private RemoteViews mRemoteViews;
@@ -34,23 +36,35 @@ public class MusicService extends Service {
     public void onCreate() {
         mRemoteViews = MusicNotificationTool.createMusicView(getApplicationContext());
         mNotification = MusicNotificationTool.createNotification(getApplicationContext(), mRemoteViews);
-        //startForeground(MusicNotificationTool.NOTIFY_ID_MUSIC, mNotification);
         mControlPlayer = new MusicPlayer(mCallback);
         mBinder = new PlayerBinder(mControlPlayer);
+        LogTools.d(TAG, "onCreate", "mControlPlayer=" + mControlPlayer);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForeground(MusicNotificationTool.NOTIFY_ID_MUSIC, mNotification);
+            stopForeground(true);
+        }
 
+        initPlayerCallback();
+    }
+
+    private void initPlayerCallback() {
         Intent intent = new Intent(this, LocalService.class);
         getApplicationContext().startService(intent);
         getApplicationContext().bindService(intent, new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 mPlayerCallback = IPlayerCallback.Stub.asInterface(service);
+                LogTools.d(TAG, "onServiceConnected", "mPlayerCallback=" + mPlayerCallback);
                 mControlPlayer.setPlayerCallback(mPlayerCallback);
             }
 
             @Override
             public void onServiceDisconnected(ComponentName name) {
                 mPlayerCallback = null;
-                mControlPlayer.setPlayerCallback(null);
+                if (mControlPlayer != null) {
+                    mControlPlayer.setPlayerCallback(null);
+                }
+                LogTools.d(TAG, "onServiceDisconnected", "---");
             }
         }, Context.BIND_IMPORTANT);
     }
@@ -99,10 +113,12 @@ public class MusicService extends Service {
 
         private PlayerBinder(IControlPlayer controlPlayer) {
             mControlPlayer = controlPlayer;
+            LogTools.d(TAG, "PlayerBinder", "mControlPlayer=" + mControlPlayer);
         }
 
         @Override
         public void setSongList(List<Song> songList, int index, boolean isPlay) throws RemoteException {
+            LogTools.d(TAG, "setSongList", "mControlPlayer=" + mControlPlayer);
             mControlPlayer.setSongList(songList, index, isPlay);
         }
 
@@ -187,5 +203,7 @@ public class MusicService extends Service {
             mBinder.release();
         } catch (Exception ignore) {
         }
+        mControlPlayer = null;
+        mBinder = null;
     }
 }
