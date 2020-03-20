@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.callback.Callback;
+import com.ccbfm.music.player.control.ControlConstants;
 import com.ccbfm.music.player.data.adapter.MusicFragmentAdapter;
 import com.ccbfm.music.player.databinding.ActivityMusicBinding;
 import com.ccbfm.music.player.tool.MenuFunctionTools;
@@ -31,12 +32,13 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
     private BaseFragment mSongListFragment;
     private boolean mIsShowSongList = false;
     private DrawerLayout mMusicMenu;
-    private TextView mExitTime;
+    private TextView mExitTime, mPlayMode;
 
     @Override
     protected void initView(ActivityMusicBinding binding) {
         mMusicMenu = binding.musicMenu;
-        mExitTime = binding.musicExitTime;
+        mExitTime = binding.musicMenuExitTime;
+        mPlayMode = binding.musicMenuPlayMode;
         MusicFragmentAdapter adapter = new MusicFragmentAdapter(getSupportFragmentManager());
         adapter.addFragment(new ScanningFragment());
         adapter.addFragment(new ControlFragment());
@@ -61,6 +63,7 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
         SPTools.putIntValue(SPTools.KEY_INIT_SHOW_PAGE, INDEX_CONTROL);
 
         setExitTime();
+        setPlayMode();
     }
 
     @Override
@@ -202,7 +205,12 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
                 });
                 break;
             case R.id.music_menu_play_mode:
-                MenuFunctionTools.showPlayModePicker(this, null);
+                MenuFunctionTools.showPlayModePicker(this, new Callback() {
+                    @Override
+                    public void callback() {
+                        setPlayMode();
+                    }
+                });
                 break;
             case R.id.music_menu_exit:
                 SystemTools.killAppProcess(this);
@@ -210,8 +218,29 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
         }
     }
 
-    private void setExitTime(){
+    private void setExitTime() {
         String exitTime = MenuFunctionTools.getExitTime();
         mExitTime.setText(exitTime);
+    }
+
+    private void setPlayMode() {
+        int mode = SPTools.getIntValue(SPTools.KEY_INIT_PLAY_MODE);
+        switch (mode) {
+            case ControlConstants.MODE_LIST:
+                mPlayMode.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.ic_repeat_asset_24dp, 0, 0, 0);
+                break;
+            case ControlConstants.MODE_SINGLE:
+                mPlayMode.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.ic_repeat_one_asset_24dp, 0, 0, 0);
+                break;
+            case ControlConstants.MODE_RANDOM:
+                mPlayMode.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.ic_shuffle_asset_24dp, 0, 0, 0);
+                break;
+            default:
+                return;
+        }
+        mPlayMode.setText(MenuFunctionTools.PLAY_MODE_STRING[mode]);
     }
 }

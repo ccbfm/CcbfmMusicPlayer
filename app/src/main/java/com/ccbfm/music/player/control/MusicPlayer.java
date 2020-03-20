@@ -231,14 +231,17 @@ public class MusicPlayer implements IControlPlayer {
             return;
         }
         pause();
-        calculationIndex(-1);
+        calculationIndex(-1, true);
         prepare(null);
     }
 
-    private void calculationIndex(int vector) {
+    private void calculationIndex(int vector, boolean flag) {
         int index = mSongIndex;
         switch (mMode) {
             case ControlConstants.MODE_SINGLE:
+                if(!flag){
+                    return;
+                }
             case ControlConstants.MODE_LIST:
                 if (vector > 0) {
                     int size = size();
@@ -279,9 +282,7 @@ public class MusicPlayer implements IControlPlayer {
         }
         LogTools.i(TAG, "next", "flag=" + flag);
         pause();
-        if (flag) {
-            calculationIndex(1);
-        }
+        calculationIndex(1, flag);
         prepare(null);
     }
 

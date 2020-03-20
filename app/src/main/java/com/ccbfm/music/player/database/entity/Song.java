@@ -215,6 +215,13 @@ public class Song extends LitePalSupport implements Parcelable {
                 '}';
     }
 
+    public String getInfo() {
+        return "歌名：" + songName + "\n"
+                + "歌手：" + singerName + "\n"
+                + "专辑：" + album + "\n"
+                + "路径：" + songPath;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

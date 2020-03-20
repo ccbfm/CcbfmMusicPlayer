@@ -128,7 +128,7 @@ public class MenuFunctionTools {
         }
     }
 
-    private static final String[] PLAY_MODE_STRING = new String[]{"列表循环", "单曲循环", "随机播放"};
+    public static final String[] PLAY_MODE_STRING = new String[]{"列表循环", "单曲循环", "随机播放"};
 
     public static void showPlayModePicker(final Context context, final Callback callback) {
         OptionsPickerBuilder builder = new OptionsPickerBuilder(context, new OnOptionsSelectListener() {

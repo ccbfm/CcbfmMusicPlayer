@@ -69,7 +69,7 @@
                     android:textSize="16sp" />
 
                 <TextView
-                    android:id="@+id/music_exit_time"
+                    android:id="@+id/music_menu_exit_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|end"
@@ -83,7 +83,7 @@
                 android:layout_height="48dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:drawableStart="@drawable/ic_exit_to_app_asset_24dp"
+                android:drawableStart="@drawable/ic_repeat_asset_24dp"
                 android:drawablePadding="10dp"
                 android:focusable="true"
                 android:gravity="center_vertical"

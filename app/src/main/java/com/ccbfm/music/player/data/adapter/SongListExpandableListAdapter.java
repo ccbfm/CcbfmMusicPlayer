@@ -142,6 +142,13 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
                                 SongListFragment.CODE_CREATE_PLAYLIST);
                         changeGroupSlidingView(-1);
                         break;
+                    case R.id.music_song_info:
+                        String songInfo = mPlaylists.get(groupPosition)
+                                .getSongList().get(childPosition)
+                                .getInfo();
+                        Dialog dialogInfo = DialogTools.buildDialog(context, "信息", songInfo);
+                        dialogInfo.show();
+                        break;
                 }
             }
         });
@@ -287,6 +294,7 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
             childHolder.singerName = convertView.findViewById(R.id.music_singer_name);
             childHolder.songPlay = convertView.findViewById(R.id.music_song_play);
             childHolder.songDelete = convertView.findViewById(R.id.music_song_delete);
+            childHolder.songInfo = convertView.findViewById(R.id.music_song_info);
             childHolder.convertView = (SlidingMenuView) convertView;
             convertView.setTag(childHolder);
         } else {
@@ -309,6 +317,18 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
             childHolder.songDelete.setTag(R.id.tag_group_position, groupPosition);
             childHolder.songDelete.setTag(R.id.tag_child_position, childPosition);
             childHolder.songDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mChildClickListener != null && v != null) {
+                        int groupPosition = (int) v.getTag(R.id.tag_group_position);
+                        int childPosition = (int) v.getTag(R.id.tag_child_position);
+                        mChildClickListener.onClick(v, groupPosition, childPosition);
+                    }
+                }
+            });
+            childHolder.songInfo.setTag(R.id.tag_group_position, groupPosition);
+            childHolder.songInfo.setTag(R.id.tag_child_position, childPosition);
+            childHolder.songInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mChildClickListener != null && v != null) {
@@ -447,6 +467,7 @@ public class SongListExpandableListAdapter extends BaseExpandableListAdapter {
         TextView singerName;
         ImageButton songPlay;
         ImageButton songDelete;
+        ImageButton songInfo;
 
         @Override
         public boolean equals(Object o) {

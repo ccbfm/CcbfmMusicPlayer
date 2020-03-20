@@ -26,4 +26,12 @@ public final class DialogTools {
         builder.setNegativeButton(R.string.music_cancel, null);
         return builder.create();
     }
+
+    public static Dialog buildDialog(Context context, String title, String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.PermissionDialog);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setPositiveButton(R.string.music_confirm, null);
+        return builder.create();
+    }
 }
