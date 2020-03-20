@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.ccbfm.music.player.broadcast.ControlEventReceiver;
 import com.ccbfm.music.player.control.MusicControl;
 import com.ccbfm.music.player.tool.AndroidPermissionTool;
 import com.ccbfm.music.player.tool.SPTools;
@@ -30,6 +31,7 @@ public class App extends Application {
         SPTools.init(this);
 
         MusicControl.getInstance().initMusicService(this, null);
+        ControlEventReceiver.registerReceiver(this);
 
     }
 
