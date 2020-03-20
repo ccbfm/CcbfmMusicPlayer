@@ -16,7 +16,7 @@ public interface ControlConstants {
     int STATUS_SET_LIST = 13;
 
     //播发模式
+    int MODE_LIST = 0; //列表循环
     int MODE_SINGLE = 1; //单曲循环
-    int MODE_LIST = 2; //列表循环
-    int MODE_RANDOM = 3; //随机播发
+    int MODE_RANDOM = 2; //随机播放
 }

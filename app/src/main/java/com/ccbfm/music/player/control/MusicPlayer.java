@@ -49,7 +49,7 @@ public class MusicPlayer implements IControlPlayer {
             public void onCompletion(MediaPlayer mp) {
                 LogTools.i(TAG, "onCompletion", "mIsResetSongList=" + mIsResetSongList);
                 if (!mIsResetSongList) {
-                    next();
+                    next(false);
                 }
             }
         });
@@ -91,7 +91,7 @@ public class MusicPlayer implements IControlPlayer {
             } catch (Exception e) {
                 LogTools.e(TAG, "prepare", "Exception--- ", e);
                 callbackError(PlayerErrorCode.PREPARE);
-                next();
+                next(true);
             }
         }
     }
@@ -273,13 +273,15 @@ public class MusicPlayer implements IControlPlayer {
 
 
     @Override
-    public void next() {
+    public void next(boolean flag) {
         if (size() == 0) {
             return;
         }
-        LogTools.i(TAG, "next", "------");
+        LogTools.i(TAG, "next", "flag=" + flag);
         pause();
-        calculationIndex(1);
+        if (flag) {
+            calculationIndex(1);
+        }
         prepare(null);
     }
 

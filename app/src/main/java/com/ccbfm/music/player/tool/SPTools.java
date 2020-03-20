@@ -22,7 +22,7 @@ public final class SPTools {
     public static final String KEY_INIT_SONG_INDEX = "init_song_index";
     public static final String KEY_INIT_SONG_MSEC = "init_song_msec";
     public static final String KEY_NEED_SEEK_TO = "need_seek_to";
-
+    public static final String KEY_INIT_PLAY_MODE = "init_play_mode";
 
     public static void init(Application context) {
         sContext = context;

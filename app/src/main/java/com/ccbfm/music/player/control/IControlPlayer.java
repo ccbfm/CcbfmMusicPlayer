@@ -19,7 +19,7 @@ public interface IControlPlayer {
 
     void previous();
 
-    void next();
+    void next(boolean flag);
 
     boolean isPlaying();
 

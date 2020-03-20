@@ -86,7 +86,7 @@ public class MusicService extends Service {
                         }
                         break;
                     case MusicNotificationTool.ACTION_NEXT:
-                        mBinder.next();
+                        mBinder.next(true);
                         break;
                     case MusicNotificationTool.ACTION_CLOSE:
                         break;
@@ -148,8 +148,8 @@ public class MusicService extends Service {
         }
 
         @Override
-        public void next() throws RemoteException {
-            mControlPlayer.next();
+        public void next(boolean flag) throws RemoteException {
+            mControlPlayer.next(flag);
         }
 
         @Override

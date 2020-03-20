@@ -8,13 +8,17 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
+import com.bigkoo.pickerview.listener.OnOptionsSelectListener;
 import com.bigkoo.pickerview.listener.OnTimeSelectListener;
+import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.bigkoo.pickerview.view.TimePickerView;
 import com.ccbfm.music.player.App;
 import com.ccbfm.music.player.callback.Callback;
+import com.ccbfm.music.player.control.MusicControl;
 
-import java.lang.ref.WeakReference;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -48,7 +52,7 @@ import java.util.Date;
  * .setDecorView(null)//设置要将pickerview显示到的容器id 必须是viewgroup
  * .isDialog(false)//是否显示为对话框样式
  */
-public class ExitTimeTools {
+public class MenuFunctionTools {
     private static String sExitTime;
     private static Handler sHandler;
 
@@ -124,27 +128,27 @@ public class ExitTimeTools {
         }
     }
 
-    private static class ExitRunnable implements Runnable {
-        private WeakReference<Context> mReference;
-        private long mDelayTime;
+    private static final String[] PLAY_MODE_STRING = new String[]{"列表循环", "单曲循环", "随机播放"};
 
-        private ExitRunnable(long delayTime) {
-            mReference = new WeakReference<>(App.getApp().getApplicationContext());
-            mDelayTime = delayTime;
-        }
-
-        @Override
-        public void run() {
-            try {
-                Thread.sleep(mDelayTime);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    public static void showPlayModePicker(final Context context, final Callback callback) {
+        OptionsPickerBuilder builder = new OptionsPickerBuilder(context, new OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(int options1, int options2, int options3, View v) {
+                SPTools.putIntValue(SPTools.KEY_INIT_PLAY_MODE, options1);
+                if (callback != null) {
+                    callback.callback();
+                }
+                MusicControl.getInstance().mode();
+                ToastTools.showToast(context, PLAY_MODE_STRING[options1]);
             }
-            LogTools.d("ExitRunnable", "run", "mReference=" + mReference.get());
-            if (mReference.get() != null) {
-                SystemTools.killAppProcess(mReference.get());
-            }
-        }
+        });
+        builder.setTitleText("播放模式");
+        builder.isAlphaGradient(true);
+        builder.setLineSpacingMultiplier(2);
+        OptionsPickerView<String> pickerView = builder.build();
+        pickerView.setPicker(Arrays.asList(PLAY_MODE_STRING));
+        pickerView.setSelectOptions(SPTools.getIntValue(SPTools.KEY_INIT_PLAY_MODE));
+        pickerView.show();
     }
 
 }

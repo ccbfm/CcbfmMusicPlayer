@@ -92,6 +92,10 @@ public class MusicControl implements ControlConstants {
         sendMessage(STATUS_NEXT, null);
     }
 
+    public void mode() {
+        sendMessage(STATUS_MODE, null);
+    }
+
     public void release() {
         sendMessage(STATUS_RELEASE, null);
     }
@@ -170,6 +174,7 @@ public class MusicControl implements ControlConstants {
                         seekTo(msg.arg1);
                         List<Song> songs = (List<Song>) msg.obj;
                         mPlayer.setSongList(songs, msg.arg1, (msg.arg2 == 1));
+                        sendEmptyMessage(STATUS_MODE);
                         break;
                     case STATUS_PREPARE:
                         String path = (String) msg.obj;
@@ -194,10 +199,10 @@ public class MusicControl implements ControlConstants {
                         mPlayer.previous();
                         break;
                     case STATUS_NEXT:
-                        mPlayer.next();
+                        mPlayer.next(true);
                         break;
                     case STATUS_MODE:
-                        mPlayer.mode(msg.arg1);
+                        mPlayer.mode(SPTools.getIntValue(SPTools.KEY_INIT_PLAY_MODE));
                         break;
 
                 }

@@ -13,7 +13,7 @@ import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.callback.Callback;
 import com.ccbfm.music.player.data.adapter.MusicFragmentAdapter;
 import com.ccbfm.music.player.databinding.ActivityMusicBinding;
-import com.ccbfm.music.player.tool.ExitTimeTools;
+import com.ccbfm.music.player.tool.MenuFunctionTools;
 import com.ccbfm.music.player.tool.SPTools;
 import com.ccbfm.music.player.tool.SystemTools;
 import com.ccbfm.music.player.ui.fragment.BaseFragment;
@@ -194,12 +194,15 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
         final int id = view.getId();
         switch (id) {
             case R.id.music_menu_timing:
-                ExitTimeTools.showExitTimePicker(this, new Callback() {
+                MenuFunctionTools.showExitTimePicker(this, new Callback() {
                     @Override
                     public void callback() {
                         setExitTime();
                     }
                 });
+                break;
+            case R.id.music_menu_play_mode:
+                MenuFunctionTools.showPlayModePicker(this, null);
                 break;
             case R.id.music_menu_exit:
                 SystemTools.killAppProcess(this);
@@ -208,7 +211,7 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
     }
 
     private void setExitTime(){
-        String exitTime = ExitTimeTools.getExitTime();
+        String exitTime = MenuFunctionTools.getExitTime();
         mExitTime.setText(exitTime);
     }
 }

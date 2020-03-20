@@ -78,6 +78,23 @@
             </FrameLayout>
 
             <TextView
+                android:id="@+id/music_menu_play_mode"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_exit_to_app_asset_24dp"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:onClick="onClickMenuView"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="@string/music_menu_play_mode"
+                android:textColor="@color/color_f2f2f2"
+                android:textSize="16sp" />
+
+            <TextView
                 android:id="@+id/music_menu_exit"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
