@@ -30,11 +30,16 @@ public class VisualizerTools {
 
     private Visualizer mVisualizer;
     private List<BaseVisualizer> mVisualizerViews;
+    private int mAudioSessionId;
 
     public void addVisualizer(int audioSessionId, BaseVisualizer... visualizers) {
         if (visualizers == null || audioSessionId <= 0) {
             return;
         }
+        if(mAudioSessionId == audioSessionId){
+            return;
+        }
+        mAudioSessionId = audioSessionId;
         try {
             mVisualizerViews = Arrays.asList(visualizers);
 

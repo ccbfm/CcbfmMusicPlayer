@@ -19,13 +19,6 @@
             app:bv_density="0.75"
             app:bv_paintType="stroke" />
 
-        <com.ccbfm.music.player.ui.widget.visualizer.HiFiVisualizer
-            android:id="@+id/music_audio_visualizer_hifi"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:bv_color="@color/color_FFEB3B"
-            app:bv_density="0.75" />
-
         <ImageButton
             android:id="@+id/music_open_menu"
             android:layout_width="64dp"

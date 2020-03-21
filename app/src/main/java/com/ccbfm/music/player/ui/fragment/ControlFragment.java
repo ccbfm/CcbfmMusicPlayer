@@ -1,6 +1,5 @@
 package com.ccbfm.music.player.ui.fragment;
 
-import android.app.Activity;
 import android.view.View;
 import android.widget.TextView;
 
@@ -35,7 +34,6 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
     private TextView mControlSinger;
     private PlayPauseView mPlayPauseView;
     private BaseVisualizer mVisualizerBar;
-    private BaseVisualizer mVisualizerHifi;
 
     private PlayerCallbackAdapter mPlayerCallback = new PlayerCallbackAdapter() {
         @Override
@@ -65,7 +63,7 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
         @Override
         public void callbackAudioSession(int id) {
             super.callbackAudioSession(id);
-            VisualizerTools.getInstance().addVisualizer(id, mVisualizerBar, mVisualizerHifi);
+            VisualizerTools.getInstance().addVisualizer(id, mVisualizerBar);
         }
     };
 
@@ -74,7 +72,6 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
         mControlTitle = binding.musicControlTitle;
         mControlSinger = binding.musicControlSinger;
         mVisualizerBar = binding.musicAudioVisualizerBar;
-        mVisualizerHifi = binding.musicAudioVisualizerHifi;
 
         LocalService.addPlayerCallbackAdapter(mPlayerCallback);
 

@@ -30,6 +30,7 @@ public abstract class BaseVisualizer extends View {
     protected float mDensity = DEFAULT_DENSITY;
     protected int mAnimSpeed = AnimSpeed.MEDIUM;
     protected boolean isVisualizationEnabled = true;
+    private int mAudioSessionId;
 
     public BaseVisualizer(Context context) {
         this(context, null);
@@ -112,6 +113,10 @@ public abstract class BaseVisualizer extends View {
     }
 
     public void setAudioSessionId(int audioSessionId) {
+        if (mAudioSessionId == audioSessionId) {
+            return;
+        }
+        mAudioSessionId = audioSessionId;
         if (mVisualizer != null) {
             release();
         }

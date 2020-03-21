@@ -39,6 +39,7 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
     }
 
     @APermission(permissions = {Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.MODIFY_AUDIO_SETTINGS})
     private void checkPermission(Activity activity) {
