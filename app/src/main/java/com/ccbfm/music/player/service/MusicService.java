@@ -71,30 +71,32 @@ public class MusicService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        final String action = intent.getAction();
-        if (mBinder != null && !TextUtils.isEmpty(action)) {
-            try {
-                switch (action) {
-                    case MusicNotificationTool.ACTION_PREVIOUS:
-                        mBinder.previous();
-                        break;
-                    case MusicNotificationTool.ACTION_PLAY:
-                        if (mBinder.isPlaying()) {
-                            mBinder.pause();
-                        } else {
-                            mBinder.play();
-                        }
-                        break;
-                    case MusicNotificationTool.ACTION_NEXT:
-                        mBinder.next(true);
-                        break;
-                    case MusicNotificationTool.ACTION_CLOSE:
-                        break;
-                    default:
-                        break;
+        if(intent != null) {
+            final String action = intent.getAction();
+            if (mBinder != null && !TextUtils.isEmpty(action)) {
+                try {
+                    switch (action) {
+                        case MusicNotificationTool.ACTION_PREVIOUS:
+                            mBinder.previous();
+                            break;
+                        case MusicNotificationTool.ACTION_PLAY:
+                            if (mBinder.isPlaying()) {
+                                mBinder.pause();
+                            } else {
+                                mBinder.play();
+                            }
+                            break;
+                        case MusicNotificationTool.ACTION_NEXT:
+                            mBinder.next(true);
+                            break;
+                        case MusicNotificationTool.ACTION_CLOSE:
+                            break;
+                        default:
+                            break;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
         return super.onStartCommand(intent, flags, startId);
@@ -203,7 +205,5 @@ public class MusicService extends Service {
             mBinder.release();
         } catch (Exception ignore) {
         }
-        mControlPlayer = null;
-        mBinder = null;
     }
 }

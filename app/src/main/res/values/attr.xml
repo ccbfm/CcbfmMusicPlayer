@@ -18,29 +18,50 @@
     </declare-styleable>
 
     <declare-styleable name="SlidingMenuView">
-        <attr name="sliding_view_id" format="reference"/>
-        <attr name="sliding_max_distance" format="dimension"/>
+        <attr name="sliding_view_id" format="reference" />
+        <attr name="sliding_max_distance" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="PlayPauseView">
-        <attr name="pp_barWidth" format="dimension"/>
-        <attr name="pp_barHeight" format="dimension"/>
-        <attr name="pp_barPadding" format="dimension"/>
-        <attr name="pp_barColor" format="color"/>
-        <attr name="pp_barActiveColor" format="color"/>
-        <attr name="pp_barBgColor" format="color"/>
-        <attr name="pp_barPlayingState" format="boolean"/>
+        <attr name="pp_barWidth" format="dimension" />
+        <attr name="pp_barHeight" format="dimension" />
+        <attr name="pp_barPadding" format="dimension" />
+        <attr name="pp_barColor" format="color" />
+        <attr name="pp_barActiveColor" format="color" />
+        <attr name="pp_barBgColor" format="color" />
+        <attr name="pp_barPlayingState" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="PreNextView">
-        <attr name="pn_barStrokeWidth" format="dimension"/>
-        <attr name="pn_barColor" format="color"/>
-        <attr name="pn_barActiveColor" format="color"/>
+        <attr name="pn_barStrokeWidth" format="dimension" />
+        <attr name="pn_barColor" format="color" />
+        <attr name="pn_barActiveColor" format="color" />
         <attr name="pn_barDirection" format="enum">
-            <enum name="left" value="1"/>
-            <enum name="right" value="2"/>
-            <enum name="top" value="3"/>
-            <enum name="bottom" value="4"/>
+            <enum name="left" value="1" />
+            <enum name="right" value="2" />
+            <enum name="top" value="3" />
+            <enum name="bottom" value="4" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="BaseVisualizer">
+        <attr name="bv_density" format="float" />
+        <attr name="bv_color" format="color" />
+        <attr name="bv_paintType" format="enum">
+            <enum name="stroke" value="1" />
+            <enum name="fill" value="2" />
+        </attr>
+        <attr name="bv_gravity" format="enum">
+            <enum name="left" value="1" />
+            <enum name="right" value="2" />
+            <enum name="top" value="3" />
+            <enum name="bottom" value="4" />
+        </attr>
+        <attr name="bv_strokeWidth" format="dimension" />
+        <attr name="bv_animSpeed" format="enum">
+            <enum name="slow" value="1" />
+            <enum name="medium" value="2" />
+            <enum name="fast" value="3" />
         </attr>
     </declare-styleable>
 </resources>

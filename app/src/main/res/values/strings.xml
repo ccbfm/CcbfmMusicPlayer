@@ -3,9 +3,10 @@
 
     <string name="music_service_permission">permission.ccbfm.music.player.service</string>
 
-    <string name="music_menu_timing">定时</string>
+    <string name="music_menu_timing">定时关闭</string>
     <string name="music_menu_exit">退出</string>
     <string name="music_menu_play_mode">播放模式</string>
+    <string name="music_menu_sound_settings">音效设置</string>
 
     <string name="music_scanning_clear">清除</string>
     <string name="music_blacklist">黑名</string>

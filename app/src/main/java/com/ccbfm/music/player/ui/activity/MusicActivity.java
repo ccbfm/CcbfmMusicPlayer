@@ -215,6 +215,9 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
             case R.id.music_menu_exit:
                 SystemTools.killAppProcess(this);
                 break;
+            case R.id.music_menu_sound_settings:
+
+                break;
         }
     }
 

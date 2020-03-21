@@ -10,7 +10,6 @@ import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.service.MusicService;
 import com.ccbfm.music.player.tool.Constants;
 import com.ccbfm.music.player.tool.LogTools;
-import com.ccbfm.music.player.tool.SystemTools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +31,6 @@ public class MusicPlayer implements IControlPlayer {
     private int mSeekTime = 0;
     private MusicService.NotificationCallback mCallback;
     private IPlayerCallback mPlayerCallback;
-    private PowerManager.WakeLock mWakeLock;
 
     public MusicPlayer(MusicService.NotificationCallback callback) {
         mCallback = callback;
@@ -61,6 +59,7 @@ public class MusicPlayer implements IControlPlayer {
                 play();
             }
         });
+
     }
 
     @Override
@@ -107,9 +106,11 @@ public class MusicPlayer implements IControlPlayer {
             LogTools.i(TAG, "play", "------" + mIsResetSongList);
             startTimer();
             mPlayer.start();
+            mPlayer.setWakeMode(App.getApp(), PowerManager.PARTIAL_WAKE_LOCK);
             //在start之后执行
             seekTo(mSeekTime);
             callbackStatus(ControlConstants.STATUS_PLAY);
+            callbackAudioSession(mPlayer.getAudioSessionId());
             mIsResetSongList = false;
 
         }
@@ -239,7 +240,7 @@ public class MusicPlayer implements IControlPlayer {
         int index = mSongIndex;
         switch (mMode) {
             case ControlConstants.MODE_SINGLE:
-                if(!flag){
+                if (!flag) {
                     return;
                 }
             case ControlConstants.MODE_LIST:
@@ -307,13 +308,6 @@ public class MusicPlayer implements IControlPlayer {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
-                    if (mWakeLock == null && App.sKeepAlive) {
-                        mWakeLock = SystemTools.newWakeLock(App.getApp(), TAG);
-                    }
-                    if (mWakeLock != null) {
-                        mWakeLock.acquire(600);
-                    }
                 }
             }
         }, 0, 500);
@@ -366,6 +360,16 @@ public class MusicPlayer implements IControlPlayer {
         if (mPlayerCallback != null) {
             try {
                 mPlayerCallback.callbackStatus(status);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void callbackAudioSession(int id) {
+        if (mPlayerCallback != null) {
+            try {
+                mPlayerCallback.callbackAudioSession(id);
             } catch (Exception e) {
                 e.printStackTrace();
             }

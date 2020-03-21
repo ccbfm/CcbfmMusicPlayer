@@ -1,11 +1,11 @@
 package com.ccbfm.music.player.ui.fragment;
 
+import android.app.Activity;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.lifecycle.Observer;
 
-import com.ccbfm.music.player.IPlayerCallback;
 import com.ccbfm.music.player.R;
 import com.ccbfm.music.player.callback.PlayerCallbackAdapter;
 import com.ccbfm.music.player.control.MusicControl;
@@ -21,6 +21,8 @@ import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.MathTools;
 import com.ccbfm.music.player.tool.SPTools;
 import com.ccbfm.music.player.ui.widget.PlayPauseView;
+import com.ccbfm.music.player.ui.widget.visualizer.BaseVisualizer;
+import com.ccbfm.music.player.ui.widget.visualizer.VisualizerTools;
 
 import java.util.List;
 
@@ -32,6 +34,8 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
     private TextView mControlTitle;
     private TextView mControlSinger;
     private PlayPauseView mPlayPauseView;
+    private BaseVisualizer mVisualizerBar;
+    private BaseVisualizer mVisualizerHifi;
 
     private PlayerCallbackAdapter mPlayerCallback = new PlayerCallbackAdapter() {
         @Override
@@ -57,12 +61,20 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
                 }
             }
         }
+
+        @Override
+        public void callbackAudioSession(int id) {
+            super.callbackAudioSession(id);
+            VisualizerTools.getInstance().addVisualizer(id, mVisualizerBar, mVisualizerHifi);
+        }
     };
 
     @Override
     protected void initView(final FragmentControlBinding binding) {
         mControlTitle = binding.musicControlTitle;
         mControlSinger = binding.musicControlSinger;
+        mVisualizerBar = binding.musicAudioVisualizerBar;
+        mVisualizerHifi = binding.musicAudioVisualizerHifi;
 
         LocalService.addPlayerCallbackAdapter(mPlayerCallback);
 
@@ -179,6 +191,7 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        VisualizerTools.getInstance().releaseVisualizer();
         LocalService.removePlayerCallbackAdapter(mPlayerCallback);
         LiveDataBus.get().<Boolean>with(Constants.SCAN_SUCCESS_NOTIFICATION_CONTROL).postValue(null);
     }

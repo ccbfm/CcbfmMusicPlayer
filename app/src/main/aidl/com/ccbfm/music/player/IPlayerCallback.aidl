@@ -13,4 +13,6 @@ interface IPlayerCallback {
     void callbackError(int code, in Song song);
 
     void callbackStatus(int status);
+
+    void callbackAudioSession(int id);
 }

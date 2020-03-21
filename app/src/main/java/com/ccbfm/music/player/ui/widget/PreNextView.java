@@ -68,19 +68,9 @@ public class PreNextView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        int measureWidth = MeasureSpec.getSize(widthMeasureSpec);
-        int measureHeight = MeasureSpec.getSize(heightMeasureSpec);
-        if (widthMode == MeasureSpec.EXACTLY || heightMode == MeasureSpec.EXACTLY) {
-            mWidth = measureWidth;
-            mHeight = measureHeight;
-            setCenterPosition();
-        } else if (widthMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.AT_MOST) {
-            mWidth = mHeight = 10;
-            setCenterPosition();
-            setMeasuredDimension(mWidth, mHeight);
-        }
+        mWidth = MeasureSpec.getSize(widthMeasureSpec);
+        mHeight = MeasureSpec.getSize(heightMeasureSpec);
+        setCenterPosition();
     }
 
     @Override

@@ -25,4 +25,9 @@ public class PlayerCallbackAdapter extends IPlayerCallback.Stub {
     public void callbackStatus(int status) {
 
     }
+
+    @Override
+    public void callbackAudioSession(int id) {
+
+    }
 }

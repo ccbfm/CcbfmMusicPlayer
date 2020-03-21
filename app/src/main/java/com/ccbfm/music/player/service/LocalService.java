@@ -114,6 +114,21 @@ public class LocalService extends Service {
                 }
             });
         }
+
+        @Override
+        public void callbackAudioSession(final int id) throws RemoteException {
+            LogTools.d(TAG, "callbackAudioSession", "id=" + id);
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (isNotifyCallback()) {
+                        for (PlayerCallbackAdapter adapter : sPlayerCallbackAdapters) {
+                            adapter.callbackAudioSession(id);
+                        }
+                    }
+                }
+            });
+        }
     }
 
     private boolean isNotifyCallback() {

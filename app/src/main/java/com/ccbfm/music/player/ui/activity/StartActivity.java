@@ -38,7 +38,9 @@ public class StartActivity extends BaseActivity<ActivityStartBinding> {
         return R.layout.activity_start;
     }
 
-    @APermission(permissions = {Manifest.permission.READ_EXTERNAL_STORAGE})
+    @APermission(permissions = {Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.MODIFY_AUDIO_SETTINGS})
     private void checkPermission(Activity activity) {
         needJump();
     }
