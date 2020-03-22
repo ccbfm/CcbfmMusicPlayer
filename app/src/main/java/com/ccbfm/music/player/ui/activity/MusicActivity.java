@@ -223,7 +223,7 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
                 SystemTools.killAppProcess(this);
                 break;
             case R.id.music_menu_sound_settings:
-                ToastTools.showToast(this, "<<<摸鱼中>>>");
+                ToastTools.showToast(this, getString(R.string.music_touch_the_fish,"音效"));
                 break;
         }
     }

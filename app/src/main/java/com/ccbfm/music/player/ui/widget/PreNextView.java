@@ -25,6 +25,7 @@ public class PreNextView extends View {
     private int mWidth, mHeight, mCenterWidth, mCenterHeight;
     private float mProgress = 0;
     private CallbackClick mCallbackClick;
+    //计算路径范围
     private Region mRegion;
     private Region mRegionRect;
 

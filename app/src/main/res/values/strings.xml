@@ -37,4 +37,6 @@
     <string name="music_permission_hint">是否去设置中打开所需权限</string>
 
     <string name="music_scanning_album_to_playlist">专辑生成歌单列表</string>
+
+    <string name="music_touch_the_fish">&#60;&#60;&#60;%1$s摸鱼中&#62;&#62;&#62;"</string>
 </resources>
