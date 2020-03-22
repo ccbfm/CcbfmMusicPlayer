@@ -176,8 +176,8 @@ public class MusicPlayer implements IControlPlayer {
         if (mPlayer != null && isPlaying()) {
             if (msec > 0) {
                 mPlayer.seekTo(msec);
+                callbackMsec(msec);
             }
-            callbackMsec(msec);
         } else {
             mSeekTime = msec;
         }
