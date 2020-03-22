@@ -51,7 +51,9 @@ public class ControlEventReceiver extends BroadcastReceiver {
                 if (intent.hasExtra("state")) {
                     if (intent.getIntExtra("state", 2) == 0) {
                         //拔出
-                        musicControl.pause();
+                        if(musicControl.isPlaying()) {
+                            musicControl.pause();
+                        }
                     } else if (intent.getIntExtra("state", 2) == 1) {
                         //插入
                     }

@@ -94,6 +94,9 @@ public class LocalService extends Service {
                         case PlayerErrorCode.NULL:
                             message = "没有可播放音乐";
                             break;
+                        case PlayerErrorCode.FILE:
+                            message = "歌曲 " + song.getSongName() + " 路径错误";
+                            break;
                     }
                     ToastTools.showToast(getApplicationContext(), message);
                 }
@@ -139,7 +142,9 @@ public class LocalService extends Service {
         if (sPlayerCallbackAdapters == null) {
             sPlayerCallbackAdapters = new LinkedList<>();
         }
-        sPlayerCallbackAdapters.add(adapter);
+        if(!sPlayerCallbackAdapters.contains(adapter)){
+            sPlayerCallbackAdapters.add(adapter);
+        }
     }
 
     public static void removePlayerCallbackAdapter(PlayerCallbackAdapter adapter) {

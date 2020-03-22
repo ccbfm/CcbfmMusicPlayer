@@ -109,7 +109,7 @@ public class HiFiVisualizer extends BaseVisualizer {
                 int x = (int) Math.ceil((i + 1) * ((float)mRawAudioBytes.length / mPoints));
                 int t = 0;
                 if (x < 1024)
-                    t = ((byte) (Math.abs(mRawAudioBytes[x]) + 128)) * mRadius / 128;
+                    t = ((byte) (Math.abs(mRawAudioBytes[x]) + 128) % 16) * mRadius / 128;
                 mHeights[i] = -t;
             }
         }

@@ -97,11 +97,11 @@ public class BarVisualizer extends BaseVisualizer {
                 float randPosY = mDestY[mRandom.nextInt(mPoints)];
                 for (int i = 0; i < mSrcY.length; i++) {
 
-                    int x = (int) Math.ceil((i + 1) * ((float)mRawAudioBytes.length / mPoints));
+                    int x = (int) Math.ceil((i + 1) * ((float) mRawAudioBytes.length / mPoints));
                     int t = 0;
                     if (x < 1024)
                         t = height +
-                                ((byte) (Math.abs(mRawAudioBytes[x]) + 128)) * height / 128;
+                                ((byte) (Math.abs(mRawAudioBytes[x]) + 128) % 32) * height / 128;
 
                     float posY;
                     if (mGravity == Gravity.TOP) {

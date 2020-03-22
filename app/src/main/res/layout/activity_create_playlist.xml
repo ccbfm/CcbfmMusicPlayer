@@ -37,6 +37,7 @@
                 android:gravity="center"
                 android:hint="@string/music_create_playlist_name_hint"
                 android:singleLine="true"
+                android:ellipsize="end"
                 android:text="@={createPlaylistModel.playlistName}"
                 android:textColor="@color/color_f2f2f2"
                 android:textColorHint="@color/color_f2f2f2"

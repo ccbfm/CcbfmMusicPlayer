@@ -84,6 +84,10 @@ public class MusicControl implements ControlConstants {
         sendMessage(STATUS_PAUSE, null);
     }
 
+    public void seekTo(int msec) {
+        sendMessage(createMessage(STATUS_SEEK, null, msec, 0), 300);
+    }
+
     public void previous() {
         sendMessage(STATUS_PREVIOUS, null);
     }
@@ -115,7 +119,7 @@ public class MusicControl implements ControlConstants {
 
     private void sendMessage(Message message, long delayMillis) {
         if (mPlayer == null) {
-            LogTools.e(TAG, "sendMessage", ">>>>>>(mPlayer == null)");
+            LogTools.e(TAG, "sendMessage", ">>>>>>(mPlayer == null)", new Throwable());
             initMusicService(App.getApp(), message);
             return;
         }

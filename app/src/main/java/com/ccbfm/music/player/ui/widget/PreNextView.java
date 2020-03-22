@@ -8,6 +8,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Region;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,6 +24,9 @@ public class PreNextView extends View {
     private int mDirection = Direction.LEFT;
     private int mWidth, mHeight, mCenterWidth, mCenterHeight;
     private float mProgress = 0;
+    private CallbackClick mCallbackClick;
+    private Region mRegion;
+    private Region mRegionRect;
 
     public PreNextView(Context context) {
         this(context, null);
@@ -63,6 +67,8 @@ public class PreNextView extends View {
     private void setCenterPosition() {
         mCenterWidth = mWidth / 2;
         mCenterHeight = mHeight / 2;
+        mRegion = new Region();
+        mRegionRect = new Region(0, 0, mWidth, mHeight);
     }
 
     @Override
@@ -130,8 +136,12 @@ public class PreNextView extends View {
         mBarPath.moveTo(startX, startY);
         mBarPath.cubicTo(startX, startY, vertexX1, vertexY1, endX, endY);
         mBarPath.cubicTo(endX, endY, vertexX2, vertexY2, startX, startY);
+
         canvas.drawPath(mBarPath, mBarPaint);
+        mRegion.setPath(mBarPath, mRegionRect);
     }
+
+
 
     private Animator getAnimator(boolean flag) {
         float start = flag ? 0 : 1;
@@ -150,6 +160,7 @@ public class PreNextView extends View {
             @Override
             public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
+                mIsActive = !mIsActive;
             }
 
             @Override
@@ -162,8 +173,11 @@ public class PreNextView extends View {
     }
 
     private Animator mAnimator;
-
+    private boolean mIsActive = false;
     private void startAnimator(final boolean flag) {
+        if(mIsActive == flag){
+            return;
+        }
         post(new Runnable() {
             @Override
             public void run() {
@@ -179,17 +193,36 @@ public class PreNextView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         final int action = event.getAction();
+        float tx = event.getX();
+        float ty = event.getY();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                startAnimator(true);
+                if (mRegion != null && mRegion.contains((int) tx, (int) ty)) {
+                    startAnimator(true);
+                } else {
+                    return true;
+                }
                 break;
             case MotionEvent.ACTION_UP:
+                startAnimator(false);
+                if (mRegion != null) {
+                    if (mCallbackClick != null && mRegion.contains((int) tx, (int) ty)) {
+                        mCallbackClick.onClick();
+                    } else {
+                        super.onTouchEvent(event);
+                        return true;
+                    }
+                }
+                break;
             case MotionEvent.ACTION_CANCEL:
                 startAnimator(false);
                 break;
         }
-        super.onTouchEvent(event);
-        return true;
+        return super.onTouchEvent(event);
+    }
+
+    public void setCallbackClick(CallbackClick callbackClick) {
+        mCallbackClick = callbackClick;
     }
 
     public @interface Direction {
@@ -197,5 +230,9 @@ public class PreNextView extends View {
         int RIGHT = 2;
         int TOP = 3;
         int BOTTOM = 4;
+    }
+
+    public interface CallbackClick {
+        void onClick();
     }
 }

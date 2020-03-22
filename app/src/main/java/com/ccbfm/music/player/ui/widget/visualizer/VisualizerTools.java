@@ -1,6 +1,5 @@
 package com.ccbfm.music.player.ui.widget.visualizer;
 
-import android.media.AudioRecord;
 import android.media.audiofx.Visualizer;
 
 import com.ccbfm.music.player.tool.LogTools;
@@ -77,7 +76,6 @@ public class VisualizerTools {
             mVisualizer = null;
         }
         if (mVisualizerViews != null) {
-            mVisualizerViews.clear();
             mVisualizerViews = null;
         }
     }

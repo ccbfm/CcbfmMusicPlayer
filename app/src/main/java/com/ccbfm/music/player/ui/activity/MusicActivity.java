@@ -1,5 +1,6 @@
 package com.ccbfm.music.player.ui.activity;
 
+import android.content.Intent;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.ccbfm.music.player.databinding.ActivityMusicBinding;
 import com.ccbfm.music.player.tool.MenuFunctionTools;
 import com.ccbfm.music.player.tool.SPTools;
 import com.ccbfm.music.player.tool.SystemTools;
+import com.ccbfm.music.player.tool.ToastTools;
 import com.ccbfm.music.player.ui.fragment.BaseFragment;
 import com.ccbfm.music.player.ui.fragment.ControlFragment;
 import com.ccbfm.music.player.ui.fragment.LyricsFragment;
@@ -131,7 +133,12 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
             mIsShowSongList = false;
             return;
         }
-        super.onBackPressed();
+        //super.onBackPressed();
+        //返回桌面
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(intent);
     }
 
     private void rightSwipe() {
@@ -216,7 +223,7 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
                 SystemTools.killAppProcess(this);
                 break;
             case R.id.music_menu_sound_settings:
-
+                ToastTools.showToast(this, "<<<摸鱼中>>>");
                 break;
         }
     }
@@ -246,4 +253,6 @@ public class MusicActivity extends BaseActivity<ActivityMusicBinding> {
         }
         mPlayMode.setText(MenuFunctionTools.PLAY_MODE_STRING[mode]);
     }
+
+
 }

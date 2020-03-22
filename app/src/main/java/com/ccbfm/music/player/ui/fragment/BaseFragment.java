@@ -17,7 +17,7 @@ import com.ccbfm.music.player.ui.activity.BaseActivity;
 public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
 
     protected T mViewDataBinding;
-
+    protected boolean mStop;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -43,5 +43,17 @@ public abstract class BaseFragment<T extends ViewDataBinding> extends Fragment {
         } else {
             throw new ClassCastException("BaseFragment#getBaseActivity()");
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mStop = false;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mStop = true;
     }
 }

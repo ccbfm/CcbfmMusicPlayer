@@ -8,20 +8,33 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.ccbfm.music.player.R;
+import com.ccbfm.music.player.tool.DateTools;
+import com.ccbfm.music.player.tool.LogTools;
+import com.ccbfm.music.player.tool.MathTools;
 
-public class PlayPauseView extends View implements View.OnClickListener {
+import java.text.DateFormat;
+import java.util.Date;
+
+public class PlayPauseView extends View {
     private static final String TAG = "PlayPauseView";
     private Paint mBgPaint;
     private Paint mBarPaint;
+    private Paint mRingPaint;
+    private Paint mRingTextPaint;
+    private RectF mRingRectF;
     private Path mLeftPath;
     private Path mRightPath;
     private int mWidth, mHeight, mCenterWidth, mCenterHeight;
     private int mBarWidth, mBarHeight, mBarPadding, mBarHalfPadding, mBarSpace, mBarHalfSpace, mRadius;
-    private float mProgress;
+    private float mProgress, mRingProgress;
+    private String mMescText = "", mMaxMescText = "";
+    private long mMaxMesc = 0;
     private int mBarBgColor, mBarColor, mBarActiveColor;
     private boolean mIsClockWise = false;
     private boolean mBarPlayingState = false;
@@ -57,17 +70,26 @@ public class PlayPauseView extends View implements View.OnClickListener {
             mBarHalfSpace = mBarSpace / 2;
             mRadius = mBarHeight / 2 + mBarHalfPadding;
             mWidth = mHeight = (mRadius + mBarHalfPadding) * 2;
-            setCenterPosition();
         }
         init();
     }
 
     private void init() {
-        setOnClickListener(this);
-
+        setClickable(true);
+        setFocusable(true);
         mBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBgPaint.setColor(mBarBgColor);
         mBgPaint.setStyle(Paint.Style.FILL);
+
+        mRingPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mRingPaint.setColor(mBarActiveColor);
+        mRingPaint.setStyle(Paint.Style.STROKE);
+
+
+        mRingTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mRingTextPaint.setColor(mBarBgColor);
+        mRingTextPaint.setStyle(Paint.Style.FILL);
+
 
         mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBarPaint.setColor(mBarColor);
@@ -75,11 +97,25 @@ public class PlayPauseView extends View implements View.OnClickListener {
 
         mLeftPath = new Path();
         mRightPath = new Path();
+
+        setCenterPosition();
     }
 
     private void setCenterPosition() {
         mCenterWidth = mWidth / 2;
         mCenterHeight = mHeight / 2;
+        float bhhp = mBarHalfPadding / 2f;
+        float temp = mRadius + bhhp;
+        mRingRectF = new RectF(mCenterWidth - temp,
+                mCenterHeight - temp,
+                mCenterWidth + temp,
+                mCenterHeight + temp);
+        if (mRingPaint != null) {
+            mRingPaint.setStrokeWidth(mBarHalfPadding);
+        }
+        if (mRingTextPaint != null) {
+            mRingTextPaint.setTextSize(bhhp);
+        }
     }
 
     private void setAttributes(int temp) {
@@ -116,7 +152,25 @@ public class PlayPauseView extends View implements View.OnClickListener {
 
         int centerW = mCenterWidth;
         int centerH = mCenterHeight;
-        //canvas.drawCircle(centerW, centerH, mRadius, mBgPaint);
+        canvas.drawCircle(centerW, centerH, mRadius, mBgPaint);
+        mRingPaint.setColor(mBarColor);
+        canvas.drawArc(mRingRectF, 0, 360, false, mRingPaint);
+        canvas.save();
+        //旋转画布
+        canvas.rotate(-90, centerW, centerH);
+        mRingPaint.setColor(mBarActiveColor);
+        canvas.drawArc(mRingRectF, 0, mRingProgress * 360, false, mRingPaint);
+        canvas.restore();
+        canvas.save();
+        mRingTextPaint.setColor(mBarBgColor);
+        float textWidth = mRingTextPaint.measureText(mMescText);
+        canvas.rotate(mRingProgress * 360, centerW, centerH);
+        canvas.drawText(mMescText, centerW - textWidth / 2f, mBarHalfPadding * 3 / 4f, mRingTextPaint);
+        canvas.restore();
+
+        mRingTextPaint.setColor(mBarActiveColor);
+        float textMaxWidth = mRingTextPaint.measureText(mMaxMescText);
+        canvas.drawText(mMaxMescText, centerW - textMaxWidth / 2f, mBarHalfPadding * 3 / 2f, mRingTextPaint);
 
         mLeftPath.rewind();
         mRightPath.rewind();
@@ -198,6 +252,7 @@ public class PlayPauseView extends View implements View.OnClickListener {
             @Override
             public void onAnimationStart(Animator animation) {
                 super.onAnimationStart(animation);
+
                 mIsClockWise = mBarPlayingState;
                 mBarPlayingState = !mBarPlayingState;
             }
@@ -211,10 +266,9 @@ public class PlayPauseView extends View implements View.OnClickListener {
         return animator;
     }
 
-    @Override
-    public void onClick(View v) {
+    public void onClickPlay() {
         if (mCallbackClick != null) {
-            if (mCallbackClick.onClick(mBarPlayingState)) {
+            if (mCallbackClick.onClickPlay(mBarPlayingState)) {
                 if (mAnimator != null) {
                     mAnimator.cancel();
                     mAnimator = null;
@@ -246,6 +300,48 @@ public class PlayPauseView extends View implements View.OnClickListener {
     }
 
     public interface CallbackClick {
-        boolean onClick(boolean isPlaying);
+        boolean onClickPlay(boolean isPlaying);
+
+        void onClickSeek(int msec);
     }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int action = event.getAction();
+        float tx = event.getX();
+        float ty = event.getY();
+        switch (action) {
+            case MotionEvent.ACTION_UP:
+                boolean inBar = MathTools.inRangeOfCircle(tx, ty, mCenterWidth, mCenterHeight, mRadius);
+                if (inBar) {
+                    onClickPlay();
+                } else {
+                    //boolean inRing = MathTools.inRangeOfCircle(tx, ty, mCenterWidth,
+                    //        mCenterHeight, mRadius + mBarHalfPadding);
+                    //if (inRing) {
+                        float angle = MathTools.calculateXYAngle(mCenterWidth, mCenterHeight, tx, ty);
+                        if (mCallbackClick != null) {
+                            mCallbackClick.onClickSeek((int) (mMaxMesc * angle / 360f));
+                        }
+                    //}
+                }
+                break;
+        }
+        return super.onTouchEvent(event);
+    }
+
+    public void setRingProgress(float ringProgress) {
+        mRingProgress = ringProgress;
+        invalidate();
+    }
+
+    public void setRingProgress(int msec, long maxMesc) {
+        mRingProgress = (float) msec / maxMesc;
+        DateFormat dateFormat = DateTools.getDateFormat(DateTools.FORMAT_MS);
+        mMescText = dateFormat.format(new Date(msec));
+        mMaxMescText = dateFormat.format(new Date(maxMesc));
+        mMaxMesc = maxMesc;
+        invalidate();
+    }
+
 }

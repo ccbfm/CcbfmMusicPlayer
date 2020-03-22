@@ -20,6 +20,7 @@ import com.ccbfm.music.player.tool.LogTools;
 import com.ccbfm.music.player.tool.MathTools;
 import com.ccbfm.music.player.tool.SPTools;
 import com.ccbfm.music.player.ui.widget.PlayPauseView;
+import com.ccbfm.music.player.ui.widget.PreNextView;
 import com.ccbfm.music.player.ui.widget.visualizer.BaseVisualizer;
 import com.ccbfm.music.player.ui.widget.visualizer.VisualizerTools;
 
@@ -43,9 +44,9 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
             if (mPlaylists != null) {
                 List<Song> songs = mPlaylists.get(playlistIndex).getSongList();
                 mSongList = songs;
-                if(songs != null && songs.size() > 0) {
+                if (songs != null && songs.size() > 0) {
                     Song song = songs.get(index);
-                    updateUI(song.getSongName(), song.getSingerName());
+                    updateUI(song);
                 }
             }
         }
@@ -57,6 +58,15 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
                 if (mPlayPauseView != null) {
                     mPlayPauseView.setBarPlayingState(false);
                 }
+            }
+        }
+
+        @Override
+        public void callbackMsec(int msec) {
+            super.callbackMsec(msec);
+            if (mSongList != null && mPlayPauseView != null && mSongList.size() > 0) {
+                Song song = mSongList.get(mSongIndex);
+                mPlayPauseView.setRingProgress(msec, song.getDuration());
             }
         }
 
@@ -88,8 +98,9 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
         loadData(binding);
         mPlayPauseView = binding.musicControlPlay;
         binding.musicControlPlay.setCallbackClick(new PlayPauseView.CallbackClick() {
+
             @Override
-            public boolean onClick(boolean isPlaying) {
+            public boolean onClickPlay(boolean isPlaying) {
                 if (!MusicControl.getInstance().isPlaying()) {
                     MusicControl.getInstance().setSongList(mSongList, mSongIndex);
                 } else {
@@ -97,17 +108,24 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
                 }
                 return true;
             }
+
+            @Override
+            public void onClickSeek(int msec) {
+                MusicControl.getInstance().seekTo(msec);
+            }
+
         });
 
-        binding.musicControlPrevious.setOnClickListener(new View.OnClickListener() {
+        binding.musicControlPrevious.setCallbackClick(new PreNextView.CallbackClick() {
             @Override
-            public void onClick(View v) {
+            public void onClick() {
                 MusicControl.getInstance().previous();
             }
         });
-        binding.musicControlNext.setOnClickListener(new View.OnClickListener() {
+
+        binding.musicControlNext.setCallbackClick(new PreNextView.CallbackClick() {
             @Override
-            public void onClick(View v) {
+            public void onClick() {
                 MusicControl.getInstance().next();
             }
         });
@@ -141,30 +159,40 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
         int playlistIndex = SPTools.getIntValue(SPTools.KEY_INIT_PLAYLIST_INDEX);
         int songIndex = SPTools.getIntValue(SPTools.KEY_INIT_SONG_INDEX);
         int playlistSize = playlists.size();
-        playlistIndex = MathTools.calculationIndex(playlistIndex, playlistSize);
+        playlistIndex = MathTools.calculateIndex(playlistIndex, playlistSize);
         if (playlistIndex >= 0 && playlistIndex < playlistSize) {
             List<Song> songList = playlists.get(playlistIndex).getSongList();
             if (songList != null) {
                 mSongList = songList;
                 int songListSize = songList.size();
 
-                songIndex = MathTools.calculationIndex(songIndex, songListSize);
+                songIndex = MathTools.calculateIndex(songIndex, songListSize);
                 if (songIndex >= 0 && songIndex < songListSize) {
                     mSongIndex = songIndex;
                     Song song = songList.get(songIndex);
                     MusicControl.getInstance().setSongList(mSongList, mSongIndex, false);
-                    updateUI(song.getSongName(), song.getSingerName());
+                    updateUI(song);
                 } else {
-                    updateUI(getString(R.string.app_name), "");
+                    updateUI(null);
                 }
             }
         }
     }
 
-    private void updateUI(final String songName, final String singerName) {
+    private void updateUI(final Song song) {
+
         mViewDataBinding.getRoot().post(new Runnable() {
             @Override
             public void run() {
+                String songName;
+                String singerName = "";
+                if (song != null) {
+                    songName = song.getSongName();
+                    singerName = song.getSingerName();
+                } else {
+                    songName = getString(R.string.app_name);
+                }
+
                 if (mControlTitle != null) {
                     mControlTitle.setText(songName);
                 }
@@ -172,6 +200,10 @@ public class ControlFragment extends BaseFragment<FragmentControlBinding> {
                     mControlSinger.setText(singerName);
                 }
                 if (mPlayPauseView != null) {
+                    if (song != null) {
+                        int msec = SPTools.getIntValue(SPTools.KEY_INIT_SONG_MSEC);
+                        mPlayPauseView.setRingProgress(msec, song.getDuration());
+                    }
                     boolean isPlaying = MusicControl.getInstance().isPlaying();
                     mPlayPauseView.setBarPlayingState(isPlaying);
                 }

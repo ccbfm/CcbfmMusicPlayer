@@ -10,7 +10,9 @@ import com.ccbfm.music.player.database.entity.Song;
 import com.ccbfm.music.player.service.MusicService;
 import com.ccbfm.music.player.tool.Constants;
 import com.ccbfm.music.player.tool.LogTools;
+import com.ccbfm.music.player.tool.SystemTools;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -31,6 +33,7 @@ public class MusicPlayer implements IControlPlayer {
     private int mSeekTime = 0;
     private MusicService.NotificationCallback mCallback;
     private IPlayerCallback mPlayerCallback;
+    private PowerManager.WakeLock mWakeLock;
 
     public MusicPlayer(MusicService.NotificationCallback callback) {
         mCallback = callback;
@@ -89,8 +92,12 @@ public class MusicPlayer implements IControlPlayer {
                 mPlayer.prepareAsync();
             } catch (Exception e) {
                 LogTools.e(TAG, "prepare", "Exception--- ", e);
-                callbackError(PlayerErrorCode.PREPARE);
-                next(true);
+                if (new File(path).exists()) {
+                    callbackError(PlayerErrorCode.FILE);
+                } else {
+                    callbackError(PlayerErrorCode.PREPARE);
+                }
+                //next(true);
             }
         }
     }
@@ -103,12 +110,14 @@ public class MusicPlayer implements IControlPlayer {
         }
         boolean isPlaying = isPlaying();
         if (mPlayer != null && !isPlaying) {
-            LogTools.i(TAG, "play", "------" + mIsResetSongList);
+            LogTools.i(TAG, "play", "------" + mIsResetSongList + "," + mSeekTime);
             startTimer();
             mPlayer.start();
-            mPlayer.setWakeMode(App.getApp(), PowerManager.PARTIAL_WAKE_LOCK);
+
             //在start之后执行
             seekTo(mSeekTime);
+            mSeekTime = 0;
+
             callbackStatus(ControlConstants.STATUS_PLAY);
             callbackAudioSession(mPlayer.getAudioSessionId());
             mIsResetSongList = false;
@@ -163,11 +172,12 @@ public class MusicPlayer implements IControlPlayer {
 
     @Override
     public void seekTo(int msec) {
+        LogTools.i(TAG, "seekTo", "------" + msec);
         if (mPlayer != null && isPlaying()) {
-            if (mSeekTime > 0) {
+            if (msec > 0) {
                 mPlayer.seekTo(msec);
-                mSeekTime = 0;
             }
+            callbackMsec(msec);
         } else {
             mSeekTime = msec;
         }
@@ -234,6 +244,7 @@ public class MusicPlayer implements IControlPlayer {
         pause();
         calculationIndex(-1, true);
         prepare(null);
+        callbackMsec(0);
     }
 
     private void calculationIndex(int vector, boolean flag) {
@@ -285,6 +296,7 @@ public class MusicPlayer implements IControlPlayer {
         pause();
         calculationIndex(1, flag);
         prepare(null);
+        callbackMsec(0);
     }
 
     @Override
@@ -302,15 +314,18 @@ public class MusicPlayer implements IControlPlayer {
             @Override
             public void run() {
                 if (mPlayerCallback != null && mPlayer != null) {
-                    try {
-                        int msec = mPlayer.getCurrentPosition();
-                        mPlayerCallback.callbackMsec(msec);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    int msec = mPlayer.getCurrentPosition();
+                    callbackMsec(msec);
+
+                    if (mWakeLock == null) {
+                        mWakeLock = SystemTools.newWakeLock(App.getApp(), TAG);
+                    }
+                    if (mWakeLock != null) {
+                        mWakeLock.acquire(2000);
                     }
                 }
             }
-        }, 0, 500);
+        }, 500, 1000);
 
 
     }
@@ -370,6 +385,16 @@ public class MusicPlayer implements IControlPlayer {
         if (mPlayerCallback != null) {
             try {
                 mPlayerCallback.callbackAudioSession(id);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void callbackMsec(int msec) {
+        if (mPlayerCallback != null) {
+            try {
+                mPlayerCallback.callbackMsec(msec);
             } catch (Exception e) {
                 e.printStackTrace();
             }

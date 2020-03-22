@@ -6,5 +6,6 @@ public @interface PlayerErrorCode {
 
     int NULL = 2;
 
+    int FILE = 3;
 
 }
