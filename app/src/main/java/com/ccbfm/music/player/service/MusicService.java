@@ -28,7 +28,7 @@ public class MusicService extends Service {
     private static final String TAG = "MusicService";
     private PlayerBinder mBinder;
     private Notification mNotification;
-    private RemoteViews mRemoteViews;
+    private RemoteViews[] mRemoteViews;
     private IPlayerCallback mPlayerCallback;
     private IControlPlayer mControlPlayer;
 

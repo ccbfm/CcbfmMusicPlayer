@@ -36,13 +36,15 @@ public class MusicNotificationTool {
     public static final String ACTION_NEXT = PACKAGE_NAME + ".music_next";
     public static final String ACTION_CLOSE = PACKAGE_NAME + ".music_close";
 
-    public static RemoteViews createMusicView(Context context) {
+    public static RemoteViews[] createMusicView(Context context) {
         if (context == null) {
             throw new NullPointerException("Context 为空！");
         }
 
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                 R.layout.remote_view_notification_music);
+        RemoteViews remoteBigViews = new RemoteViews(context.getPackageName(),
+                R.layout.remote_big_view_notification_music);
 
         Intent serviceIntent = new Intent(context, MusicService.class);
 
@@ -50,27 +52,31 @@ public class MusicNotificationTool {
         PendingIntent previousPendingIntent = PendingIntent.getService(context, 0,
                 serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.music_notification_previous, previousPendingIntent);
+        remoteBigViews.setOnClickPendingIntent(R.id.music_notification_previous, previousPendingIntent);
 
         serviceIntent.setAction(ACTION_PLAY);
         PendingIntent playPendingIntent = PendingIntent.getService(context, 0,
                 serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.music_notification_play, playPendingIntent);
+        remoteBigViews.setOnClickPendingIntent(R.id.music_notification_play, playPendingIntent);
 
         serviceIntent.setAction(ACTION_NEXT);
         PendingIntent nextPendingIntent = PendingIntent.getService(context, 0,
                 serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.music_notification_next, nextPendingIntent);
+        remoteBigViews.setOnClickPendingIntent(R.id.music_notification_next, nextPendingIntent);
 
         serviceIntent.setAction(ACTION_CLOSE);
         PendingIntent closePendingIntent = PendingIntent.getService(context, 0,
                 serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.music_notification_close, closePendingIntent);
+        remoteBigViews.setOnClickPendingIntent(R.id.music_notification_close, closePendingIntent);
 
-        return remoteViews;
+        return new RemoteViews[]{remoteViews, remoteBigViews};
     }
 
 
-    public static Notification createNotification(Context context, RemoteViews remoteViews) {
+    public static Notification createNotification(Context context, RemoteViews[] remoteViews) {
         if (context == null) {
             throw new NullPointerException("Context 为空！");
         }
@@ -81,7 +87,7 @@ public class MusicNotificationTool {
         String channelId = CHANNEL_ID;
         //适配一下高版本
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String name = context.getPackageName() + ".music.name";
+            String name = context.getString(R.string.app_name);
             NotificationChannel channel = new NotificationChannel(channelId,
                     name,
                     NotificationManager.IMPORTANCE_DEFAULT);
@@ -89,6 +95,7 @@ public class MusicNotificationTool {
             channel.setLightColor(Color.RED); //小红点颜色
             channel.setSound(null, null);//关了通知默认提示音
             channel.setShowBadge(false); //是否在久按桌面图标时显示此渠道的通知
+            notificationManager.deleteNotificationChannel(channelId);
             notificationManager.createNotificationChannel(channel);
         }
 
@@ -109,8 +116,8 @@ public class MusicNotificationTool {
         builder.setVibrate(null);//关了车震
         builder.setContentIntent(pendingIntent);//整个点击跳转activity安排上
         builder.setOnlyAlertOnce(false);
-        builder.setContent(remoteViews);//把自定义view放上
-        builder.setCustomBigContentView(remoteViews);//把自定义view放上
+        builder.setCustomBigContentView(remoteViews[1]);//把自定义view放上
+        builder.setCustomContentView(remoteViews[0]);//把自定义view放上
 
         Notification notification = builder.build();
         notification.flags |= FLAG_ONGOING_EVENT;
@@ -121,7 +128,7 @@ public class MusicNotificationTool {
 
     public static void showNotification(Service service,
                                         Notification notification,
-                                        RemoteViews remoteViews,
+                                        RemoteViews[] remoteViews,
                                         String title, boolean isPlaying) {
         if (service == null) {
             throw new NullPointerException("Context 为空！");
@@ -130,13 +137,18 @@ public class MusicNotificationTool {
             return;
         }
         if (!TextUtils.isEmpty(title)) {
-            remoteViews.setTextViewText(R.id.music_notification_title, title);
+            remoteViews[0].setTextViewText(R.id.music_notification_title, title);
+            remoteViews[1].setTextViewText(R.id.music_notification_title, title);
         }
-        remoteViews.setInt(R.id.music_notification_play, "setBackgroundResource",
+        remoteViews[0].setInt(R.id.music_notification_play, "setBackgroundResource",
                 (isPlaying ? R.drawable.ic_play_to_pause_40dp : R.drawable.ic_pause_to_play_40dp));
+        remoteViews[1].setInt(R.id.music_notification_play, "setBackgroundResource",
+                (isPlaying ? R.drawable.ic_play_to_pause_40dp : R.drawable.ic_pause_to_play_40dp));
+
         if (notification == null) {
             return;
         }
+
         service.startForeground(NOTIFY_ID_MUSIC, notification);
     }
 
