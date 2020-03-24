@@ -244,6 +244,7 @@ public class MusicPlayer implements IControlPlayer {
         if (size() == 0) {
             return;
         }
+        mSeekTime = 0;
         pause();
         calculationIndex(-1, true);
         prepare(null);
@@ -295,6 +296,7 @@ public class MusicPlayer implements IControlPlayer {
         if (size() == 0) {
             return;
         }
+        mSeekTime = 0;
         LogTools.i(TAG, "next", "flag=" + flag);
         pause();
         calculationIndex(1, flag);
