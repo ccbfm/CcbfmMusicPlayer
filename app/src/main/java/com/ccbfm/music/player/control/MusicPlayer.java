@@ -180,6 +180,7 @@ public class MusicPlayer implements IControlPlayer {
             }
         } else {
             mSeekTime = msec;
+            play();
         }
     }
 
