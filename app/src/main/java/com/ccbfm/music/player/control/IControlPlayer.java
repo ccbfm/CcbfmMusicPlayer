@@ -23,7 +23,7 @@ public interface IControlPlayer {
 
     boolean isPlaying();
 
-    void seekTo(int msec);
+    void seekTo(int msec, boolean isPlay);
 
     void mode(int mode);
 

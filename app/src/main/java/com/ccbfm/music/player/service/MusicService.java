@@ -160,8 +160,8 @@ public class MusicService extends Service {
         }
 
         @Override
-        public void seekTo(int msec) throws RemoteException {
-            mControlPlayer.seekTo(msec);
+        public void seekTo(int msec, boolean isPlay) throws RemoteException {
+            mControlPlayer.seekTo(msec, isPlay);
         }
 
         @Override

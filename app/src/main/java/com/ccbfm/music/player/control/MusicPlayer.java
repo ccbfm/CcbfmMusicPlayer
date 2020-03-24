@@ -115,7 +115,7 @@ public class MusicPlayer implements IControlPlayer {
             mPlayer.start();
 
             //在start之后执行
-            seekTo(mSeekTime);
+            seekTo(mSeekTime, false);
             mSeekTime = 0;
 
             callbackStatus(ControlConstants.STATUS_PLAY);
@@ -171,7 +171,7 @@ public class MusicPlayer implements IControlPlayer {
     }
 
     @Override
-    public void seekTo(int msec) {
+    public void seekTo(int msec, boolean isPlay) {
         LogTools.i(TAG, "seekTo", "------" + msec);
         if (mPlayer != null && isPlaying()) {
             if (msec > 0) {
@@ -180,7 +180,9 @@ public class MusicPlayer implements IControlPlayer {
             }
         } else {
             mSeekTime = msec;
-            play();
+            if(isPlay) {
+                play();
+            }
         }
     }
 

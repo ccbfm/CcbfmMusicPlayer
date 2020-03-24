@@ -85,7 +85,7 @@ public class MusicControl implements ControlConstants {
     }
 
     public void seekTo(int msec) {
-        sendMessage(createMessage(STATUS_SEEK, null, msec, 0), 300);
+        sendMessage(createMessage(STATUS_SEEK, null, msec, 1), 300);
     }
 
     public void previous() {
@@ -197,7 +197,7 @@ public class MusicControl implements ControlConstants {
                         mPlayer.release();
                         break;
                     case STATUS_SEEK:
-                        mPlayer.seekTo(msg.arg1);
+                        mPlayer.seekTo(msg.arg1, msg.arg2 == 1);
                         break;
                     case STATUS_PREVIOUS:
                         mPlayer.previous();
@@ -230,6 +230,7 @@ public class MusicControl implements ControlConstants {
                 Message message = Message.obtain();
                 message.what = STATUS_SEEK;
                 message.arg1 = msec;
+                message.arg2 = 0;
                 sendMessage(message);
             }
         }
