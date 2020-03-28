@@ -73,21 +73,21 @@ public class LogTools {
     }
 
     public static int i(String tag, String method, String msg) {
-        if (DISABLE && LEVEL > Log.DEBUG) {
+        if (DISABLE && LEVEL > Log.INFO) {
             return 0;
         }
         return Log.i(TAG, "[" + tag + "]>(" + method + ")>" + msg);
     }
 
     public static int w(String tag, String method, String msg) {
-        if (DISABLE && LEVEL > Log.DEBUG) {
+        if (DISABLE && LEVEL > Log.WARN) {
             return 0;
         }
         return Log.w(TAG, "[" + tag + "]>(" + method + ")>" + msg);
     }
 
     public static int e(String tag, String method, String msg) {
-        if (DISABLE && LEVEL > Log.DEBUG) {
+        if (DISABLE && LEVEL > Log.ERROR) {
             return 0;
         }
         return Log.e(TAG, "[" + tag + "]>(" + method + ")>" + msg);
@@ -101,21 +101,21 @@ public class LogTools {
     }
 
     public static int i(String tag, String method, String msg, Throwable tr) {
-        if (DISABLE && LEVEL > Log.DEBUG) {
+        if (DISABLE && LEVEL > Log.INFO) {
             return 0;
         }
         return Log.i(TAG, "[" + tag + "]>(" + method + ")>" + msg, tr);
     }
 
     public static int w(String tag, String method, String msg, Throwable tr) {
-        if (DISABLE && LEVEL > Log.DEBUG) {
+        if (DISABLE && LEVEL > Log.WARN) {
             return 0;
         }
         return Log.w(TAG, "[" + tag + "]>(" + method + ")>" + msg, tr);
     }
 
     public static int e(String tag, String method, String msg, Throwable tr) {
-        if (DISABLE && LEVEL > Log.DEBUG) {
+        if (DISABLE && LEVEL > Log.ERROR) {
             return 0;
         }
         return Log.e(TAG, "[" + tag + "]>(" + method + ")>" + msg, tr);
