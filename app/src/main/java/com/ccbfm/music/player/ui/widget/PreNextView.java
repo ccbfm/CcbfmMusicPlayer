@@ -143,7 +143,6 @@ public class PreNextView extends View {
     }
 
 
-
     private Animator getAnimator(boolean flag) {
         float start = flag ? 0 : 1;
         float end = flag ? 1 : 0;
@@ -175,8 +174,9 @@ public class PreNextView extends View {
 
     private Animator mAnimator;
     private boolean mIsActive = false;
+
     private void startAnimator(final boolean flag) {
-        if(mIsActive == flag){
+        if (mIsActive == flag) {
             return;
         }
         post(new Runnable() {
@@ -191,6 +191,8 @@ public class PreNextView extends View {
         });
     }
 
+    private boolean mIsActionDown = false;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         final int action = event.getAction();
@@ -198,7 +200,8 @@ public class PreNextView extends View {
         float ty = event.getY();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                if (mRegion != null && mRegion.contains((int) tx, (int) ty)) {
+                mIsActionDown = (mRegion != null && mRegion.contains((int) tx, (int) ty));
+                if (mIsActionDown) {
                     startAnimator(true);
                 } else {
                     return true;
@@ -206,13 +209,11 @@ public class PreNextView extends View {
                 break;
             case MotionEvent.ACTION_UP:
                 startAnimator(false);
-                if (mRegion != null) {
-                    if (mCallbackClick != null && mRegion.contains((int) tx, (int) ty)) {
-                        mCallbackClick.onClick();
-                    } else {
-                        super.onTouchEvent(event);
-                        return true;
-                    }
+                if (mCallbackClick != null && mIsActionDown) {
+                    mCallbackClick.onClick();
+                } else {
+                    super.onTouchEvent(event);
+                    return true;
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:

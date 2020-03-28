@@ -281,6 +281,10 @@ public class MusicPlayer implements IControlPlayer {
                     mRandom = new Random();
                 }
                 index = mRandom.nextInt(size());
+                if(mSongIndex == index){
+                    calculationIndex(vector, flag);
+                    break;
+                }
                 mSongIndex = index;
                 break;
         }
